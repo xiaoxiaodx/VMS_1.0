@@ -202,36 +202,41 @@ Rectangle {
                 mDeviceID: did
                 mArea: did
 
-                MouseArea{
+                onDeleteClick: {
 
-                    anchors.fill: parent
-                    hoverEnabled: true
+                    listDeviceDid.remove(index)
 
-
-                    onDoubleClicked: {
-
-
-                        if(modelDataCurrentIndex >= 0 && (index != listDeviceCurrentIndex)){
-
-                            var curVideoItem = listDeviceDataModel.get(modelDataCurrentIndex);
-
-                            if(curVideoItem.did === did){
-                                if(curVideoItem.isCreateConnected === 0)
-                                    curVideoItem.isCreateConnected = 1;
-
-                            }else{
-                                curVideoItem.isCreateConnected = 0
-                                curVideoItem.did = did;
-                                curVideoItem.account = account
-                                curVideoItem.password = password
-                                curVideoItem.ip = ip
-                                curVideoItem.port = port
-                                curVideoItem.isCreateConnected = 1
-
-                            }
+                    for(var i=0;i<listDeviceDataModel.count;i++){
+                        var curVideoItem = listDeviceDataModel.get(i);
+                        if(curVideoItem.did === str){
+                            curVideoItem.isCreateConnected = 0;
+                            return
                         }
                     }
                 }
+
+                onDoubleClick: {
+                    if(modelDataCurrentIndex >= 0 && (index != listDeviceCurrentIndex)){
+
+                        var curVideoItem = listDeviceDataModel.get(modelDataCurrentIndex);
+
+                        if(curVideoItem.did === did){
+                            if(curVideoItem.isCreateConnected === 0)
+                                curVideoItem.isCreateConnected = 1;
+
+                        }else{
+                            curVideoItem.isCreateConnected = 0
+                            curVideoItem.did = did;
+                            curVideoItem.account = account
+                            curVideoItem.password = password
+                            curVideoItem.ip = ip
+                            curVideoItem.port = port
+                            curVideoItem.isCreateConnected = 1
+
+                        }
+                    }
+                }
+
             }
         }
     }
@@ -316,6 +321,17 @@ Rectangle {
                     multiScreenNum = premultiScreenNum
                     s_multiScreenNumChange(premultiScreenNum)
                 }
+            }
+
+            onS1_authenticationFailue: {
+
+                for(var i=0;i<listDeviceDid.count;i++){
+
+
+                    if(listDeviceDid.get(i).did == str)
+                        listDeviceDid.remove(i)
+                }
+
             }
 
         }
@@ -405,6 +421,7 @@ Rectangle {
 
         listDeviceDid.append({did:strID,account:strAcc,password:strPwd,ip:strIp,port:strPort});
 
+        listDeviceDid.saveImageData();
     }
 
     function deleteDevice(tmpIndex){

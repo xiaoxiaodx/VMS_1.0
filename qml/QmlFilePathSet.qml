@@ -32,7 +32,6 @@ Popup {
         id:setting1s
         property alias sFilePath: inputR.text
         property alias rFilePath: inputS.text
-
     }
     Rectangle {
         id: rect

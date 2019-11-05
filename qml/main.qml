@@ -24,7 +24,7 @@ Window {
 
     property string toastStr: ""
 
-    property string versionstr: "V1.2"
+    property string versionstr: "V1.1.1"
 
     property bool isSpecilState: false      //窗口在最大化的时候调用最小化 会出现特例（窗口还原后大小不再是最大化了）
 

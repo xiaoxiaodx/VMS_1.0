@@ -5,7 +5,7 @@
 TcpWorker::TcpWorker(QObject *parent) : QObject(parent)
 {
 
-   // qDebug()<<"TcpWorker thread thread:"<<QThread::currentThreadId();
+    // qDebug()<<"TcpWorker thread thread:"<<QThread::currentThreadId();
     initVariable();
 
 
@@ -85,7 +85,7 @@ void TcpWorker::slot_timerConnectSer()
 {
 
 
-     //qDebug()<<"slot_timerConnectSer";
+    //qDebug()<<"slot_timerConnectSer";
     if(!isConnected){
 
         if(tcpSocket != nullptr){
@@ -420,11 +420,13 @@ void TcpWorker::parseRecevieData()
 
                 if(statuscode == 200){
                     emit signal_sendMsg(new MsgInfo(tr("Successful authentication"),true));
+
                     //createFFmpegDecodec();
 
-                }else
-                    emit signal_sendMsg(new MsgInfo(tr("Authentication failure"),true));
-
+                }else{
+                    emit signal_sendMsg(new MsgInfo(tr("Authentication failure,Please re-add"),true));
+                    //emit signal_authenticationFailue(QString(arrDid));
+                }
                 //qDebug()<<"msgHex:"<<readDataBuff.toHex();
                 readDataBuff.remove(0,136);
                 needlen = 2;
@@ -438,7 +440,6 @@ void TcpWorker::parseRecevieData()
 
         resetAVFlag();
         needlen = 2;
-
 
     }
 
@@ -472,7 +473,7 @@ void TcpWorker::slot_tcpRecAuthentication(QString did,QString usrName,QString pa
 
 
 
-    writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"1");
+//    writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"1");
 }
 
 void TcpWorker::slot_tcpSendAuthentication(QString did,QString usrName,QString password)

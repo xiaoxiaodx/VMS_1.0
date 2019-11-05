@@ -22,7 +22,7 @@ extern "C"{
 #include <QMutex>
 #include <QMutexLocker>
 #include <QFile>
-
+#include "dispatchmsgmanager.h"
 
 enum ENUM_CODEC_TYPE{
   AV_NAKESTREAM = 1,
@@ -41,11 +41,14 @@ signals:
     void signal_sendImg(QImage *img);
     void signal_sendAudio(unsigned char*buff,int len);
     void signal_preparePlayAudio(int samplerate,int prenum,int bitwidth,int soundmode,long pts);
+    void signal_sendMsg(MsgInfo *info);
+
 public slots:
     void resetSample(int64_t srcCh_layout,int64_t dstCh_layout,int srcSampleRate,int desSampleRate,AVSampleFormat srcSample_fmt,AVSampleFormat dstSample_fmt, int srcNb_samples);
     void vNakedStreamDecodeInit(AVCodecID codecId);
     void aNakedStreamDecodeInit(AVCodecID codecId,AVSampleFormat sample_fmt, int sample_rate, int channels);
     void decodeAFrame(uint8_t *inbuff,int inbufflen,QByteArray &outArr);
+
     QImage* decodeVFrame(uint8_t *buff,int bufflen);
 
 
@@ -55,6 +58,7 @@ private:
     void initVariable();
 
     void consoleDebug(QString str);
+    void writeDebugfile(QString filename,QString funname,int lineCount,QString strContent);
 
     AVPacket m_AVPacket;
     AVFrame *m_pAVFrame;
@@ -98,6 +102,9 @@ private:
     bool isFinish;
     bool isPause;
 
+
+    int mWidth;
+    int mHeight;
 
 
 };

@@ -6,16 +6,14 @@ FfmpegCodec::FfmpegCodec(QObject *parent) : QObject(parent)
     initVariable();
     av_register_all();
 
-//    audioSrc = new QFile("playAudioSrc.pcm");
-//    if (!audioSrc->open(QIODevice::ReadOnly  |QIODevice::WriteOnly))
-//        return;
-
+    //    audioSrc = new QFile("playAudioSrc.pcm");
+    //    if (!audioSrc->open(QIODevice::ReadOnly  |QIODevice::WriteOnly))
+    //        return;
 }
 
 
 void FfmpegCodec::initVariable()
 {
-
     audioSrc = nullptr;
     m_pVoutBuffer = nullptr;
     m_VstreamIndex = -1;
@@ -36,13 +34,13 @@ void FfmpegCodec::initVariable()
     m_pACodec = nullptr;
     m_pACodecCtx = nullptr;
 
-
-
     //控制播放和线程结束
     isFinish = false;
     isPlay = false;
     isPause = false;
 
+    mWidth = 0;
+    mHeight = 0;
 }
 
 void FfmpegCodec::aNakedStreamDecodeInit(AVCodecID codecId,AVSampleFormat sample_fmt1, int sample_rate, int channels)
@@ -148,6 +146,8 @@ QImage* FfmpegCodec::decodeVFrame(uint8_t *buff,int bufflen)
     m_AVPacket.data = buff;
     m_AVPacket.size = bufflen;
 
+
+    writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"1");
     if( avcodec_send_packet(m_pVCodecCtx,&m_AVPacket) == 0)
     {
 
@@ -173,37 +173,43 @@ QImage* FfmpegCodec::decodeVFrame(uint8_t *buff,int bufflen)
             default:
                 pixFormat = m_pVCodecCtx->pix_fmt;
             }
-            //
 
-            if (m_videofirstParse ){
+            writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"2");
+
+            if (mWidth !=  m_pVCodecCtx->width || m_pVCodecCtx->height!= mHeight){
+
+                mWidth = m_pVCodecCtx->width;
+                mHeight = m_pVCodecCtx->height;
                 qDebug()<<"***first_time***";
                 m_pImg_convert_ctx = sws_getContext(m_pVCodecCtx->width, m_pVCodecCtx->height, pixFormat, m_pVCodecCtx->width, m_pVCodecCtx->height, AV_PIX_FMT_RGB32, SWS_BICUBIC, NULL, NULL, NULL);
                 int size = avpicture_get_size(AV_PIX_FMT_RGB32, m_pVCodecCtx->width, m_pVCodecCtx->height);
                 m_pVoutBuffer = (uint8_t *)av_malloc(size);
                 avpicture_fill((AVPicture *)m_pVFrameBGR, m_pVoutBuffer, AV_PIX_FMT_RGB32, m_pVCodecCtx->width, m_pVCodecCtx->height); // allocator memory for BGR buffer
                 m_videofirstParse = false;
+
+            }
+
+            writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"3");
+            sws_scale(m_pImg_convert_ctx, (const uint8_t* const*)m_pAVFrame->data, m_pAVFrame->linesize, 0, m_pVCodecCtx->height, m_pVFrameBGR->data, m_pVFrameBGR->linesize);
+
+
+            writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"3.5");
+            QImage *pImage = nullptr;
+            try {
+
+                pImage = new QImage((uchar*)m_pVoutBuffer, m_pVCodecCtx->width, m_pVCodecCtx->height, QImage::Format_RGB32);
+                writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"3.9");
+                // 其它代码
+            } catch ( const std::bad_alloc& e ) {
+
+                 writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"图片分配内存失败     ");
                 return nullptr;
             }
-            else
-            {
-                sws_scale(m_pImg_convert_ctx, (const uint8_t* const*)m_pAVFrame->data, m_pAVFrame->linesize, 0, m_pVCodecCtx->height, m_pVFrameBGR->data, m_pVFrameBGR->linesize);
 
+            writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"4");
 
-                QImage *pImage = nullptr;
-                try {
+            return pImage;
 
-                    pImage = new QImage((uchar*)m_pVoutBuffer, m_pVCodecCtx->width, m_pVCodecCtx->height, QImage::Format_RGB32);
-
-                    // 其它代码
-                } catch ( const std::bad_alloc& e ) {
-
-                    qDebug()<<"图片分配内存失败     ";
-                    return nullptr;
-                }
-
-                return pImage;
-
-            }
         }
     }
     return nullptr;
@@ -340,6 +346,17 @@ void FfmpegCodec::resetSample(int64_t srcCh_layout,int64_t dstCh_layout,int srcS
     }
 }
 
+void FfmpegCodec::writeDebugfile(QString filename,QString funname,int lineCount,QString strContent){
+
+    MsgInfo *msg = new MsgInfo(strContent,false);
+    msg->msgType = MSG_DEBUGLOG;
+    msg->msgProductionFunName = funname;
+    msg->msgProductionFileName = filename;
+    msg->msgProductionCodeLine = lineCount;
+    emit signal_sendMsg(msg);
+}
+
+
 void FfmpegCodec::finishWork()
 {
 
@@ -356,7 +373,6 @@ FfmpegCodec::~FfmpegCodec()
 {
 
     qDebug()<<"析构   FfmpegCodec";
-
 
     if(m_pAVFrame != nullptr)
         av_frame_free(&m_pAVFrame);
@@ -375,7 +391,7 @@ FfmpegCodec::~FfmpegCodec()
 
     if(m_pVoutBuffer != nullptr)
         av_free(m_pVoutBuffer);
-     qDebug()<<"析构   FfmpegCodec 结束";
+    qDebug()<<"析构   FfmpegCodec 结束";
 }
 
 

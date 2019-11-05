@@ -10,12 +10,19 @@ Rectangle{
     width: parent.width
     height: 42 + loadItem.height
 
+    signal deleteClick(string str);
+    signal doubleClick();
 
     Rectangle{
         id:listHead
         width: parent.width
         height: 42
 
+        MouseArea{
+            anchors.fill: parent
+
+            onDoubleClicked:doubleClick()
+        }
         color: backColor
         Text {
             id: txt
@@ -26,55 +33,26 @@ Rectangle{
             text: qsTr(mArea)
         }
 
+
         Image {
             id: image
             width: 16
             height: 16
             anchors.right: parent.right
-            anchors.rightMargin: 5
-            anchors.verticalCenter: parent.verticalCenter
-            visible: false
-            source: "qrc:/images/arrow.png"
+            anchors.top: parent.top
+
+            visible: true
+            source: "qrc:/images/img_delete.png"
 
             MouseArea{
                 anchors.fill: parent
 
                 hoverEnabled: true
-                onEntered: image.source  = "qrc:/images/arrow_enter.png"
-                onExited: image.source = "qrc:/images/arrow.png"
 
                 onClicked:{
-                    if (rotationAnimation.running === true)
 
-                        return;
-
-                    rotationAnimation.start();
-
+                    deleteClick(mDeviceID)
                 }
-            }
-        }
-
-
-        RotationAnimation{
-            id: rotationAnimation
-            target: image
-            from: 0
-            to: 90
-            duration: 100
-            onStopped: {
-                if (isDown === true)
-                {
-                    loadItem.sourceComponent = null;
-                    rotationAnimation.from = 0;
-                    rotationAnimation.to = 90;
-                }
-                else
-                {
-                    loadItem.sourceComponent = cptPicVideo;
-                    rotationAnimation.from = 90;
-                    rotationAnimation.to = 0;
-                }
-                isDown = !isDown;
             }
         }
     }

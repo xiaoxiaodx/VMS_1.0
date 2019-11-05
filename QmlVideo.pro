@@ -9,7 +9,7 @@ QT += core
 CONFIG += c++11
 QT += multimedia
 
-TARGET = VMS_V1.2
+TARGET = VMS_TCP_V1.1.1
 
 TRANSLATIONS = zh_CN.ts en_US.ts
 

@@ -37,6 +37,7 @@ signals:
     void signal_sendPreparePlayAudio(int samplerate,int prenum,int bitwidth,int soundmode,long pts);
 
     void signal_sendMsg(MsgInfo *info);
+    void signal_authenticationFailue(QString did);
 
     void signal_writeMediaVideoQueue(char *data,int len,QueueVideoInputInfo_T param,Enum_MediaType mediaType);
     void signal_writeMediaAudioQueue(char *data,int len,QueueAudioInputInfo_T param,Enum_MediaType mediaType);

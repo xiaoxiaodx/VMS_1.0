@@ -83,6 +83,7 @@ void XVideo::createFFmpegDecodec()
         pffmpegCodec->aNakedStreamDecodeInit(AV_CODEC_ID_PCM_ALAW,AV_SAMPLE_FMT_S16,8000,1);
         pffmpegCodec->resetSample(AV_CH_LAYOUT_MONO,AV_CH_LAYOUT_MONO,8000,44100,AV_SAMPLE_FMT_S16,AV_SAMPLE_FMT_S16,160);
 
+        connect(pffmpegCodec,&FfmpegCodec::signal_sendMsg,this,&XVideo::slot_recMsg);
 
         if(m_readThread != nullptr)
             connect(m_readThread,&QThread::finished,pffmpegCodec,&FfmpegCodec::deleteLater);
@@ -170,6 +171,8 @@ void XVideo::createTcpThread()
     connect(worker,&TcpWorker::signal_waitTcpConnect,this,&XVideo::slot_trasfer_waitingLoad);
     connect(worker,&TcpWorker::signal_endWait,this,&XVideo::slot_trasfer_endLoad);
 
+    connect(worker,&TcpWorker::signal_authenticationFailue,this,&XVideo::slot_authenticationFailue);
+
     connect(this,&XVideo::signal_connentSer,worker,&TcpWorker::creatNewTcpConnect);
     connect(this,&XVideo::signal_disconnentSer,worker,&TcpWorker::slot_disConnectSer);
 
@@ -177,6 +180,7 @@ void XVideo::createTcpThread()
 
 
     connect(this,&XVideo::signal_destoryTcpWork,worker,&TcpWorker::slot_destory);
+
 
 
     connect(m_readThread,&QThread::finished,worker,&TcpWorker::deleteLater);
@@ -362,6 +366,8 @@ void XVideo::disConnectServer()
 
     emit signal_disconnentSer();
     timerUpdate.stop();
+
+
 }
 
 QSGNode* XVideo::updatePaintNode(QSGNode *old, UpdatePaintNodeData *data)
@@ -524,6 +530,10 @@ void XVideo::slot_trasfer_endLoad()
     emit signal_endLoad();
 }
 
+void XVideo::slot_authenticationFailue(QString str){
+
+    emit signal_authenticationFailue(str);
+}
 
 void XVideo::funSetShotScrennFilePath(QString str)
 {

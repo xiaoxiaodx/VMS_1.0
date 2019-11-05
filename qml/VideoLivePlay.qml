@@ -7,6 +7,7 @@ Rectangle {
     signal click();
     signal s_showToastMsg(string str)
     signal s_deleteObject()
+    signal s_authenticationFailue(string str)
 
     property string mip: ""
     property string mport: ""
@@ -69,6 +70,10 @@ Rectangle {
 
 //        }
 
+
+        onSignal_authenticationFailue: {
+            s_authenticationFailue(str)
+        }
 
         onSignal_loginStatus: s_showToastMsg(msg);
 

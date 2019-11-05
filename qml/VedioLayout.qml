@@ -17,6 +17,7 @@ Rectangle {
     signal s_click(var clickIndex);
     signal s_showToastMsg(string str)
     signal s_deleteObject()
+    signal s1_authenticationFailue(string str)
 
     Repeater{
         id:repeater
@@ -67,6 +68,10 @@ Rectangle {
 
                 isCreateConnected = 0;
 
+            }
+
+            onS_authenticationFailue: {
+                s1_authenticationFailue(str)
             }
         }
     }

@@ -55,6 +55,7 @@ signals:
     void signal_loginStatus(QString msg);
     void signal_waitingLoad(QString msgload);
     void signal_endLoad();
+    void signal_authenticationFailue(QString str);
     //audio
     void signal_stopPlayAudio();
     void signal_startPlayAudio();
@@ -71,18 +72,15 @@ signals:
     void signal_endRecord();
     void signal_setRecordingFilePath(QString str);
 
-
-
-
 public slots:
     void slot_trasfer_waitingLoad(QString msgload);
     void slot_trasfer_endLoad();
-
 
     void slot_sendToastMsg(MsgInfo *msg);//经过dispatchMsgManager后出来消息
     void slot_recMsg(MsgInfo *msg);//所有其他类的消息都先到此
     void slot_recH264(char *buff,int len,quint64 time);
     void slot_recPcmALaw(char *buff,int len,quint64 time);
+    void slot_authenticationFailue(QString str);
 
     void slot_reconnectP2p();
     void slot_timeout();

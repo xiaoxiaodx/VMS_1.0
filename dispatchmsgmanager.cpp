@@ -77,23 +77,29 @@ void DispatchMsgManager::dispatchMsg(MsgInfo *msg){
 
 
 
-//    qDebug()<<"****** dispatchMsg *******    "<<timeCount<<","<<msg->msgContentStr ;
+    //    qDebug()<<"****** dispatchMsg *******    "<<timeCount<<","<<msg->msgContentStr ;
 
     if(msg->msgType == MSG_TOAST)
         emit signal_sendToastMsg(msg);
     else if(msg->msgType == MSG_DEBUGLOG){
 
 
-        qDebug()<<"MSG_DEBUGLOG" ;
+
         QFile debugFile(msg->msgDid+".txt");
 
 
-        if(!debugFile.isOpen())
-            if (!debugFile.open(QIODevice::ReadOnly  |QIODevice::WriteOnly))
-                return;
+
+        if(!debugFile.isOpen()){
+
+            if(debugFile.size() <=1024*1024){
+                if (!debugFile.open(QIODevice::Append  |QIODevice::WriteOnly))return;
+            }else
+                if (!debugFile.open(QIODevice::WriteOnly))return;
+
+        }
 
 
-        QString str = "debuglog:"+msg->msgProductionFileName + "---"+msg->msgProductionFunName+"---"+QString::number(msg->msgProductionCodeLine) + "    "+msg->msgContentStr;
+        QString str = msg->msgProductionFileName + "    "+msg->msgProductionFunName+"   "+QString::number(msg->msgProductionCodeLine) + "    debug:"+msg->msgContentStr;
         QTextStream txtOutput(&debugFile);
         txtOutput << str<< endl;
     }

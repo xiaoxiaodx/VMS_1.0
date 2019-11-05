@@ -206,6 +206,7 @@ Rectangle {
 
                     listDeviceDid.remove(index)
 
+                    listDeviceDid.saveImageData();
                     for(var i=0;i<listDeviceDataModel.count;i++){
                         var curVideoItem = listDeviceDataModel.get(i);
                         if(curVideoItem.did === str){

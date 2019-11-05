@@ -69,7 +69,20 @@ void FfmpegCodec::aNakedStreamDecodeInit(AVCodecID codecId,AVSampleFormat sample
         return ;
     }
 
+    m_pAVFrame = av_frame_alloc();
+    if (!m_pAVFrame)
+    {
+        consoleDebug("m_pAVFrame 分配内存失败");
+        return ;
+    }
 
+    m_pVFrameBGR = av_frame_alloc();
+
+    if (!m_pVFrameBGR)
+    {
+        consoleDebug("m_pVFrameBGR 分配内存失败");
+        return ;
+    }
 
     av_init_packet(&m_AVPacket);
     if(m_pAVFrame == nullptr){
@@ -95,28 +108,6 @@ void FfmpegCodec::vNakedStreamDecodeInit(AVCodecID codecId)
         }
     }
 
-    if(m_pAVFrame == nullptr){
-
-        m_pAVFrame = av_frame_alloc();
-        if (!m_pAVFrame)
-        {
-            consoleDebug("m_pAVFrame 分配内存失败");
-            return ;
-        }
-    }
-
-    if(m_pVFrameBGR == nullptr){
-
-        m_pVFrameBGR = av_frame_alloc();
-
-        if (!m_pVFrameBGR)
-        {
-            consoleDebug("m_pVFrameBGR 分配内存失败");
-
-
-            return ;
-        }
-    }
 
     if(m_pVCodecCtx == nullptr){
 
@@ -147,7 +138,11 @@ QImage* FfmpegCodec::decodeVFrame(uint8_t *buff,int bufflen)
     m_AVPacket.size = bufflen;
 
 
-    writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"1");
+    //writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"1");
+    qDebug()<<"111111111111111111111";
+
+
+
     if( avcodec_send_packet(m_pVCodecCtx,&m_AVPacket) == 0)
     {
 
@@ -174,13 +169,16 @@ QImage* FfmpegCodec::decodeVFrame(uint8_t *buff,int bufflen)
                 pixFormat = m_pVCodecCtx->pix_fmt;
             }
 
-            writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"2");
+            qDebug()<<"22222222222222222222";
+           // writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"2");
 
             if (mWidth !=  m_pVCodecCtx->width || m_pVCodecCtx->height!= mHeight){
- writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"2.5");
+                writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"2.5");
                 mWidth = m_pVCodecCtx->width;
                 mHeight = m_pVCodecCtx->height;
                 qDebug()<<"***first_time***";
+                if(m_pImg_convert_ctx != nullptr)
+                    sws_freeContext(m_pImg_convert_ctx);
                 m_pImg_convert_ctx = sws_getContext(m_pVCodecCtx->width, m_pVCodecCtx->height, pixFormat, m_pVCodecCtx->width, m_pVCodecCtx->height, AV_PIX_FMT_RGB32, SWS_BICUBIC, NULL, NULL, NULL);
                 int size = avpicture_get_size(AV_PIX_FMT_RGB32, m_pVCodecCtx->width, m_pVCodecCtx->height);
                 m_pVoutBuffer = (uint8_t *)av_malloc(size);
@@ -189,11 +187,13 @@ QImage* FfmpegCodec::decodeVFrame(uint8_t *buff,int bufflen)
 
             }
 
-            writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"3");
+            qDebug()<<"333333333333333333333";
+           // writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"3");
             sws_scale(m_pImg_convert_ctx, (const uint8_t* const*)m_pAVFrame->data, m_pAVFrame->linesize, 0, m_pVCodecCtx->height, m_pVFrameBGR->data, m_pVFrameBGR->linesize);
 
+             qDebug()<<"4444";
 
-            writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"3.5");
+            //writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"3.5");
             QImage *pImage = nullptr;
             try {
 
@@ -202,11 +202,13 @@ QImage* FfmpegCodec::decodeVFrame(uint8_t *buff,int bufflen)
                 // 其它代码
             } catch ( const std::bad_alloc& e ) {
 
-                 writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"图片分配内存失败     ");
+                writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"图片分配内存失败     ");
+
+//                av_frame_free(&m_pAVFrame);
+//                av_frame_free(&m_pVFrameBGR);
                 return nullptr;
             }
 
-            writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"4");
 
             return pImage;
 
@@ -348,6 +350,7 @@ void FfmpegCodec::resetSample(int64_t srcCh_layout,int64_t dstCh_layout,int srcS
 
 void FfmpegCodec::writeDebugfile(QString filename,QString funname,int lineCount,QString strContent){
 
+    return;
     MsgInfo *msg = new MsgInfo(strContent,false);
     msg->msgType = MSG_DEBUGLOG;
     msg->msgProductionFunName = funname;
@@ -374,11 +377,11 @@ FfmpegCodec::~FfmpegCodec()
 
     qDebug()<<"析构   FfmpegCodec";
 
-    if(m_pAVFrame != nullptr)
-        av_frame_free(&m_pAVFrame);
+    //    if(m_pAVFrame != nullptr)
+    //        av_frame_free(&m_pAVFrame);
 
-    if(m_pVFrameBGR != nullptr)
-        av_frame_free(&m_pVFrameBGR);
+    //    if(m_pVFrameBGR != nullptr)
+    //        av_frame_free(&m_pVFrameBGR);
 
     if(m_pACodecCtx != nullptr)
         avcodec_close(m_pACodecCtx);

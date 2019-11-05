@@ -56,7 +56,7 @@ void DispatchMsgManager::slot_timeOut()
             if((timeCount - msg->msgSendTime)>=msg->msgRepeatInterval && (qAbs(timeCount - msg->msgProductionDate)<=2)){
 
 
-                dispatchMsg(msg);
+                //dispatchMsg(msg);
 
                 msg->msgSendTime = timeCount;
 
@@ -77,13 +77,14 @@ void DispatchMsgManager::dispatchMsg(MsgInfo *msg){
 
 
 
-    //    qDebug()<<"****** dispatchMsg *******    "<<timeCount<<","<<msg->msgContentStr ;
+        qDebug()<<"****** dispatchMsg *******    "<<timeCount<<","<<msg->msgContentStr ;
 
+        qDebug()<<"*****AAAAAAAAAAAAAAAAAA";
     if(msg->msgType == MSG_TOAST)
         emit signal_sendToastMsg(msg);
     else if(msg->msgType == MSG_DEBUGLOG){
 
-
+        qDebug()<<"*****BBBBBBBBBBBBBBBBBBBB";
 
         QFile debugFile(msg->msgDid+".txt");
 
@@ -102,8 +103,12 @@ void DispatchMsgManager::dispatchMsg(MsgInfo *msg){
         QString str = msg->msgProductionFileName + "    "+msg->msgProductionFunName+"   "+QString::number(msg->msgProductionCodeLine) + "    debug:"+msg->msgContentStr;
         QTextStream txtOutput(&debugFile);
         txtOutput << str<< endl;
+        qDebug()<<"*****2321";
+        delete  msg;
+        qDebug()<<"*****88888888";
+        qDebug()<<str;
     }
-
+     qDebug()<<"*****CCCCCCCCCCCCCCCCCC";
 }
 
 void DispatchMsgManager::addMsg(MsgInfo *info)

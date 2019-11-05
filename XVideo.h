@@ -38,9 +38,10 @@ public:
     Q_INVOKABLE void funPlayAudio(bool isPlay);
     Q_INVOKABLE void funRecordVedio(bool isRecord);
     Q_INVOKABLE void funScreenShot();
-
     Q_INVOKABLE void funSetShotScrennFilePath(QString str);
     Q_INVOKABLE void funSetRecordingFilePath(QString str);
+
+
 
     explicit XVideo();
     ~XVideo();
@@ -100,6 +101,7 @@ private:
     void createAviRecord();
 
     void initVariable();
+    void writeDebugfile(QString filename,QString funname,int lineCount,QString strContent);
 
     QThread *m_readThread;
     TcpWorker *worker;
@@ -153,6 +155,9 @@ private:
 
     QString mshotScreenFilePath;
 
+
+    static int testIdIndex;
+    int testID;
 };
 
 #endif // XVideo_H

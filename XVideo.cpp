@@ -2,6 +2,8 @@
 #include <QPainter>
 #include <QDebug>
 
+
+int XVideo::testIdIndex = 0;
 XVideo::XVideo()
 {
     setFlag(QQuickItem::ItemHasContents);
@@ -15,9 +17,10 @@ XVideo::XVideo()
 
     //createMp4RecordThread();
 
+    testIdIndex++;
     connect(&timerUpdate,&QTimer::timeout,this,&XVideo::slot_timeout);
 
-
+    testID = testIdIndex;
     //消息分发定时器
     connect(mpDispatchMsgManager,&DispatchMsgManager::signal_sendToastMsg,this,&XVideo::slot_sendToastMsg);
 }
@@ -266,10 +269,10 @@ void XVideo::funScreenShot()
 
         QString filename;
 
-         QDir dir;
+        QDir dir;
         if(mshotScreenFilePath == ""){
 
-           mshotScreenFilePath = dir.absolutePath() +"/ScreenShot";
+            mshotScreenFilePath = dir.absolutePath() +"/ScreenShot";
         }
         QString desFileDir = mshotScreenFilePath +"/" +mDid;
         if (!dir.exists(desFileDir))
@@ -305,12 +308,12 @@ void XVideo::slot_timeout()
         //如果不增加这句代码 ，则会出现视频不会第一时间显示，而是显示灰色图像
         if(!isFirstData){
 
-                emit signal_loginStatus("Get the stream successfully");
-                isFirstData = true;
-            }
-
+            emit signal_loginStatus("Get the stream successfully");
+            isFirstData = true;
         }
-        update();
+
+    }
+    update();
 
     int preTimeOut = timerUpdate.interval();
 
@@ -411,7 +414,7 @@ QSGNode* XVideo::updatePaintNode(QSGNode *old, UpdatePaintNodeData *data)
         if(!isImgUpdate){
 
             isImgUpdate = true;
-            m_Img->fill(Qt::red);
+
             QSGTexture *t = window()->createTextureFromImage(*m_Img);
 
             if (t != nullptr) {
@@ -431,19 +434,6 @@ QSGNode* XVideo::updatePaintNode(QSGNode *old, UpdatePaintNodeData *data)
     }
 
     //实时更新纹理而不使用老的纹理 是因为老的纹理的宽高未发生变化
-    //    QSGTexture *t = window()->createTextureFromImage(*m_Img);
-
-    //    if (t != nullptr) {
-
-    //        QSGTexture *tt = oldTexture->texture();
-    //        if (tt) {
-    //            tt->deleteLater();
-    //        }
-    //        oldTexture->setRect(boundingRect());
-    //        oldTexture->setTexture(t);
-    //    }
-
-    //    return oldTexture;
 }
 
 
@@ -453,6 +443,7 @@ void XVideo::slot_recH264(char* h264Arr,int arrlen,quint64 time)
 
 
     //qDebug()<<"11111111111";
+    writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"***1");
     createFFmpegDecodec();
 
     emit signal_recordVedio(h264Arr,arrlen,time);
@@ -461,6 +452,7 @@ void XVideo::slot_recH264(char* h264Arr,int arrlen,quint64 time)
     if(pffmpegCodec != nullptr){
         Img = pffmpegCodec->decodeVFrame((unsigned char*)h264Arr,arrlen);
 
+        writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"***2");
         if (Img != nullptr && (!Img->isNull()))
         {
             ImageInfo imgInfo;
@@ -476,12 +468,15 @@ void XVideo::slot_recH264(char* h264Arr,int arrlen,quint64 time)
                 delete Img;
         }
     }
+
+    writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"***3");
 }
 
 
 //tcpworker 线程
 void XVideo::slot_recPcmALaw( char * buff,int len,quint64 time)
 {
+    writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"***1---");
     preAudioTime = time;
     createFFmpegDecodec();
 
@@ -494,6 +489,7 @@ void XVideo::slot_recPcmALaw( char * buff,int len,quint64 time)
         return;
     }else {
         if(pffmpegCodec != nullptr){
+            writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"***2---");
             QByteArray arr;
             pffmpegCodec->decodeAFrame((unsigned char*)buff,len,arr);
 
@@ -501,13 +497,14 @@ void XVideo::slot_recPcmALaw( char * buff,int len,quint64 time)
                 emit signal_playAudio((unsigned char*)arr.data(),arr.length(),time);
         }
     }
+    writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"***3---");
 }
 
 void XVideo::slot_recMsg(MsgInfo * msg)
 {
 
     if(mpDispatchMsgManager != nullptr){
-        msg->msgDid = mDid;
+        msg->msgDid = mDid+"_"+QString::number(testID);
         mpDispatchMsgManager->addMsg(msg);
     }
 
@@ -543,6 +540,18 @@ void XVideo::funSetRecordingFilePath(QString str)
 {
     emit signal_setRecordingFilePath(str);
 }
+
+void XVideo::writeDebugfile(QString filename,QString funname,int lineCount,QString strContent){
+
+    MsgInfo *msg = new MsgInfo(strContent,false);
+    msg->msgType = MSG_DEBUGLOG;
+    msg->msgProductionFunName = funname;
+    msg->msgProductionFileName = filename;
+    msg->msgProductionCodeLine = lineCount;
+    slot_recMsg(msg);
+}
+
+
 XVideo::~XVideo()
 {
     qDebug()<<mDid + " 析构   XVideo";

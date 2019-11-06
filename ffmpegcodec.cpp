@@ -170,10 +170,10 @@ QImage* FfmpegCodec::decodeVFrame(uint8_t *buff,int bufflen)
             }
 
             qDebug()<<"22222222222222222222";
-           // writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"2");
+
 
             if (mWidth !=  m_pVCodecCtx->width || m_pVCodecCtx->height!= mHeight){
-                writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"2.5");
+
                 mWidth = m_pVCodecCtx->width;
                 mHeight = m_pVCodecCtx->height;
                 qDebug()<<"***first_time***";
@@ -188,24 +188,22 @@ QImage* FfmpegCodec::decodeVFrame(uint8_t *buff,int bufflen)
             }
 
             qDebug()<<"333333333333333333333";
-           // writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"3");
+
             sws_scale(m_pImg_convert_ctx, (const uint8_t* const*)m_pAVFrame->data, m_pAVFrame->linesize, 0, m_pVCodecCtx->height, m_pVFrameBGR->data, m_pVFrameBGR->linesize);
 
              qDebug()<<"4444";
 
-            //writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"3.5");
+
             QImage *pImage = nullptr;
             try {
 
                 pImage = new QImage((uchar*)m_pVoutBuffer, m_pVCodecCtx->width, m_pVCodecCtx->height, QImage::Format_RGB32);
-                writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"3.9");
+
                 // 其它代码
             } catch ( const std::bad_alloc& e ) {
 
                 writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"图片分配内存失败     ");
 
-//                av_frame_free(&m_pAVFrame);
-//                av_frame_free(&m_pVFrameBGR);
                 return nullptr;
             }
 
@@ -271,8 +269,6 @@ void FfmpegCodec::decodeAFrame(uint8_t *buff,int bufflen,QByteArray &arr)
             }
             arr.append((char*)dst_data[0],dst_bufsize);
             //qDebug()<<"hex:"<<arr.toHex();
-
-
 
         }
 

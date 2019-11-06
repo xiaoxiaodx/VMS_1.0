@@ -471,9 +471,6 @@ void TcpWorker::slot_tcpRecAuthentication(QString did,QString usrName,QString pa
     m_usrName = usrName;
     m_password = password;
 
-
-
-//    writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"1");
 }
 
 void TcpWorker::slot_tcpSendAuthentication(QString did,QString usrName,QString password)

@@ -110,14 +110,13 @@ void P2pWorker::slot_connectDev(QString deviceDid,QString name,QString pwd)
         isWorking = true;
         isConnectDevSucc = true;
 
-        for(int i=0;i<32;i++)
-            m_appKey[i] = rand() % 0xFF;
-        QByteArray arr;
-        arr.append(m_appKey,32);
-        qDebug()<<" m_appKey "<<arr.toHex();
-        writeBuff(CMD_USR_KEY, m_appKey, 32);
+        QVariantMap vMap;
+        vMap.insert("username","admin");
+        vMap.insert("password","admin");
+        QByteArray loginArr = p2pProtrol.makeJsonPacket("login",vMap);
 
-        qDebug()<<" 11111 ";
+        writeBuff(CMD_LOGIN,loginArr.data(),loginArr.length());
+
         emit slot_startLoopRead();
     }else{
         QThread::msleep(500);
@@ -137,12 +136,14 @@ void P2pWorker::slot_startLoopRead()
     qDebug()<<"P2P slot_startLoopRead";
 
     while(isWorking  && (!isForceStopWorking)){
+
         //8个通道
         for(int i=0;i<8;i++)
         {
 
             unsigned int readSize = 0;
             int ret = PPCS_Check_Buffer(sessionHandle,  i,  NULL, &readSize);
+
 
             if(ERROR_PPCS_SUCCESSFUL != ret){
 
@@ -164,7 +165,7 @@ void P2pWorker::slot_startLoopRead()
                 arr.append(buff,readSize);
 
                 if(ERROR_PPCS_SUCCESSFUL == ret){
-                    // qDebug()<<"通道"<<i<<" 有"<<readSize<<"个数据："<<arr.toHex();
+                    qDebug()<<"通道"<<i<<" 有"<<readSize<<"个数据："<<arr.toHex();
                     processUnPkg(buff,readSize);
                 }
             }
@@ -218,7 +219,7 @@ void P2pWorker::processUnPkg(char *buff,int len)
             if(head == MEIAN_HEAD)
             {
 
-                //qDebug()<<"找到头";
+                qDebug()<<"找到头";
                 readDataBuff.remove(0,2);
                 isFindHead = true;
                 needLen = 6;
@@ -266,22 +267,13 @@ void P2pWorker::processUnPkg(char *buff,int len)
 
                 qDebug()<<"找到 CMD_USR_KEY  内容:"<<m_serverKey<<"    ";
 
-                QString loginCmd = "authcfg -act checkuser -name "+m_account+" -passwd "+ m_password;
-
-                qDebug()<<loginCmd.length() <<" "<<loginCmd.toLatin1().data();
-
-                writeBuff(CMD_LOGIN,loginCmd.toLatin1().data(),loginCmd.length());
-
-                writeBuff(CMD_GET_VIDEO_INFO,"vlive -act list -para 0 ",strlen("vlive -act list -para 0 "));
-
-                writeBuff(CMD_VIDEO_REQ,"vlive -act set -speed 2 -audio 1 ",strlen("vlive -act set -speed 2 -audio 1"));
 
             }else if(m_cmd == CMD_LOGIN) {
 
                 QByteArray arr ;
                 arr.append(readDataBuff.data(),needLen);
 
-                usr_decode(arr.data(), arr.length(),m_serverKey, serverKeyLen);
+
 
                 QString returnStr = QString(arr);
                 qDebug()<<"找到 CMD_LOGIN  内容:"<<returnStr;
@@ -292,6 +284,7 @@ void P2pWorker::processUnPkg(char *buff,int len)
                     emit signal_sendMsg(new MsgInfo(m_did+":wrong password, try to Re-add device",true));
 
                 }
+
             }else if(m_cmd == CMD_VIDEO_TRNS){
 
 
@@ -313,7 +306,7 @@ void P2pWorker::processUnPkg(char *buff,int len)
 
                 video_frame_header *video_pack= (video_frame_header*)(readDataBuff.data());
 
-                usr_decode(arr.data(), arr.length(),m_serverKey, serverKeyLen);
+                //usr_decode(arr.data(), arr.length(),m_serverKey, serverKeyLen);
 
                 emit signal_sendPcmALaw(arr.data(), arr.length(),1000);
 
@@ -368,8 +361,8 @@ void P2pWorker::processReqPkg(unsigned int cmd,  char* inBuff, int inbuffSize, c
 
     *outBuffSize=inbuffSize+ sizeof(m_pkg_head);
 
-    if(m_serverKey != nullptr)
-        usr_decode(outBuff + sizeof(m_pkg_head), inbuffSize, m_serverKey, serverKeyLen);
+//    if(m_serverKey != nullptr)
+//        usr_decode(outBuff + sizeof(m_pkg_head), inbuffSize, m_serverKey, serverKeyLen);
 }
 
 

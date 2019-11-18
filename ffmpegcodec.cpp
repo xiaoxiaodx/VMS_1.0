@@ -137,10 +137,7 @@ QImage* FfmpegCodec::decodeVFrame(uint8_t *buff,int bufflen)
     m_AVPacket.data = buff;
     m_AVPacket.size = bufflen;
 
-
-    //writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"1");
-    qDebug()<<"111111111111111111111";
-
+    qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
 
 
     if( avcodec_send_packet(m_pVCodecCtx,&m_AVPacket) == 0)
@@ -169,7 +166,8 @@ QImage* FfmpegCodec::decodeVFrame(uint8_t *buff,int bufflen)
                 pixFormat = m_pVCodecCtx->pix_fmt;
             }
 
-            qDebug()<<"22222222222222222222";
+
+            qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
 
 
             if (mWidth !=  m_pVCodecCtx->width || m_pVCodecCtx->height!= mHeight){
@@ -187,22 +185,27 @@ QImage* FfmpegCodec::decodeVFrame(uint8_t *buff,int bufflen)
 
             }
 
-            qDebug()<<"333333333333333333333";
+
 
             sws_scale(m_pImg_convert_ctx, (const uint8_t* const*)m_pAVFrame->data, m_pAVFrame->linesize, 0, m_pVCodecCtx->height, m_pVFrameBGR->data, m_pVFrameBGR->linesize);
 
-             qDebug()<<"4444";
 
+             qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
+            sws_scale(m_pImg_convert_ctx, (const uint8_t* const*)m_pAVFrame->data, m_pAVFrame->linesize, 0, m_pVCodecCtx->height, m_pVFrameBGR->data, m_pVFrameBGR->linesize);
+
+            qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
 
             QImage *pImage = nullptr;
             try {
 
                 pImage = new QImage((uchar*)m_pVoutBuffer, m_pVCodecCtx->width, m_pVCodecCtx->height, QImage::Format_RGB32);
 
+                qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
+
                 // 其它代码
             } catch ( const std::bad_alloc& e ) {
 
-                writeDebugfile(__FILE__ ,__FUNCTION__,__LINE__,"图片分配内存失败     ");
+                 qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) +"图片分配内存失败     ";
 
                 return nullptr;
             }
@@ -224,7 +227,7 @@ void FfmpegCodec::decodeAFrame(uint8_t *buff,int bufflen,QByteArray &arr)
 
     m_AVPacket.data = buff;
     m_AVPacket.size = bufflen;
-
+ qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
 
     //确保获取的是一帧数据
     int ret = av_packet_from_data(&m_AVPacket, m_AVPacket.data, m_AVPacket.size);
@@ -238,7 +241,7 @@ void FfmpegCodec::decodeAFrame(uint8_t *buff,int bufflen,QByteArray &arr)
 
         if(0==avcodec_receive_frame(m_pACodecCtx,m_pAVFrame)){
 
-
+             qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
             double  t = 0;
             /* compute destination number of samples */
             dst_nb_samples = av_rescale_rnd(swr_get_delay(swr_ctx, src_rate) +
@@ -267,6 +270,7 @@ void FfmpegCodec::decodeAFrame(uint8_t *buff,int bufflen,QByteArray &arr)
                 qDebug()<< "Could not get sample buffer size";
                 return;
             }
+             qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
             arr.append((char*)dst_data[0],dst_bufsize);
             //qDebug()<<"hex:"<<arr.toHex();
 

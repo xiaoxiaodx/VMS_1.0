@@ -3,176 +3,100 @@ import QtQuick.Controls 1.4
 import QtQuick.Window 2.12
 import QtQml 2.12
 
-
+import "../qml/homePage"
+import "../qml/liveVedio"
 Window {
 
     id: main;
-    visible: true
     flags:Qt.FramelessWindowHint |
           Qt.WindowMinimizeButtonHint |
           Qt.Window
-
-    property bool fullscreen: false
-    property bool isPress: false
-
-    property int mWindowStates: 4   // 2：正常 4：最大化
-
-    property int preX:0
-    property int preY:0
-    property int preWidth:0
-    property int preHeight:0
-
-    property string toastStr: ""
-
-    property string versionstr: "V1.1.1"
-
+    property bool isMainContent: false
     property bool isSpecilState: false      //窗口在最大化的时候调用最小化 会出现特例（窗口还原后大小不再是最大化了）
+    visible: true
 
-    minimumWidth:  Screen.desktopAvailableWidth/2
-    minimumHeight: Screen.desktopAvailableHeight/2
+    width:860
+    height:499
 
-    width: Screen.desktopAvailableWidth/2
-    height: Screen.desktopAvailableHeight/2
+    visibility : "Windowed"
 
-    visibility : "Maximized"
-    color: "#BDBDBD"
+
+    QmlLogin{
+        id:login
+        width: parent.width
+        height: parent.height
+
+        visible: isMainContent?false:true
+        onS_Login: {
+
+            main.x = Screen.desktopAvailableWidth/6
+            main.y = Screen.desktopAvailableHeight/8
+            main.width=2*Screen.desktopAvailableWidth/3
+            main.height= 3*Screen.desktopAvailableHeight/4
+            isMainContent = true
+        }
+    }
+
+    MainContent{
+        id:maincontent
+        width: parent.width
+        height: parent.height
+        visible: isMainContent?true:false
+
+        onWinMin1: {
+            if(main.visibility === 4)
+                isSpecilState = true;
+
+            main.visibility = "Minimized"
+
+        }
+        onWinMax1: {
+            if(main.visibility === 2)
+
+                main.visibility = "Maximized"
+
+            else if(main.visibility === 4)
+                main.visibility = "Windowed"
+
+        }
+        onWinClose1:Qt.quit();
+        onDragPosChange1:main.setDlgPoint(mx,my);
+    }
 
 
     onVisibilityChanged: {
-
-        //console.debug(" HomeContent:"+mhomecontent.x  + "   "+ mhomecontent.y)
         if(isSpecilState){
             if(main.visibility === 2){
                 main.visibility = "Maximized"
                 isSpecilState = false;
             }
         }
-
     }
 
-    Rectangle{
-        id:rect
 
-        width: main.width
-        height: main.height
-        color: "#BDBDBD"
-        HomeTitleBar{
-            id:mTitleBar
-            width: parent.width
-            height: 60
-            color: "#3f8eff"
-            versionStr:versionstr
-            z:2
-            onWinMin: {
-
-               if(main.visibility === 4)
-                    isSpecilState = true;
-
-                main.visibility = "Minimized"
-            }
-            onWinMax: {
-
-                if(main.visibility === 2)
-                    main.visibility = "Maximized"
-
-                else if(main.visibility === 4)
-                    main.visibility = "Windowed"
-
-
-            }
-            onWinClose:Qt.quit();
-            onDragPosChange:setDlgPoint(mx,my);
-
-            onSetFilePath:mhomecontent.openDlgFilePath();
+    Loader{
+        id:loaderToast
+        z:10
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 80
+        sourceComponent: null
+    }
+    Component {
+        id: toast
+        QmlToast{
+            txtStr:toastStr
+            backColor: "#ffffff00"
+            txtColor:"#ee555555"
+            maxWid: rect.width/2
 
         }
-
-        HomeStateBar{
-
-            id:mhomeState
-            anchors.top:mhomecontent.bottom
-            anchors.topMargin: 2
-            width: parent.width
-            height: 65
-            z:3
-            onS_multiScreenNumChange: {
-                //几乘几的屏幕显示
-                //mhomecontent.setMultiScreen(num);
-
-                if(num < 5)
-                    mhomecontent.setMultiScreenNum (num);
-
-            }
-        }
-
-        HomeContent{
-            id:mhomecontent
-            anchors.top: mTitleBar.bottom
-            anchors.left: parent.left
-            width: parent.width
-            height: parent.height - mTitleBar.height - mhomeState.height-2
-            z:1
-
-            onS_addDevice: {
-                myDlgAddDevice.open();
-            }
-
-            onSt_showToastMsg: {
-
-                showToast(str1)
-
-
-            }
-
-            onS_multiScreenNumChange:{
-
-                mhomeState.setSelectItem (num)
-
-            }
-
-            onS_mqttLoginSucc: {
-                    myLogin.close();
-            }
-
-        }
-
-
-
-
-        Loader{
-            id:loaderToast
-            z:10
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 80
-            sourceComponent: null
-        }
-        Component {
-            id: toast
-            QmlToast{
-                txtStr:toastStr
-                backColor: "#ffffff00"
-                txtColor:"#ee555555"
-                maxWid: rect.width/2
-
-            }
-        }
-
     }
 
 
 
-    QmlDialogAddDevice{
-        id: myDlgAddDevice
-        onS_deviceIDstr: {
 
-            mhomecontent.addDevice(1,strID,strAccoount,strPassword,strIp,strPort)
-        }
 
-        onS_showToast: {
-            showToast(str1)
-        }
-    }
 
 
 
@@ -243,4 +167,6 @@ Window {
             timer.start();
         }
     }
+
+
 }

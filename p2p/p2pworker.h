@@ -7,6 +7,8 @@
 #include <QTimer>
 
 #include "dispatchmsgmanager.h"
+
+#include "p2pprotrol.h"
 extern "C"{
 #include "PPCS_API.h"
 #include "PPCS_Error.h"
@@ -24,12 +26,12 @@ extern "C"{
 //};
 
 
-//#define MEIAN_HEAD 0xBEEF
+//#define MEIAN_HEAD 0xBEEE
 //#define CMD_USR_KEY	DEF_APPCMD_HEX_REQ(CMDMOD_ID_LOGIN,5)   //0x084A
 
 
 #define D_SYNCDATA_HEAD0 0xBE
-#define D_SYNCDATA_HEAD1 0xEF
+#define D_SYNCDATA_HEAD1 0xEE
 
 #define serverKeyLen 16
 #define appKeyLen 32
@@ -89,6 +91,9 @@ private:
     int needLen;
 
     QByteArray readDataBuff;
+
+    P2pProtrol p2pProtrol;
+
 };
 
 #endif // P2PWORKER_H

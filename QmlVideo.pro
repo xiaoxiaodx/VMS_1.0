@@ -42,6 +42,7 @@ HEADERS += \
     dispatchmsgmanager.h \
     VideoManagement/mp4format.h \
     p2p/p2pworker.h \
+    p2p/p2pprotrol.h
 
 
 SOURCES += main.cpp \
@@ -63,6 +64,7 @@ SOURCES += main.cpp \
     dispatchmsgmanager.cpp \
     VideoManagement/mp4format.cpp \
     p2p/p2pworker.cpp \
+    p2p/p2pprotrol.cpp
 
 
 
@@ -122,7 +124,9 @@ contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
 }
 
 RESOURCES += \
-    qrc.qrc
+    res.qrc
+
+
 
 
 

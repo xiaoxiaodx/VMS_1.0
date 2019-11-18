@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
     app.setApplicationName("VMS_V1.2"); //3
 
 
-    QFont font("arial",15);
+    QFont font("Microsoft Yahei",15);
     app.setFont(font);
 
     SetUnhandledExceptionFilter(callback);
@@ -66,6 +66,8 @@ int main(int argc, char *argv[])
     qmlRegisterType<XVideo>("XVideo", 1, 0, "XVideo");
 
     engine.load("qrc:/qml/main.qml");
+
+
 
     if (engine.rootObjects().isEmpty())
         return -1;

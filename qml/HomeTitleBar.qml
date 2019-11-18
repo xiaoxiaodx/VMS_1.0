@@ -5,6 +5,8 @@ import QtQuick.Controls 2.12
 import Qt.labs.platform 1.1
 import QtQuick 2.12
 import QtQuick.Controls 2.12
+
+import "../qml/simpleControl"
 Rectangle {
 
     id:root
@@ -16,16 +18,13 @@ Rectangle {
     signal winMin();
     signal winMax();
     signal winClose();
-    signal dragPosChange(var mx,var my);
+    signal dragPosChange(var tx,var ty);
 
-    signal setFilePath();
-
-    property var pathMapping : {"File path setting":"qrc:/images/filePath.png","about":"qrc:/images/about.png"}
 
     Rectangle {
         anchors.fill: parent
 
-        color: "#476BFD"
+        color: "transparent"
         Image {
             id: namew
             width: 130
@@ -37,12 +36,13 @@ Rectangle {
         }
 
         Label{
-            anchors.top: namew.bottom
-            anchors.left: parent.left
-            anchors.leftMargin: 25+130/2
+
+            anchors.left: namew.right
+            anchors.leftMargin: 2
+            anchors.bottom: namew.bottom
 
             font.family: "arial"
-            font.pointSize: 10
+            font.pointSize: 8
             color: "white"
             font.italic:true
             font.bold: true
@@ -74,119 +74,6 @@ Rectangle {
                 dragPosChange(offset.x, offset.y)
             }
         }
-
-
-        Row{
-
-            anchors.right: windowAdjust.left
-            anchors.rightMargin: 10
-            anchors.verticalCenter: parent.verticalCenter
-            spacing: 10
-            QmlImageButton{
-                width: 36
-                height: 36
-                imgSourseHover: "qrc:/images/flush_enter.png"
-                imgSourseNormal: "qrc:/images/flush.png"
-                imgSoursePress: "qrc:/images/flush_enter.png"
-
-            }
-            QmlImageButton{
-                width: 36
-                height: 36
-                imgSourseHover: "qrc:/images/msg_enter.png"
-                imgSourseNormal: "qrc:/images/msg.png"
-                imgSoursePress: "qrc:/images/msg_enter.png"
-
-            }
-            QmlImageButton{
-                id:menuSys
-                width: 36
-                height: 36
-                imgSourseHover: "qrc:/images/menu_enter.png"
-                imgSourseNormal: "qrc:/images/menu.png"
-                imgSoursePress: "qrc:/images/menu_enter.png"
-                onClick: {
-                    menu1.visible = true
-
-
-                }
-            }
-
-
-            Menu {
-                id: menu1
-                x:menuSys.x
-                y:menuSys.y+menuSys.height
-
-                Action { text: qsTr("File path setting"); checkable: true }
-                Action { text: qsTr("about"); checkable: true; checked: true }
-
-
-
-                topPadding: 2
-                bottomPadding: 2
-
-                delegate: MenuItem {
-                    id: menuItem
-                    implicitWidth: 140
-                    implicitHeight: 40
-
-                    indicator: Image {
-                        id: name1
-                        width: 32
-                        height: 32
-                        source: strToimg(menuItem.text)
-                    }
-
-                    contentItem: Text {
-                        leftPadding: menuItem.indicator.width
-                        rightPadding: menuItem.arrow.width
-                        text: menuItem.text
-                        font: menuItem.font
-                        opacity: enabled ? 1.0 : 0.3
-                        color: menuItem.highlighted ? "#ffffff" : "#000000"
-                        horizontalAlignment: Text.AlignLeft
-                        verticalAlignment: Text.AlignVCenter
-                        elide: Text.ElideRight
-                    }
-
-                    background: Rectangle {
-                        implicitWidth: 200
-                        implicitHeight: 40
-                        opacity: enabled ? 1 : 0.3
-                        color: menuItem.highlighted ? "#21be2b" : "transparent"
-                    }
-
-                    onTriggered: {
-
-                        if(menuItem.text === "File path setting")
-                            setFilePath();
-                        console.debug(  "menuItem "+menuItem.text)
-
-                    }
-                }
-
-                background: Rectangle {
-                    implicitWidth: 200
-                    implicitHeight: 40
-                    color: "#ffffff"
-                    border.color: "#21be2b"
-                    radius: 2
-                }
-
-
-           }
-
-            Rectangle{
-                width: 1
-                height: 30
-                color: "#4A4A4A"
-            }
-
-
-        }
-
-
 
 
         Row{

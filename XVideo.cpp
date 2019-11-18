@@ -9,11 +9,10 @@ XVideo::XVideo()
     setFlag(QQuickItem::ItemHasContents);
 
     initVariable();
-    //createP2pThread();
-    createTcpThread();
+    createP2pThread();
+    //createTcpThread();
     createPlayAudio();
     createAviRecord();
-
 
     //createMp4RecordThread();
 
@@ -315,18 +314,18 @@ void XVideo::slot_timeout()
     }
     update();
 
-    int preTimeOut = timerUpdate.interval();
+//    int preTimeOut = timerUpdate.interval();
 
-    int resetTimeout;
-    if(size >=12)
-        resetTimeout = 30;
-    else if(size >=6)
-        resetTimeout = 50;
-    else if(size >=0)
-        resetTimeout = 70;
+//    int resetTimeout;
+//    if(size >=12)
+//        resetTimeout = 30;
+//    else if(size >=6)
+//        resetTimeout = 50;
+//    else if(size >=0)
+//        resetTimeout = 70;
 
-    if(preTimeOut != resetTimeout)
-        timerUpdate.setInterval(resetTimeout);
+//    if(preTimeOut != resetTimeout)
+//        timerUpdate.setInterval(resetTimeout);
 }
 
 void XVideo::sendWaitLoad(bool &isWaiting)
@@ -442,14 +441,20 @@ void XVideo::slot_recH264(char* h264Arr,int arrlen,quint64 time)
 {
 
 
+
+    qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
+
     createFFmpegDecodec();
 
+    qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
     emit signal_recordVedio(h264Arr,arrlen,time);
+    qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
 
     QImage *Img = nullptr;
     if(pffmpegCodec != nullptr){
         Img = pffmpegCodec->decodeVFrame((unsigned char*)h264Arr,arrlen);
 
+       qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
 
         if (Img != nullptr && (!Img->isNull()))
         {
@@ -457,7 +462,7 @@ void XVideo::slot_recH264(char* h264Arr,int arrlen,quint64 time)
             imgInfo.pImg = Img;
             imgInfo.time = time;
 
-
+             qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
             if(listImgInfo.size() < minBuffLen){
 
                 listImgInfo.append(imgInfo);
@@ -466,6 +471,9 @@ void XVideo::slot_recH264(char* h264Arr,int arrlen,quint64 time)
                 delete Img;
         }
     }
+
+
+   qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
 
 }
 
@@ -476,7 +484,7 @@ void XVideo::slot_recPcmALaw( char * buff,int len,quint64 time)
 
     preAudioTime = time;
     createFFmpegDecodec();
-
+     qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
     emit signal_recordAudio(buff,len,time);
 
     //声卡准备
@@ -487,6 +495,8 @@ void XVideo::slot_recPcmALaw( char * buff,int len,quint64 time)
     }else {
         if(pffmpegCodec != nullptr){
 
+            qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
+
             QByteArray arr;
             pffmpegCodec->decodeAFrame((unsigned char*)buff,len,arr);
 
@@ -495,11 +505,13 @@ void XVideo::slot_recPcmALaw( char * buff,int len,quint64 time)
         }
     }
 
+     qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
+
 }
 
 void XVideo::slot_recMsg(MsgInfo * msg)
 {
-
+     qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
     if(mpDispatchMsgManager != nullptr){
         msg->msgDid = mDid+"_"+QString::number(testID);
         mpDispatchMsgManager->addMsg(msg);

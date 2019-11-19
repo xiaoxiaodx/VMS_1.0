@@ -32,14 +32,14 @@ void XVideo::initVariable()
 
     minBuffLen = 15;
 
-    m_threadReadDate = nullptr;
-    m_dataProcess = nullptr;
+//    m_threadReadDate = nullptr;
+//    m_dataProcess = nullptr;
 
-    worker = nullptr;
-    m_readThread = nullptr;
+//    worker = nullptr;
+//    m_readThread = nullptr;
 
-    p2pWorker = nullptr;
-    m_p2pThread = nullptr;
+//    p2pWorker = nullptr;
+//    m_p2pThread = nullptr;
 
     recordThread = nullptr;
     aviRecord = nullptr;
@@ -87,8 +87,8 @@ void XVideo::createFFmpegDecodec()
 
         connect(pffmpegCodec,&FfmpegCodec::signal_sendMsg,this,&XVideo::slot_recMsg);
 
-        if(m_readThread != nullptr)
-            connect(m_readThread,&QThread::finished,pffmpegCodec,&FfmpegCodec::deleteLater);
+//        if(m_readThread != nullptr)
+//            connect(m_readThread,&QThread::finished,pffmpegCodec,&FfmpegCodec::deleteLater);
     }
 
 }
@@ -135,59 +135,59 @@ void XVideo::createAviRecord()
 void XVideo::createP2pThread()
 {
 
-    if(p2pWorker == nullptr){
+//    if(p2pWorker == nullptr){
 
-        p2pWorker = new P2pWorker;
-        m_p2pThread = new QThread;
-        p2pWorker->moveToThread(m_p2pThread);
+//        p2pWorker = new P2pWorker;
+//        m_p2pThread = new QThread;
+//        p2pWorker->moveToThread(m_p2pThread);
 
-        connect(p2pWorker,&P2pWorker::signal_sendH264,this,&XVideo::slot_recH264,Qt::DirectConnection);
-        connect(p2pWorker,&P2pWorker::signal_sendPcmALaw,this,&XVideo::slot_recPcmALaw,Qt::DirectConnection);
+//        connect(p2pWorker,&P2pWorker::signal_sendH264,this,&XVideo::slot_recH264,Qt::DirectConnection);
+//        connect(p2pWorker,&P2pWorker::signal_sendPcmALaw,this,&XVideo::slot_recPcmALaw,Qt::DirectConnection);
 
-        connect(p2pWorker,&P2pWorker::signal_sendMsg,this,&XVideo::slot_recMsg);
-        connect(p2pWorker,&P2pWorker::signal_loopEnd,this,&XVideo::slot_reconnectP2p);
-        connect(this,&XVideo::signal_tcpSendAuthentication,p2pWorker,&P2pWorker::slot_connectDev);
+//        connect(p2pWorker,&P2pWorker::signal_sendMsg,this,&XVideo::slot_recMsg);
+//        connect(p2pWorker,&P2pWorker::signal_loopEnd,this,&XVideo::slot_reconnectP2p);
+//        connect(this,&XVideo::signal_tcpSendAuthentication,p2pWorker,&P2pWorker::slot_connectDev);
 
 
-        connect(m_p2pThread,&QThread::finished,p2pWorker,&P2pWorker::deleteLater);
-        connect(m_p2pThread,&QThread::finished,m_p2pThread,&QThread::deleteLater);
+//        connect(m_p2pThread,&QThread::finished,p2pWorker,&P2pWorker::deleteLater);
+//        connect(m_p2pThread,&QThread::finished,m_p2pThread,&QThread::deleteLater);
 
-        m_p2pThread->start();
+//        m_p2pThread->start();
 
-    }
+//    }
 
 }
 
 void XVideo::createTcpThread()
 {
 
-    worker = new TcpWorker();
-    m_readThread = new QThread();
-    worker->moveToThread(m_readThread);
+//    worker = new TcpWorker();
+//    m_readThread = new QThread();
+//    worker->moveToThread(m_readThread);
 
-    connect(worker,&TcpWorker::signal_sendH264,this,&XVideo::slot_recH264,Qt::DirectConnection);
-    connect(worker,&TcpWorker::signal_sendPcmALaw,this,&XVideo::slot_recPcmALaw,Qt::DirectConnection);
+//    connect(worker,&TcpWorker::signal_sendH264,this,&XVideo::slot_recH264,Qt::DirectConnection);
+//    connect(worker,&TcpWorker::signal_sendPcmALaw,this,&XVideo::slot_recPcmALaw,Qt::DirectConnection);
 
-    connect(worker,&TcpWorker::signal_sendMsg,this,&XVideo::slot_recMsg);
+//    connect(worker,&TcpWorker::signal_sendMsg,this,&XVideo::slot_recMsg);
 
-    connect(worker,&TcpWorker::signal_waitTcpConnect,this,&XVideo::slot_trasfer_waitingLoad);
-    connect(worker,&TcpWorker::signal_endWait,this,&XVideo::slot_trasfer_endLoad);
+//    connect(worker,&TcpWorker::signal_waitTcpConnect,this,&XVideo::slot_trasfer_waitingLoad);
+//    connect(worker,&TcpWorker::signal_endWait,this,&XVideo::slot_trasfer_endLoad);
 
-    connect(worker,&TcpWorker::signal_authenticationFailue,this,&XVideo::slot_authenticationFailue);
+//    connect(worker,&TcpWorker::signal_authenticationFailue,this,&XVideo::slot_authenticationFailue);
 
-    connect(this,&XVideo::signal_connentSer,worker,&TcpWorker::creatNewTcpConnect);
-    connect(this,&XVideo::signal_disconnentSer,worker,&TcpWorker::slot_disConnectSer);
+//    connect(this,&XVideo::signal_connentSer,worker,&TcpWorker::creatNewTcpConnect);
+//    connect(this,&XVideo::signal_disconnentSer,worker,&TcpWorker::slot_disConnectSer);
 
-    connect(this,&XVideo::signal_tcpSendAuthentication,worker,&TcpWorker::slot_tcpRecAuthentication,Qt::DirectConnection);
-
-
-    connect(this,&XVideo::signal_destoryTcpWork,worker,&TcpWorker::slot_destory);
+//    connect(this,&XVideo::signal_tcpSendAuthentication,worker,&TcpWorker::slot_tcpRecAuthentication,Qt::DirectConnection);
 
 
+//    connect(this,&XVideo::signal_destoryTcpWork,worker,&TcpWorker::slot_destory);
 
-    connect(m_readThread,&QThread::finished,worker,&TcpWorker::deleteLater);
-    connect(m_readThread,&QThread::finished,m_readThread,&QThread::deleteLater);
-    m_readThread->start();
+
+
+//    connect(m_readThread,&QThread::finished,worker,&TcpWorker::deleteLater);
+//    connect(m_readThread,&QThread::finished,m_readThread,&QThread::deleteLater);
+//    m_readThread->start();
 
 }
 
@@ -195,27 +195,27 @@ void XVideo::createTcpThread()
 void XVideo::creatDateProcessThread()
 {
 
-    if(m_threadReadDate == nullptr && m_dataProcess == nullptr)
-    {
+//    if(m_threadReadDate == nullptr && m_dataProcess == nullptr)
+//    {
 
-        m_threadReadDate = new QThread;
-        m_dataProcess = new MediaDataProcess;
-        m_dataProcess->moveToThread(m_threadReadDate);
+//        m_threadReadDate = new QThread;
+//        m_dataProcess = new MediaDataProcess;
+//        m_dataProcess->moveToThread(m_threadReadDate);
 
-        //写队列使用A线程，读队列使用B线程，数据发送出来也使用B线程
-        connect(worker,&TcpWorker::signal_writeMediaVideoQueue,m_dataProcess,&MediaDataProcess::slot_writeQueueVideoData,Qt::DirectConnection);
-        connect(worker,&TcpWorker::signal_writeMediaAudioQueue,m_dataProcess,&MediaDataProcess::slot_writeQueueAudioData,Qt::DirectConnection);
+//        //写队列使用A线程，读队列使用B线程，数据发送出来也使用B线程
+//        connect(worker,&TcpWorker::signal_writeMediaVideoQueue,m_dataProcess,&MediaDataProcess::slot_writeQueueVideoData,Qt::DirectConnection);
+//        connect(worker,&TcpWorker::signal_writeMediaAudioQueue,m_dataProcess,&MediaDataProcess::slot_writeQueueAudioData,Qt::DirectConnection);
 
-        //connect(worker,&TcpWorker::signal_readMediaQueue,m_dataProcess,&MediaDataProcess::slot_loopReadQueueData);
+//        //connect(worker,&TcpWorker::signal_readMediaQueue,m_dataProcess,&MediaDataProcess::slot_loopReadQueueData);
 
-        //        connect(m_dataProcess,&MediaDataProcess::signal_sendImg,this,&XVideo::slot_GetOneFrame,Qt::DirectConnection);
-        //        connect(m_dataProcess,&MediaDataProcess::signal_preparePlayAudio,this,&XVideo::slot_preparePlayAudio);
-        //        connect(m_dataProcess,&MediaDataProcess::signal_playAudio,this,&XVideo::slot_GetOneAudioFrame);
+//        //        connect(m_dataProcess,&MediaDataProcess::signal_sendImg,this,&XVideo::slot_GetOneFrame,Qt::DirectConnection);
+//        //        connect(m_dataProcess,&MediaDataProcess::signal_preparePlayAudio,this,&XVideo::slot_preparePlayAudio);
+//        //        connect(m_dataProcess,&MediaDataProcess::signal_playAudio,this,&XVideo::slot_GetOneAudioFrame);
 
-        connect(m_threadReadDate,&QThread::finished,m_dataProcess,&MediaDataProcess::deleteLater);
-        m_threadReadDate->start();
+//        connect(m_threadReadDate,&QThread::finished,m_dataProcess,&MediaDataProcess::deleteLater);
+//        m_threadReadDate->start();
 
-    }
+//    }
 }
 
 void XVideo::createPlayAudio()
@@ -568,32 +568,32 @@ XVideo::~XVideo()
 {
     qDebug()<<mDid + " 析构   XVideo";
 
-    //析构tcpworker
+//    //析构tcpworker
 
-    if(worker != nullptr)
-    {
-        emit signal_destoryTcpWork();
+//    if(worker != nullptr)
+//    {
+//        emit signal_destoryTcpWork();
 
-        worker->stopParsing();
+//        worker->stopParsing();
 
-        m_readThread->quit();
+//        m_readThread->quit();
 
-    }
+//    }
 
 
-    //析构meidiadateprocess
-    if(m_dataProcess != nullptr)
-    {
+//    //析构meidiadateprocess
+//    if(m_dataProcess != nullptr)
+//    {
 
-        m_dataProcess->slot_stopRead();
-        m_threadReadDate->quit();
+//        m_dataProcess->slot_stopRead();
+//        m_threadReadDate->quit();
 
-        if(m_threadReadDate->wait(3000)){
+//        if(m_threadReadDate->wait(3000)){
 
-            qDebug()<<"delete meidiadateprocess read Thread succ";
-        }else
-            qDebug()<<"delete meidiadateprocess read Thread timeout";
-    }
+//            qDebug()<<"delete meidiadateprocess read Thread succ";
+//        }else
+//            qDebug()<<"delete meidiadateprocess read Thread timeout";
+//    }
 
 
     if(recordThread != nullptr)
@@ -609,13 +609,10 @@ XVideo::~XVideo()
 
 
     qDebug()<<mDid + " 3333";
-    if(p2pWorker != nullptr){
-
-        p2pWorker->stopWoring();
-
-        m_p2pThread->quit();
-
-    }
+//    if(p2pWorker != nullptr){
+//        p2pWorker->stopWoring();
+//        m_p2pThread->quit();
+//    }
 
 
     qDebug()<<mDid + " 析构   XVideo 结束";

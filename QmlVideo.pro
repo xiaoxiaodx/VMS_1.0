@@ -42,7 +42,11 @@ HEADERS += \
     dispatchmsgmanager.h \
     VideoManagement/mp4format.h \
     p2p/p2pworker.h \
-    p2p/p2pprotrol.h
+    p2p/p2pprotrol.h \
+    mqtt/mqttpacket.h \
+    mqtt/mqttwork.h \
+    devicemanagerment.h \
+    deviceinfo.h
 
 
 SOURCES += main.cpp \
@@ -64,11 +68,15 @@ SOURCES += main.cpp \
     dispatchmsgmanager.cpp \
     VideoManagement/mp4format.cpp \
     p2p/p2pworker.cpp \
-    p2p/p2pprotrol.cpp
+    p2p/p2pprotrol.cpp \
+    mqtt/mqttpacket.cpp \
+    mqtt/mqttwork.cpp \
+    devicemanagerment.cpp \
+    deviceinfo.cpp
 
 
 
-include(deployment.pri)
+#include(deployment.pri)
 
 
 #P2P 库
@@ -123,8 +131,30 @@ contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
 }
 }
 
+INCLUDEPATH += $$PWD/third/mqtt/include
+DEPENDPATH += $$PWD/third/mqtt/include
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/third/mqtt/lib/ -lQt5Mqtt
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/third/mqtt/lib/ -lQt5Mqttd
+
+INCLUDEPATH += $$PWD/third/mqtt/include
+DEPENDPATH += $$PWD/third/mqtt/include
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/third/mqtt/lib/libQt5Mqtt.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/third/mqtt/lib/libQt5Mqttd.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/third/mqtt/lib/Qt5Mqtt.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/third/mqtt/lib/Qt5Mqttd.lib
+
 RESOURCES += \
     res.qrc
+
+
+
+
+
+
+
+
 
 
 

@@ -6,12 +6,13 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 1.4
+import "../simpleControl"
 Popup {
     id: root
     x: parent.width/2 - root.width/2
     y: parent.height/2 - root.height/2
-    width: 344
-    height: 345
+    width: 520
+    height: 431
     modal: true
     focus: true
     //设置窗口关闭方式为按“Esc”键关闭
@@ -19,39 +20,35 @@ Popup {
     //设置窗口的背景控件，不设置的话Popup的边框会显示出来
     background: rect
 
-    signal s_deviceIDstr(var strID,var strAccoount,var strPassword,var strIp,var strPort)
+    signal s_deviceIDstr(var name,var strID,var strAccoount,var strPassword)
 
     signal s_showToast(var str1)
 
     Rectangle {
         id: rect
         anchors.fill: parent
-        color: "white"
+        color: "black"
 
-        radius: 8
-
-        Rectangle{
-            width: parent.width-4
-            height: 2
-            anchors.top: parent.top
-            anchors.topMargin: 40
-            anchors.left: parent.left
-            color: "#F8F8F8"
-            anchors.leftMargin: 2
-            radius: 8
-        }
-
-
+        radius: 3
 
         //设置标题栏区域为拖拽区域
-        Text {
-            id:title
+        Rectangle{
+            id:recttitle
             width: parent.width
-            height: 40
+            height: 54
             anchors.top: parent.top
-            text: qsTr("Add Device")
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
+            color: "transparent"
+            Text {
+
+
+
+                text: qsTr("Add device")
+                color: "white"
+
+                anchors.left: parent.left
+                anchors.leftMargin: 19
+                anchors.verticalCenter: parent.verticalCenter
+            }
 
             MouseArea {
                 property point clickPoint: "0,0"
@@ -66,105 +63,262 @@ Popup {
                     setDlgPoint(offset.x, offset.y)
                 }
             }
-        }
 
+            Image {
+                id: imgClose
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: parent.right
+                anchors.rightMargin: 18
+                source: "qrc:/images/devicem_close"
+
+                MouseArea{
+
+                    anchors.fill: parent
+                    onClicked: root.close()
+                }
+            }
+
+        }
 
         Column{
             id:txtInput
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: title.bottom
-            anchors.topMargin: 15
-            spacing: 10
-            TextField {
 
-                id:input1
-                width: 270
-                height: 34
-                placeholderText: qsTr("Enter Did")
+            width: parent.width
+            anchors.top: recttitle.bottom
+            anchors.topMargin: 40
+            spacing: 20
 
-                //validator: RegExpValidator { regExp: /[0-9A-F-]+/ }
-                text:"INEW-003882-RHHFR"
 
-             //   inputMask: "AAAA-00000-AAAAA"
+
+            Rectangle{
+
+                width: parent.width
+                height: 40
+                color: "transparent"
+                Text {
+                    id: txtname
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: input4.left
+                    anchors.rightMargin: 6
+                    font.pixelSize: 16
+                    color: "white"
+                    text: qsTr("name:")
+                }
+
+                Text {
+                    id: txtname1
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: txtname.left
+                    color: "red"
+                    font.pixelSize: 16
+                    text: qsTr("*")
+                }
+                TextField {
+
+                    id:input4
+                    width: 254
+                    height: 40
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: parent.right
+                    anchors.rightMargin: 118
+                    placeholderText: qsTr("enter name")
+                    text:"hello"//"113.247.22.69"//"218.76.52.29"//
+                    font.pixelSize: 16
+                    style:TextFieldStyle {
+                        textColor: "#ffffff"
+                        background: Rectangle {
+                            color: "#272727"
+                            implicitWidth: 100
+                            implicitHeight: 24
+                            radius: 4
+                        }
+                    }
+                }
             }
+            Rectangle{
+                width: parent.width
+                height: 40
+                color: "transparent"
+                Text {
+                    id: txtdid
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: input1.left
+                    anchors.rightMargin: 6
+                    font.pixelSize: 16
+                    color: "white"
+                    text: qsTr("device did:")
+                }
 
-            TextField {
+                Text {
+                    id: txtdid1
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: txtdid.left
+                    color: "red"
+                    font.pixelSize: 16
+                    text: qsTr("*")
+                }
+                TextField {
 
-                id:input2
-                width: 270
-                height: 34
-
-                placeholderText: qsTr("Enter account")
-                text:"admin"
-
+                    id:input1
+                    width: 254
+                    height: 40
+                    placeholderText: qsTr("input did")
+                    anchors.right: parent.right
+                    anchors.rightMargin: 118
+                    //validator: RegExpValidator { regExp: /[0-9A-F-]+/ }
+                    font.pixelSize: 16
+                    text:"INEW-003882-RHHFR"
+                    style:TextFieldStyle {
+                        textColor: "#ffffff"
+                        background: Rectangle {
+                            color: "#272727"
+                            implicitWidth: 100
+                            implicitHeight: 24
+                            radius: 4
+                        }
+                    }inputMask: "AAAA-00000-AAAAA"
+                }
             }
+            Rectangle{
+                width: parent.width
+                height: 40
+                color: "transparent"
+                Text {
+                    id: txtacc
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: input2.left
+                    anchors.rightMargin: 6
+                    font.pixelSize: 16
+                    color: "white"
+                    text: qsTr("account:")
+                }
 
-            TextField {
+                Text {
+                    id: txtacc1
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: txtacc.left
+                    color: "red"
+                    font.pixelSize: 16
+                    text: qsTr("*")
+                }
+                TextField {
 
-                id:input3
-                width: 270
-                height: 34
-                placeholderText: qsTr("Enter password")
-                text:"admin"
-
+                    id:input2
+                    width: 254
+                    height: 40
+                    anchors.right: parent.right
+                    anchors.rightMargin: 118
+                    placeholderText: qsTr("input account")
+                    text:"admin"
+                    font.pixelSize: 16
+                    style:TextFieldStyle {
+                        textColor: "#ffffff"
+                        background: Rectangle {
+                            color: "#272727"
+                            implicitWidth: 100
+                            implicitHeight: 24
+                            radius: 4
+                        }
+                    }
+                }
             }
+            Rectangle{
+                width: parent.width
+                height: 40
+                color: "transparent"
+                Text {
+                    id: txtpwd
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: input3.left
+                    anchors.rightMargin: 6
+                    font.pixelSize: 16
+                    color: "white"
+                    text: qsTr("password:")
+                }
 
-            TextField {
+                Text {
+                    id: txtpwd1
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: txtpwd.left
+                    color: "red"
+                    font.pixelSize: 16
+                    text: qsTr("*")
+                }
+                TextField {
 
-                id:input4
-                width: 270
-                height: 34
-                placeholderText: qsTr("Enter ip")
-                text:"10.67.3.58"//"113.247.22.69"//"218.76.52.29"//
+                    id:input3
+                    width: 254
+                    height: 40
+                    anchors.right: parent.right
+                    anchors.rightMargin: 118
+                    placeholderText: qsTr("input password")
+                    text:"admin"
+                    font.pixelSize: 16
+                    style:TextFieldStyle {
+                        textColor: "#ffffff"
 
-            }
+                        background: Rectangle {
+                            color: "#272727"
+                            implicitWidth: 100
+                            implicitHeight: 24
+                            radius: 4
+                        }
+                    }
 
-            TextField {
-
-                id:input5
-                width: 270
-                height: 34
-                placeholderText: qsTr("Enter prot")
-                text:"555"
+                }
             }
         }
-        Button {
 
-            anchors.top: txtInput.bottom
-            anchors.topMargin: 20
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: qsTr("ok")
 
+
+
+
+        QmlButton {
+
+
+            id:btnEnsure
+
+            width: 78
+            height: 39
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 30
+            anchors.right: parent.right
+            anchors.rightMargin: 40
+
+            colorNor:"black"
+            colorPressed: "#409EFF"
+            borderColor: "#D9D9D9"
+            borderW: 1
+            mRadius: 5
+            fontsize: 17
+            text: qsTr("ensure")
+            onClicked: {
+
+                s_deviceIDstr(input4.text.toString(),input1.text.toString(),input2.text.toString(),input3.text.toString())
+
+                root.close()
+            }
+        }
+        QmlButton{
+            width: 78
+            height: 39
+            anchors.bottom: btnEnsure.bottom
+            anchors.right: btnEnsure.left
+            anchors.rightMargin: 10
+            colorNor:"black"
+            colorPressed: "#409EFF"
+            borderColor: "#D9D9D9"
+            borderW: 1
+            mRadius: 5
+            fontsize: 17
+            text: qsTr("cancel")
             onClicked: {
 
 
 
-                var did = input1.text.replace(/ /g,"");
-                var acc = input2.text.replace(/ /g,"");
-                var pwd = input3.text.replace(/ /g,"");
-                var ip = input4.text.replace(/ /g,"");
-                var port = input5.text.replace(/ /g,"");
-
-
-                input1.text = did
-                input2.text = acc
-                input3.text = pwd
-                input4.text = ip
-                input5.text = port
-
-
-                var didFirstChar = did.charAt(0);
-
-                 if(((didFirstChar >= 'A' && didFirstChar <= 'Z') || (didFirstChar >= 'a' && didFirstChar <= 'z')));
-                 else{
-                    s_showToast("did input error")
-                     return;
-                 }
-
-                s_deviceIDstr(did,acc,pwd,ip,port)
-
                 root.close()
             }
+
         }
 
 

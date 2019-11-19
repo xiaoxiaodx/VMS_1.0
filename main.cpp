@@ -5,8 +5,10 @@
 #include "XVideo.h"
 #include "qmllanguage.h"
 #include "ccrashstack.h"
-#include "tcpworker.h"
+#include "devicemanagerment.h"
 
+#include <QFile>
+#include <QFont>
 
 long __stdcall   callback(_EXCEPTION_POINTERS*   excp)
 {
@@ -64,6 +66,9 @@ int main(int argc, char *argv[])
 
     // XVideo 为QPaint显示视频(光栅绘图)
     qmlRegisterType<XVideo>("XVideo", 1, 0, "XVideo");
+    qmlRegisterType<DeviceManagerment>("DeviceManagerment", 1, 0, "DeviceManagerment");
+//    qmlRegisterType<TcpWorker>("TcpWorker", 1, 0, "TcpWorker");
+//    qmlRegisterType<P2pWorker>("P2pWorker", 1, 0, "P2pWorker");
 
     engine.load("qrc:/qml/main.qml");
 

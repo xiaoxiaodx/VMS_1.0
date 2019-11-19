@@ -1,31 +1,44 @@
 <RCC>
     <qresource prefix="/">
+        <file>qml/HomeMenu.qml</file>
+        <file>qml/HomeTitleBar.qml</file>
         <file>qml/main.qml</file>
+        <file>qml/MainContent.qml</file>
+        <file>qml/ModifyPassword.qml</file>
+        <file>qml/MyCalendar.qml</file>
+        <file>qml/QmlLogin.qml</file>
+        <file>qml/QmlToast.qml</file>
+        <file>qml/QmlVideo.qml</file>
+        <file>qml/QmlWaitingEllipsis.qml</file>
+        <file>qml/QmlWatingBusy.qml</file>
+        <file>qml/deviceManager/DeviceConfig.qml</file>
+        <file>qml/deviceManager/DeviceConfigMedia.qml</file>
+        <file>qml/deviceManager/DeviceConfigMotionDetection.qml</file>
+        <file>qml/deviceManager/DeviceManager.qml</file>
+        <file>qml/deviceManager/DeviceTable.qml</file>
+        <file>qml/deviceManager/DialogAddDevice.qml</file>
+        <file>qml/deviceManager/MediaInfoConfig.qml</file>
+        <file>qml/deviceManager/MotionDetection.qml</file>
         <file>qml/homePage/HomePage.qml</file>
-        <file>qml/liveVedio/LiveVideo.qml</file>
-        <file>qml/liveVedio/LiveContent.qml</file>
+        <file>qml/homePage/HomeStateBar.qml</file>
         <file>qml/liveVedio/CloudControl.qml</file>
         <file>qml/liveVedio/CruiseControl.qml</file>
         <file>qml/liveVedio/CruisePresetPoint.qml</file>
         <file>qml/liveVedio/CruiseTrack.qml</file>
         <file>qml/liveVedio/CuriseTrackSet.qml</file>
         <file>qml/liveVedio/ListDeviceItem.qml</file>
+        <file>qml/liveVedio/LiveContent.qml</file>
+        <file>qml/liveVedio/LiveVideo.qml</file>
         <file>qml/liveVedio/VedioLayout.qml</file>
         <file>qml/liveVedio/VideoLivePlay.qml</file>
         <file>qml/liveVedio/VideoMultiWindow.qml</file>
-        <file>qml/QmlToast.qml</file>
+        <file>qml/playbackVideo/PlaybackVideo.qml</file>
         <file>qml/simpleControl/MyComBox.qml</file>
         <file>qml/simpleControl/QmlButton.qml</file>
         <file>qml/simpleControl/QmlCheck.qml</file>
         <file>qml/simpleControl/QmlDialog.qml</file>
         <file>qml/simpleControl/QmlImageButton.qml</file>
         <file>qml/simpleControl/QmlImageTarBar.qml</file>
-        <file>qml/HomeMenu.qml</file>
-        <file>qml/MyCalendar.qml</file>
-        <file>qml/QmlLogin.qml</file>
-        <file>qml/QmlVideo.qml</file>
-        <file>qml/QmlWaitingEllipsis.qml</file>
-        <file>qml/QmlWatingBusy.qml</file>
         <file>qml/simpleControl/QmlTabBarButtonH.qml</file>
         <file>qml/simpleControl/QmlTabButton.qml</file>
         <file>images/about.png</file>
@@ -67,7 +80,15 @@
         <file>images/cruise_up.png</file>
         <file>images/cruise_upP.png</file>
         <file>images/deleteMsg.png</file>
+        <file>images/device.png</file>
+        <file>images/deviceAdd.png</file>
+        <file>images/devicem_close.png</file>
+        <file>images/devicem_off.png</file>
+        <file>images/devicem_on.png</file>
+        <file>images/devicem_triangle.png</file>
         <file>images/deviceManager.png</file>
+        <file>images/deviceOffline.png</file>
+        <file>images/deviceOnline.png</file>
         <file>images/editer.png</file>
         <file>images/fileopen.png</file>
         <file>images/filePath.png</file>
@@ -124,17 +145,5 @@
         <file>images/wMax_enter.png</file>
         <file>images/wMin.png</file>
         <file>images/wMin_enter.png</file>
-        <file>qml/MainContent.qml</file>
-        <file>qml/HomeTitleBar.qml</file>
-        <file>qml/deviceManager/DeviceManager.qml</file>
-        <file>images/device.png</file>
-        <file>images/deviceAdd.png</file>
-        <file>images/deviceOffline.png</file>
-        <file>images/deviceOnline.png</file>
-        <file>qml/playbackVideo/PlaybackVideo.qml</file>
-        <file>qml/deviceManager/DeviceTable.qml</file>
-        <file>qml/deviceManager/MediaInfoConfig.qml</file>
-        <file>qml/deviceManager/MotionDetection.qml</file>
-        <file>qml/deviceManager/DialogAddDevice.qml</file>
     </qresource>
 </RCC>

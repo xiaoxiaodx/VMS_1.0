@@ -5,6 +5,7 @@ import QtQml 2.12
 
 import "../qml/homePage"
 import "../qml/liveVedio"
+import DeviceManagerment 1.0
 Window {
 
     id: main;
@@ -21,6 +22,10 @@ Window {
     visibility : "Windowed"
 
 
+    DeviceManagerment{
+        id:devicemanagerment
+
+    }
     QmlLogin{
         id:login
         width: parent.width
@@ -86,18 +91,12 @@ Window {
         id: toast
         QmlToast{
             txtStr:toastStr
-            backColor: "#ffffff00"
-            txtColor:"#ee555555"
+            backColor: "#383838"
+            txtColor:"#ffffff"
             maxWid: rect.width/2
 
         }
     }
-
-
-
-
-
-
 
 
     function showToast(stri){

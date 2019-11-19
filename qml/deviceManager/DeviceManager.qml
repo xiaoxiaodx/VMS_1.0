@@ -1,7 +1,7 @@
 import QtQuick 2.0
 
 import QtQuick.Controls 1.4
-
+import DeviceManagerment 1.0
 import "../simpleControl"
 Rectangle {
 
@@ -9,7 +9,7 @@ Rectangle {
     Rectangle{
 
         id:rectLeft
-        width: 350
+        width: 300
         height: parent.height
 
 
@@ -38,10 +38,12 @@ Rectangle {
             }
             Rectangle{
 
-                color: "black"
-                width: 318
+                color: "#88000000"
+                width: parent.width-32
                 height: 37
                 anchors.top: leftHead.bottom
+                anchors.left: parent.left
+                anchors.leftMargin: 16
 
                 Text {
                     id: txt1
@@ -65,7 +67,7 @@ Rectangle {
         anchors.left: rectLeft.right
         anchors.top: parent.top
 
-        color: "#272727"
+        color: "#383838"
         QmlTabBarButtonH{
             id:tabbarBtn
             height: 50
@@ -88,7 +90,6 @@ Rectangle {
                 tabbarBtn.barModel.append({txtStr:qsTr("Flow Media Services"),imgSrc:"qrc:/images/homemenuCl1ose.png",imgSrcEnter:"qrc:/images/hom1emenuClose.png"})
 
             }
-
         }
 
 
@@ -123,6 +124,7 @@ Rectangle {
                 anchors.fill: parent
                 onPressed: btnDeviceAdd.color = "#dd409EFF"
                 onReleased:  btnDeviceAdd.color = "#409EFF"
+                onClicked: deviceAdd.open()
             }
 
         }
@@ -151,13 +153,14 @@ Rectangle {
             anchors.left: parent.left
             anchors.leftMargin: 30
 
+           // onSDeviceConfig:
         }
 
         Rectangle{
             color: "#00000000"
             anchors.fill: tableView
             border.width: 1
-            border.color: "#272727"
+            border.color: "#383838"
 
         }
 
@@ -165,11 +168,24 @@ Rectangle {
     }
 
 
+    DeviceConfig{
 
 
+    }
 
+    DeviceManagerment{
+        id:devicemanagerment
 
+    }
 
+    DialogAddDevice{
+
+        id:deviceAdd
+        width: 525
+        height: 434
+
+        onS_deviceIDstr: devicemanagerment.funConnectP2pDevice(name, strID, strAccoount, strPassword)
+    }
 
 
 

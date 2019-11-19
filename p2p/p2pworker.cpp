@@ -65,6 +65,7 @@ void P2pWorker::stopWoring()
 void P2pWorker::slot_connectDev(QString deviceDid,QString name,QString pwd)
 {
 
+    qDebug()<<" slot_connectDev";
     if(deviceDid.contains("SST")){
 
         qDebug()<<"deviceDid  "<<deviceDid;

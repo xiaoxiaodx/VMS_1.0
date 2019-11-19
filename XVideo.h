@@ -13,12 +13,13 @@
 #include <QDir>
 
 #include <QQuickWindow>
-#include "tcpworker.h"
+//#include "tcpworker.h"
 #include "playaudio.h"
 #include "dispatchmsgmanager.h"
-#include "p2pworker.h"
+//#include "p2pworker.h"
 #include "mp4format.h"
-
+#include "ffmpegcodec.h"
+#include "avirecord.h"
 
 
 class ImageInfo{
@@ -103,16 +104,16 @@ private:
     void initVariable();
     void writeDebugfile(QString filename,QString funname,int lineCount,QString strContent);
 
-    QThread *m_readThread;
-    TcpWorker *worker;
+//    QThread *m_readThread;
+//    TcpWorker *worker;
 
-    QThread *m_p2pThread;
-    P2pWorker *p2pWorker;
+//    QThread *m_p2pThread;
+//    P2pWorker *p2pWorker;
 
     FfmpegCodec *pffmpegCodec;
 
-    QThread *m_threadReadDate;
-    MediaDataProcess *m_dataProcess;
+//    QThread *m_threadReadDate;
+//    MediaDataProcess *m_dataProcess;
 
     PlayAudio *playAudio;
     QThread *playAudioThread;

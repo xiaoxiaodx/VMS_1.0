@@ -17,17 +17,6 @@ extern "C"{
 
 #include "protocal_pkg.h"
 
-//struct meian_pkg_head_type
-//{
-//    unsigned short head;
-//    unsigned short len;
-//    unsigned short cmd;
-//    unsigned short reslv;
-//};
-
-
-//#define MEIAN_HEAD 0xBEEE
-//#define CMD_USR_KEY	DEF_APPCMD_HEX_REQ(CMDMOD_ID_LOGIN,5)   //0x084A
 
 
 #define D_SYNCDATA_HEAD0 0xBE

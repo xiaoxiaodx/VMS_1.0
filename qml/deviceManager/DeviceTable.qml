@@ -7,7 +7,7 @@ TableView {
 
     horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
     verticalScrollBarPolicy: Qt.ScrollBarAlwaysOff
-
+    signal sDeviceConfig(var str)
 
     model:ListModel{
         id:listModel
@@ -89,7 +89,7 @@ TableView {
 
             MouseArea{
                 anchors.fill: parent
-                onClicked: console.debug("dsadsfdsaf")
+                onClicked: sDeviceConfig();
             }
 
         }
@@ -153,7 +153,7 @@ TableView {
 
     rowDelegate: Rectangle{
         id:rowRectangle
-        property color rowColor: styleData.selected?"#3A3D41":(styleData.alternate ? "#272727":"#272727")//是否为奇数
+        property color rowColor: styleData.selected?"#3A3D41":(styleData.alternate ? "#383838":"#383838")//是否为奇数
         color:rowColor
         height: 30
         border.width: 0

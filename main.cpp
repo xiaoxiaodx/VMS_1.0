@@ -67,6 +67,8 @@ int main(int argc, char *argv[])
     // XVideo 为QPaint显示视频(光栅绘图)
     qmlRegisterType<XVideo>("XVideo", 1, 0, "XVideo");
     qmlRegisterType<DeviceManagerment>("DeviceManagerment", 1, 0, "DeviceManagerment");
+
+
 //    qmlRegisterType<TcpWorker>("TcpWorker", 1, 0, "TcpWorker");
 //    qmlRegisterType<P2pWorker>("P2pWorker", 1, 0, "P2pWorker");
 

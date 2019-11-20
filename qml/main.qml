@@ -22,8 +22,14 @@ Window {
     visibility : "Windowed"
 
 
+
+    ListModel{
+        id:listdeviceInfo
+
+    }
     DeviceManagerment{
         id:devicemanagerment
+
 
     }
     QmlLogin{

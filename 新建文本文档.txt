@@ -1,0 +1,495 @@
+import QtQuick 2.0
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
+import QtQuick.Controls.Styles 1.4
+import QtQuick.Controls 1.4
+import Qt.labs.platform 1.1
+
+import QtQuick.LocalStorage 2.0 as Sql
+import MqttWork 1.0
+
+Rectangle {
+
+    signal s_addDevice();
+    signal st_showToastMsg(string str1);
+    signal s_multiScreenNumChange(int num);
+
+    signal s_mqttLoginSucc();
+    signal s_mqttLoginOutSucc();
+    signal s_modifyPwd(bool isSuccs,string str);
+    property int multiScreenNum: 2
+    property int premultiScreenNum: 2
+
+    property int modelDataCurrentIndex: -1
+    property int listDeviceCurrentIndex: -1
+
+    property bool isMax: false
+
+    QmlDialogTip{
+        id:tip
+    }
+
+    MqttWork{
+        id:mqttwork
+
+        onSignal_connect: {
+            if(isConnected)
+                st_showToastMsg("mqtt服务器连接成功")
+            else
+                st_showToastMsg(qsTr("mqtt服务器连接失败"))
+        }
+        onSignal_login: {
+            st_showToastMsg(errStr)
+            if(isLogiged)
+                s_mqttLoginSucc();
+        }
+
+        onSignal_loginout: {
+            if(isSucc){
+                s_mqttLoginOutSucc();
+                st_showToastMsg(errStr)
+            }else
+                st_showToastMsg(errStr)
+        }
+
+        onSignal_modifyPwd:s_modifyPwd(isSucc,errStr)
+
+        onSignal_listdevice: {
+            var groudIndex = -1;
+            for(var i=0;i<listDidGroup.count;i++){
+                if(variant.msgid === listDidGroup.get(i).mediatoke){
+                    groudIndex = i;
+                }
+            }
+            if(groudIndex > -1){
+
+                var tmpdevicelist = variant.devicelist;
+
+                for(var i=0;i<tmpdevicelist.length;i++){
+
+                    listDidGroup.get(groudIndex).listDeviceInfo.append({did:tmpdevicelist[i].deviceid,isOnline:tmpdevicelist[i].state?true:false,account:"",password:"",ip:"",port:""});
+
+                }
+            }
+        }
+        onSignal_listSer: {
+
+            for(var i= 0;i<variant.length;i++){
+                listDidGroup.append({"mediatoke":variant[i].mediatoken,"name":variant[i].name,"location":variant[i].location,"onlinestate":variant[i].onlinestate,"listDeviceInfo":[]});
+            }
+        }
+
+        onSignal_DeviceInfo: {
+
+            for(var i= 0;i<listDidGroup.count;i++){
+
+                var vlistdev  = listDidGroup.get(i).listDeviceInfo;
+
+
+                for(var j=0;j<vlistdev.count;j++){
+
+
+                    if(vlistdev.get(j).did === variant.msgid){
+
+
+                        vlistdev.get(j).account = "admin"
+                        vlistdev.get(j).password = "admin"
+                        vlistdev.get(j).ip = variant.hostip
+                        vlistdev.get(j).port = "555"
+
+                        return;
+                    }
+                }
+            }
+
+        }
+
+    }
+
+    function mqttLogin(ip,port,cc,pwd) {mqttwork.funLogin(ip,port,cc,pwd);}
+
+    function mqttModifyPwd(usrname,oldpwd,newpwd){var data={ "username":usrname,"oldpassword":oldpwd,"newpassword":newpwd};mqttwork.publishMsg("modifyusrpasswd",data);}
+
+    function mqttLoginOut(){var data={};mqttwork.publishMsg("loginoutmainserver",data);}
+
+    Rectangle{
+
+        id:leftContent
+        anchors.top: parent.top
+        anchors.left: parent.left
+        width:300
+        height: parent.height
+        color: "#FAFAFA"
+        z:3
+
+        Rectangle{
+            id:deviceAdd
+            width: parent.width-1
+            height: 57
+            z:1
+            anchors.horizontalCenter: parent.horizontalCenter
+            color: "#FAFAFA"
+            Text {
+                id: mydevice
+                width: 72
+                height: 25
+                anchors.left: parent.left
+                anchors.leftMargin: 25
+                anchors.verticalCenter: parent.verticalCenter
+                verticalAlignment:Text.AlignVCenter
+                color: "#4A4A4A"
+                font.bold: true
+                font.pixelSize: 18
+                text: qsTr("My Device")
+
+            }
+            QmlImageButton{
+
+                width:26
+                height:26
+                anchors.right: parent.right
+                anchors.rightMargin: 26
+
+                anchors.verticalCenter: parent.verticalCenter
+                imgSourseHover: "qrc:/images/add_enter.png"
+                imgSourseNormal: "qrc:/images/add.png"
+                imgSoursePress: "qrc:/images/add_enter.png"
+
+                onClick: {
+
+                    {
+                        listDidGroup.clear();
+                        var data={ "deviceid":""};
+                        mqttwork.publishMsg("getserverlist",data);
+                    }
+                    //s_addDevice();
+                }
+            }
+        }
+
+        Rectangle{
+            id:searchDevice
+            anchors.top: deviceAdd.bottom
+            width:deviceAdd.width
+            height: 30
+
+            Image {
+                id: imgSearch
+                width: 26
+                height: 28
+                anchors.left: parent.left
+                anchors.leftMargin: 15
+                source: "qrc:/images/search.png"
+            }
+
+            TextField{
+                id:inputSearch
+                width: 168
+                height: 24
+
+                anchors.left: imgSearch.right
+                anchors.leftMargin: 8
+                anchors.verticalCenter: parent.verticalCenter
+
+
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+                cursorPosition:10
+
+
+                font.pixelSize: 14
+                placeholderText:qsTr("search device id")
+
+                style:TextFieldStyle {
+                    textColor: "black"
+                    background: Rectangle {
+                        radius: 12
+                        implicitWidth: 100
+                        implicitHeight: 24
+                        border.color: "#aaa"
+                        border.width: 1
+                    }
+                }
+            }
+        }
+
+        ListModel{
+            id:listDidGroup
+
+        }
+
+        ListView{
+            id:listDevice
+            width: deviceAdd.width
+            height: parent.height - 90
+            anchors.top: searchDevice.bottom
+            anchors.topMargin: 10
+            spacing: 1
+            currentIndex: listDeviceCurrentIndex
+            z:0
+            model: listDidGroup
+
+            delegate: ListDeviceItem{
+
+
+                mymodel: listDeviceInfo
+                backColor: index === listDeviceCurrentIndex?"#dedede":"#eeeeee"
+                mDeviceID: mediatoke
+                mArea: mediatoke
+
+
+
+
+                onS_doubleClick: {
+
+                    console.debug("onS_doubleClick")
+
+                    var curVideoItem = listDeviceDataModel.get(modelDataCurrentIndex);
+
+                    curVideoItem.isCreateConnected = 0
+
+                    curVideoItem.did = did;
+
+                    curVideoItem.password = pwd
+                    curVideoItem.account = acc
+
+                    curVideoItem.port = port
+                    curVideoItem.ip = ip
+
+                    curVideoItem.isCreateConnected = 1
+
+                    vedioLayout.updateTcpPar(modelDataCurrentIndex);
+
+
+
+                }
+            }
+        }
+    }
+
+
+    Rectangle{
+        id:vedioContent
+        anchors.left: leftContent.right
+        anchors.top: parent.top
+        width: parent.width - leftContent.width
+        height: parent.height
+
+        color: "#BDBDBD"
+        Rectangle{
+            id:rectBar
+            anchors.left: parent.left
+            anchors.top: parent.top
+            width: parent.width
+            height: 54
+            color: "white"
+            z:1
+
+            Text {
+                id: labelVideo
+                anchors.left: parent.left
+                anchors.leftMargin: 100
+                anchors.verticalCenter: parent.verticalCenter
+                verticalAlignment: TextInput.AlignVCenter
+                width: 72
+                height: 25
+                color: "#476BFD"
+                font.pixelSize: 18
+                font.bold: true
+                text: qsTr("Live Video")
+            }
+        }
+
+        VedioLayout{
+            id: vedioLayout
+            height: parent.height - rectBar.height-2
+            width: parent.width;
+            anchors.top: rectBar.bottom
+            anchors.topMargin: 2
+
+            myLayoutSquare:multiScreenNum
+
+            myModel: listDeviceDataModel
+
+            Component.onCompleted: {
+                var listCount = listDeviceDataModel.count;
+                var needCount = multiScreenNum*multiScreenNum;
+
+
+                for(var i = listCount;i < needCount;i++){
+
+                    listDeviceDataModel.append({did:"",account:"",password:"",ip:"",port:"",isCreateConnected:0,isMax:0});
+
+                }
+
+            }
+
+            onS_click: {
+
+                modelDataCurrentIndex=clickIndex
+
+            }
+
+            onS_doubleClick: {
+
+                //console.debug("onS_doubleClick  " + multiScreenNum + "  "+premultiScreenNum + "  "+ismax)
+
+                if(ismax > 0 ){
+
+                    premultiScreenNum = multiScreenNum;
+                    s_multiScreenNumChange(1)
+
+                }else{
+
+                    multiScreenNum = premultiScreenNum
+                    s_multiScreenNumChange(premultiScreenNum)
+                }
+            }
+
+        }
+    }
+
+    ListModel{
+        id:listDeviceDataModel
+
+        //        Component.onCompleted: {
+
+        //            var listCount = listDeviceDataModel.count;
+        //            var needCount = multiScreenNum*multiScreenNum;
+
+
+        //            for(var i = listCount;i < needCount;i++){
+
+        //                listDeviceDataModel.append({did:"",account:"",password:"",ip:"",port:"",isCreateConnected:0});
+
+        //            }
+
+
+        //        }
+        //        Component.onDestruction: saveImageData()
+
+        //        function loadDeviceData() {
+        //            var db = Sql.LocalStorage.openDatabaseSync("MyDB", "1.0", "My model SQL", 50000);
+        //            db.transaction(
+        //                        function(tx) {
+        //                            // Create the database if it doesn't already exist
+        //                            tx.executeSql('CREATE TABLE IF NOT EXISTS DeviceInfoList(did TEXT,isCreateConnected INTEGER, account TEXT,password TEXT, ip TEXT,port TEXT)');
+
+        //                            var rs = tx.executeSql('SELECT * FROM DeviceInfoList');
+        //                            var index = 0;
+        //                            if (rs.rows.length > 0) {
+        //                                var index = 0;
+        //                                while (index < rs.rows.length) {
+        //                                    var myItem = rs.rows.item(index);
+
+        //                                    addDevice(myItem.isCreateConnected,myItem.did,myItem.account,myItem.password,myItem.ip,myItem.port  )
+
+        //                                    index++;
+        //                                }
+        //                            }
+        //                        }
+        //                        )
+        //        }
+
+        //        function saveImageData() {
+
+        //            var db = Sql.LocalStorage.openDatabaseSync("MyDB", "1.0", "My model SQL", 50000);
+
+
+        //            db.transaction(
+        //                        function(tx) {
+        //                            tx.executeSql('DROP TABLE DeviceInfoList');
+        //                            tx.executeSql('CREATE TABLE IF NOT EXISTS DeviceInfoList(did TEXT,isCreateConnected INTEGER, account TEXT,password TEXT, ip TEXT,port TEXT)');
+        //                            var index = 0;
+
+
+        //                            while (index < listDeviceDataModel.count) {
+        //                                var myItem = listDeviceDataModel.get(index);
+
+
+        //                                console.debug(myItem.did +","+ myItem.isCreateConnected+","+myItem.account+","+ myItem.password+","+myItem.ip+","+myItem.port)
+        //                                tx.executeSql('INSERT INTO DeviceInfoList VALUES(?,?,?,?,?,?)', [myItem.did, myItem.isCreateConnected,myItem.account, myItem.password,myItem.ip,myItem.port]);
+        //                                index++;
+        //                            }
+        //                        }
+        //                        )
+        //        }
+    }
+
+    function setMultiScreenNum(num){
+
+
+        multiScreenNum = num;
+
+
+        if(num > 1){
+
+            for(var i=0;i<listDeviceDataModel.count;i++){
+
+                if(listDeviceDataModel.get(i).isMax > 0){
+                    listDeviceDataModel.get(i).isMax = 0;
+                    break
+                }
+
+            }
+
+        }
+        for(var i= listDeviceDataModel.count ; i<=multiScreenNum*multiScreenNum;i++)
+            listDeviceDataModel.append({did:"",account:"",password:"",ip:"",port:"",isCreateConnected:0,isMax:0});
+    }
+
+
+
+    function addDevice(isCreateTcpConnect,strID,strAcc,strPwd,strIp,strPort){
+
+        if (strID == null || strID == undefined || strID == ""){
+
+            st_showToastMsg(qsTr("add failed!  did is null"))
+
+            return;
+        }
+        if (strAcc == null || strAcc == undefined || strAcc == ""){
+
+            st_showToastMsg(qsTr("add failed!  account is null"))
+            return;
+        }
+        if (strPwd == null || strPwd == undefined || strPwd == ""){
+
+            st_showToastMsg(qsTr("add failed!  password is null"))
+            return;
+        }
+
+        if (strIp == null || strIp == undefined || strIp == ""){
+
+            st_showToastMsg(qsTr("add failed!   ip is null"))
+            return;
+        }
+
+        if (strPort == null || strPort == undefined || strPort == ""){
+
+            st_showToastMsg(qsTr("add failed!  port is null"))
+            return;
+        }
+
+        //同一DID 不继续添加
+        for(var i = 0;i<listDidGroup.count;i++){
+
+            if(listDidGroup.get(i).did === strID){
+                st_showToastMsg(qsTr("add failed! The current did already exists"))
+                return;
+            }
+        }
+
+        listDidGroup.append({did:strID,account:strAcc,password:strPwd,ip:strIp,port:strPort});
+
+    }
+
+    function deleteDevice(tmpIndex){
+        listDeviceDataModel.get(tmpIndex).isCreateConnected = 0;
+
+    }
+}
+
+
+

@@ -1,7 +1,7 @@
 import QtQuick 2.0
 
 import QtQuick.Controls 1.4
-import DeviceManagerment 1.0
+
 import "../simpleControl"
 Rectangle {
 
@@ -173,10 +173,7 @@ Rectangle {
 
     }
 
-    DeviceManagerment{
-        id:devicemanagerment
 
-    }
 
     DialogAddDevice{
 

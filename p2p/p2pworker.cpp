@@ -1,6 +1,6 @@
 #include "p2pworker.h"
 
-P2pWorker::P2pWorker(QObject *parent) : QObject(parent)
+P2pWorker::P2pWorker(QString name)
 {
     sessionHandle = -1;
 
@@ -12,6 +12,8 @@ P2pWorker::P2pWorker(QObject *parent) : QObject(parent)
 
     isForceStopWorking = false;
 
+
+    m_name = name;
     readDataBuff.clear();
     needLen = 2;
 
@@ -92,14 +94,10 @@ void P2pWorker::slot_connectDev(QString deviceDid,QString name,QString pwd)
     }else
         m_did = deviceDid;
 
-
-
-
     m_password = pwd;
     m_account = name;
 
-
-    qDebug()<<"m_did  "<<m_did<<"   "<<m_account<<"    "<<m_password;
+    //qDebug()<<"m_did  "<<m_did<<"   "<<m_account<<"    "<<m_password;
     if(!isP2pInitSucc)
         p2pinit();
 
@@ -108,25 +106,20 @@ void P2pWorker::slot_connectDev(QString deviceDid,QString name,QString pwd)
     qDebug()<<"P2P connectDev   ret ="<<sessionHandle;
     if(sessionHandle >= 0){
 
+        emit signal_p2pErr(m_name,"conenct succ");
+
         isWorking = true;
         isConnectDevSucc = true;
 
-        QVariantMap vMap;
-        vMap.insert("username","admin");
-        vMap.insert("password","admin");
-        QByteArray loginArr = p2pProtrol.makeJsonPacket("login",vMap);
 
-        writeBuff(CMD_LOGIN,loginArr.data(),loginArr.length());
-
+        emit signal_p2pConnectState(m_name,true);
         emit slot_startLoopRead();
+
     }else{
         QThread::msleep(500);
 
+        emit signal_p2pErr(m_name,err2String(sessionHandle));
 
-        if(sessionHandle == ERROR_PPCS_DEVICE_NOT_ONLINE){
-            //qDebug()<<"signal_sendMsg";
-            emit signal_sendMsg(new MsgInfo("device is not online",true));
-        }
         slot_connectDev(m_did,m_account,m_password);
     }
 
@@ -191,6 +184,25 @@ void P2pWorker::slot_startLoopRead()
 
     }
 
+}
+void P2pWorker::test()
+{
+    qDebug()<<"test**************";
+}
+
+void P2pWorker::p2pSendData(QString cmd,QVariantMap map)
+{
+    qDebug()<<" p2pSendData";
+    if(cmd.compare("login")==0){
+
+        QVariantMap vMap;
+        vMap.insert("username","admin");
+        vMap.insert("password","admin");
+        QByteArray loginArr = p2pProtrol.makeJsonPacket("login",vMap);
+
+        writeBuff(CMD_LOGIN,loginArr.data(),loginArr.length());
+
+    }
 }
 
 void P2pWorker::resetParseVariant()
@@ -281,10 +293,12 @@ void P2pWorker::processUnPkg(char *buff,int len)
 
                 if(returnStr.contains("error")){
 
-                    qDebug()<<"找到 CMD_LOGIN  内容:密码错误";
-                    emit signal_sendMsg(new MsgInfo(m_did+":wrong password, try to Re-add device",true));
 
-                }
+                    emit signal_loginState(false,m_did,"fail");
+
+                }else
+                    emit signal_loginState(true,m_did,"succ");
+
 
             }else if(m_cmd == CMD_VIDEO_TRNS){
 
@@ -362,8 +376,8 @@ void P2pWorker::processReqPkg(unsigned int cmd,  char* inBuff, int inbuffSize, c
 
     *outBuffSize=inbuffSize+ sizeof(m_pkg_head);
 
-//    if(m_serverKey != nullptr)
-//        usr_decode(outBuff + sizeof(m_pkg_head), inbuffSize, m_serverKey, serverKeyLen);
+    //    if(m_serverKey != nullptr)
+    //        usr_decode(outBuff + sizeof(m_pkg_head), inbuffSize, m_serverKey, serverKeyLen);
 }
 
 
@@ -385,6 +399,62 @@ unsigned short P2pWorker::char2Short(char ch1,char ch2){
 
     return  head0 + head1*256;
 
+}
+
+QString P2pWorker::err2String(int ret)
+{
+
+
+    QString errStr = "";
+    if(ret >= 0){
+        errStr = "succ";
+    }else if (ret == ERROR_PPCS_NOT_INITIALIZED) {
+        errStr = "not initialized";
+    }else if (ret == ERROR_PPCS_ALREADY_INITIALIZED) {
+        errStr = "already initialized";
+    }else if (ret == ERROR_PPCS_TIME_OUT) {
+        errStr = "time out";
+    }else if (ret == ERROR_PPCS_INVALID_ID) {
+        errStr = "invalid id";
+    }else if (ret == ERROR_PPCS_INVALID_PARAMETER) {
+        errStr = "invalid parameter";
+    }else if (ret == ERROR_PPCS_DEVICE_NOT_ONLINE) {
+        errStr = "device not online";
+    }else if (ret == ERROR_PPCS_FAIL_TO_RESOLVE_NAME) {
+        errStr = "fail to resolve name";
+    }else if (ret == ERROR_PPCS_INVALID_PREFIX) {
+        errStr = "invalid prefix";
+    }else if (ret == ERROR_PPCS_ID_OUT_OF_DATE) {
+        errStr = "id out of date";
+    }else if (ret == ERROR_PPCS_NO_RELAY_SERVER_AVAILABLE) {
+        errStr = "no relay server available";
+    }else if (ret == ERROR_PPCS_INVALID_SESSION_HANDLE) {
+        errStr = "invalid session handle";
+    }else if (ret == ERROR_PPCS_SESSION_CLOSED_REMOTE) {
+        errStr = "session closed remote";
+    }else if (ret == ERROR_PPCS_SESSION_CLOSED_TIMEOUT) {
+        errStr = "session closed timeout";
+    }else if (ret == ERROR_PPCS_SESSION_CLOSED_CALLED) {
+        errStr = "session closed called";
+    }else if (ret == ERROR_PPCS_REMOTE_SITE_BUFFER_FULL) {
+        errStr = "remote site buffer full";
+    }else if (ret == ERROR_PPCS_USER_LISTEN_BREAK) {
+        errStr = "user listen break";
+    }else if (ret == ERROR_PPCS_MAX_SESSION) {
+        errStr = "max session";
+    }else if (ret == ERROR_PPCS_UDP_PORT_BIND_FAILED) {
+        errStr = "udp port bind failed";
+    }else if (ret == ERROR_PPCS_USER_CONNECT_BREAK) {
+        errStr = "user connect break";
+    }else if (ret == ERROR_PPCS_SESSION_CLOSED_INSUFFICIENT_MEMORY) {
+        errStr = "session closed insufficient memory";
+    }else if (ret == ERROR_PPCS_INVALID_APILICENSE) {
+        errStr = "invalid apilicense";
+    }else if (ret == ERROR_PPCS_FAIL_TO_CREATE_THREAD) {
+        errStr = "fail to create thread";
+    }
+
+    return  "p2p err:"+errStr;
 }
 
 P2pWorker::~P2pWorker()

@@ -28,11 +28,16 @@ class P2pWorker : public QObject
 {
     Q_OBJECT
 public:
-    explicit P2pWorker(QObject *parent = nullptr);
+    explicit P2pWorker(QString name);
     ~P2pWorker();
 
     void writeBuff(unsigned int cmd,char* buff,int bufflen);
     void stopWoring();
+
+    void p2pSendData(QString cmd,QVariantMap map);
+
+    void test();
+    QString m_name;
 signals:
 
 
@@ -42,13 +47,22 @@ signals:
     void signal_loopEnd();
     void signal_sendMsg(MsgInfo *info);
 
+    void signal_p2pConnectState(QString name,bool isSucc);
+    void signal_loginState(bool isSucc,QString name,QString errStr);
+    void signal_p2pErr(QString name,QString str);
+    void signal_deviceParameterSet(QString name,int parameterType,QVariantMap parMap);
 public slots:
 
     void slot_connectDev(QString deviceDid,QString name,QString pwd);
     void slot_startLoopRead();
+
+
+
+
 private:
 
     void p2pinit();
+
 
 
     void processUnPkg(char* inBuff, int inbuffSize);
@@ -57,6 +71,8 @@ private:
     void resetParseVariant();
     unsigned short char2Short(char ch1,char ch2 );
     int sessionHandle;
+
+    QString err2String(int ret);
 
     char m_appKey[appKeyLen];
     char *m_serverKey;
@@ -74,6 +90,7 @@ private:
     QString m_did;
     QString m_account;
     QString m_password;
+
 
     unsigned short m_cmd;
     int m_validDatalen;

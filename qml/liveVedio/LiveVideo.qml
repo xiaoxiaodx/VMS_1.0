@@ -143,66 +143,66 @@ Rectangle{
 
         }
 
-        ListModel{
-            id:listDeviceDid
+//        ListModel{
+//            id:listDeviceDid
 
-            Component.onCompleted: {
+//            Component.onCompleted: {
 
-                loadDeviceData();
+//                loadDeviceData();
 
-            }
-            Component.onDestruction: saveImageData()
+//            }
+//            Component.onDestruction: saveImageData()
 
-            function loadDeviceData() {
-                var db = Sql.LocalStorage.openDatabaseSync("MyDB", "1.0", "My model SQL", 50000);
+//            function loadDeviceData() {
+//                var db = Sql.LocalStorage.openDatabaseSync("MyDB", "1.0", "My model SQL", 50000);
 
-                //listDeviceDid.append({did:strID,account:strAcc,password:strPwd,ip:strIp,port:strPort});
-                db.transaction(
-                            function(tx) {
-                                // Create the database if it doesn't already exist
-                                tx.executeSql('CREATE TABLE IF NOT EXISTS DeviceInfoList(did TEXT, account TEXT,password TEXT, ip TEXT,port TEXT)');
+//                //listDeviceDid.append({did:strID,account:strAcc,password:strPwd,ip:strIp,port:strPort});
+//                db.transaction(
+//                            function(tx) {
+//                                // Create the database if it doesn't already exist
+//                                tx.executeSql('CREATE TABLE IF NOT EXISTS DeviceInfoList(did TEXT, account TEXT,password TEXT, ip TEXT,port TEXT)');
 
-                                var rs = tx.executeSql('SELECT * FROM DeviceInfoList');
-                                var index = 0;
-                                if (rs.rows.length > 0) {
-                                    var index = 0;
-                                    while (index < rs.rows.length) {
-                                        var myItem = rs.rows.item(index);
+//                                var rs = tx.executeSql('SELECT * FROM DeviceInfoList');
+//                                var index = 0;
+//                                if (rs.rows.length > 0) {
+//                                    var index = 0;
+//                                    while (index < rs.rows.length) {
+//                                        var myItem = rs.rows.item(index);
 
-                                        addDevice(0,myItem.did,myItem.account,myItem.password,myItem.ip,myItem.port  )
+//                                        addDevice(0,myItem.did,myItem.account,myItem.password,myItem.ip,myItem.port  )
 
-                                        index++;
-                                    }
-                                }
-                            }
-                            )
-            }
+//                                        index++;
+//                                    }
+//                                }
+//                            }
+//                            )
+//            }
 
-            function saveImageData() {
+//            function saveImageData() {
 
-                var db = Sql.LocalStorage.openDatabaseSync("MyDB", "1.0", "My model SQL", 50000);
-
-
-                db.transaction(
-                            function(tx) {
-                                tx.executeSql('DROP TABLE DeviceInfoList');
-                                tx.executeSql('CREATE TABLE IF NOT EXISTS DeviceInfoList(did TEXT, account TEXT,password TEXT, ip TEXT,port TEXT)');
-                                var index = 0;
+//                var db = Sql.LocalStorage.openDatabaseSync("MyDB", "1.0", "My model SQL", 50000);
 
 
-                                while (index < listDeviceDid.count) {
-                                    var myItem = listDeviceDid.get(index);
+//                db.transaction(
+//                            function(tx) {
+//                                tx.executeSql('DROP TABLE DeviceInfoList');
+//                                tx.executeSql('CREATE TABLE IF NOT EXISTS DeviceInfoList(did TEXT, account TEXT,password TEXT, ip TEXT,port TEXT)');
+//                                var index = 0;
 
 
-                                    console.debug(myItem.did +","+","+myItem.account+","+ myItem.password+","+myItem.ip+","+myItem.port)
-                                    tx.executeSql('INSERT INTO DeviceInfoList VALUES(?,?,?,?,?)', [myItem.did,myItem.account, myItem.password,myItem.ip,myItem.port]);
-                                    index++;
-                                }
-                            }
-                            )
-            }
+//                                while (index < listDeviceDid.count) {
+//                                    var myItem = listDeviceDid.get(index);
 
-        }
+
+//                                    console.debug(myItem.did +","+","+myItem.account+","+ myItem.password+","+myItem.ip+","+myItem.port)
+//                                    tx.executeSql('INSERT INTO DeviceInfoList VALUES(?,?,?,?,?)', [myItem.did,myItem.account, myItem.password,myItem.ip,myItem.port]);
+//                                    index++;
+//                                }
+//                            }
+//                            )
+//            }
+
+//        }
 
         ListView{
             id:listDevice
@@ -213,13 +213,13 @@ Rectangle{
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: 1
             currentIndex: listDeviceCurrentIndex
-            model: listDeviceDid
+            model: devicemanagerment.listDeviceInfo
 
             delegate: ListDeviceItem{
 
                 backColor: index === listDeviceCurrentIndex?"#000000":"transparent"
-                mDeviceID: did
-                mArea: did
+                mDeviceID: "data.did"
+                mArea: model.nima
                 color: "transparent"
                 onDeleteClick: {
 

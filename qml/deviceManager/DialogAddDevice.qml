@@ -176,7 +176,8 @@ Popup {
                             implicitHeight: 24
                             radius: 4
                         }
-                    }inputMask: "AAAA-00000-AAAAA"
+                    }
+                    //inputMask: "AAAA-000000-AAAAA"
                 }
             }
             Rectangle{

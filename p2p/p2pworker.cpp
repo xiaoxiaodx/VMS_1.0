@@ -193,16 +193,9 @@ void P2pWorker::test()
 void P2pWorker::p2pSendData(QString cmd,QVariantMap map)
 {
     qDebug()<<" p2pSendData";
-    if(cmd.compare("login")==0){
 
-        QVariantMap vMap;
-        vMap.insert("username","admin");
-        vMap.insert("password","admin");
-        QByteArray loginArr = p2pProtrol.makeJsonPacket("login",vMap);
-
-        writeBuff(CMD_LOGIN,loginArr.data(),loginArr.length());
-
-    }
+    QByteArray loginArr = p2pProtrol.makeJsonPacket("login",map);
+    writeBuff(CMD_LOGIN,loginArr.data(),loginArr.length());
 }
 
 void P2pWorker::resetParseVariant()
@@ -288,16 +281,22 @@ void P2pWorker::processUnPkg(char *buff,int len)
 
 
 
+
+                QVariantMap map = p2pProtrol.unJsonPacket("login",arr);
                 QString returnStr = QString(arr);
-                qDebug()<<"找到 CMD_LOGIN  内容:"<<returnStr;
-
-                if(returnStr.contains("error")){
 
 
-                    emit signal_loginState(false,m_did,"fail");
+
+                int stateCode = map.value("statuscode").toInt();
+
+                qDebug()<<"找到 CMD_LOGIN  内容:"<<returnStr<<endl<<"   stateCode:"<<stateCode;
+                if(stateCode == 200){
+
+
+                    emit signal_loginState(true,m_name,m_did,m_account,m_password,"fail");
 
                 }else
-                    emit signal_loginState(true,m_did,"succ");
+                    emit signal_loginState(false,m_name,m_did,m_account,m_password,"succ");
 
 
             }else if(m_cmd == CMD_VIDEO_TRNS){
@@ -313,15 +312,13 @@ void P2pWorker::processUnPkg(char *buff,int len)
                 // qDebug()<<"找到  视频信息 1:"<<vstreamLen<<"  "<<arr.toHex();
 
                 emit signal_sendH264(arr.data() + sizeof(video_frame_header), vstreamLen,1000);
-                //qDebug()<<"发送   signal_sendH264:";
+
             }else if(m_cmd == CMD_AUDIO_TRNS){
                 // qDebug()<<"找到  音频信息:"<<needLen<<"   "<<readDataBuff.length();
                 QByteArray arr ;
                 arr.append(readDataBuff.data(),needLen);
 
                 video_frame_header *video_pack= (video_frame_header*)(readDataBuff.data());
-
-                //usr_decode(arr.data(), arr.length(),m_serverKey, serverKeyLen);
 
                 emit signal_sendPcmALaw(arr.data(), arr.length(),1000);
 

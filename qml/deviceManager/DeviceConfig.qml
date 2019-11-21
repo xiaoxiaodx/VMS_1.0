@@ -15,7 +15,7 @@ Popup {
     modal: true
     focus: true
     //设置窗口关闭方式为按“Esc”键关闭
-    closePolicy: Popup.OnEscape
+    closePolicy: Popup.NoAutoClose
     //设置窗口的背景控件，不设置的话Popup的边框会显示出来
     background: rect
 
@@ -38,8 +38,6 @@ Popup {
             anchors.top: parent.top
             color: "transparent"
             Text {
-
-
 
                 text: qsTr("Remote device configuration")
                 color: "white"
@@ -84,26 +82,36 @@ Popup {
             id:content
             width: parent.width
             height: parent.height - recttitle.height
-            color: "#272727"
+            anchors.top: recttitle.bottom
+            color: "#191919"
             Rectangle{
                 id:contentleft
                 width: 200
                 height: parent.height
-
+                color: "#272727"
                 Rectangle{
                     id:rectmedia
                     anchors.top: parent.top
                     anchors.topMargin: 14
                     width: parent.width
                     height: 37
+                    color: view.currentIndex ==0?"#191919":"transparent"
                     Text {
                         id: txtMedia
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.left: parent.left
                         anchors.leftMargin: 20
+                        font.pixelSize: 18
+                        color: "white"
                         text: qsTr("MediaInfo")
                     }
 
+                    MouseArea{
+                        anchors.fill: parent
+
+                        onClicked: view.currentIndex = 0
+
+                    }
                 }
 
                 Rectangle{
@@ -111,26 +119,33 @@ Popup {
                     anchors.top: rectmedia.bottom
                     width: parent.width
                     height: 37
+                    color: view.currentIndex ==1?"#191919":"transparent"
                     Text {
                         id: txtmove
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.left: parent.left
                         anchors.leftMargin: 20
-                        text: qsTr("MediaInfo")
-                    }
+                        font.pixelSize: 18
+                        color: "white"
+                        text: qsTr("Motion Detection")
+                        MouseArea{
+                            anchors.fill: parent
 
+                            onClicked: view.currentIndex = 1
+
+                        }
+                    }
                 }
             }
             SwipeView {
                 id: view
-                z:0
                 width: parent.width -contentleft.left
                 height: parent.height
                 interactive:false
                 anchors.top: parent.top
                 anchors.left: contentleft.right
-
                 currentIndex: 0
+                orientation:Qt.Vertical
                 DeviceConfigMedia{
 
                 }
@@ -143,14 +158,8 @@ Popup {
         }
 
 
-
-
-
         QmlButton {
-
-
             id:btnEnsure
-
             width: 78
             height: 39
             anchors.bottom: parent.bottom
@@ -198,39 +207,41 @@ Popup {
         layer.enabled: true
         layer.effect: DropShadow {
             transparentBorder: true
-            horizontalOffset: 4
-            verticalOffset: 4
-            color:"#80000000"
+            horizontalOffset: 1
+            verticalOffset: 1
+            color:"#80555555"
         }
     }
 
     function setDlgPoint(dlgX ,dlgY)
     {
         //设置窗口拖拽不能超过父窗口
-        if(root.x + dlgX < 0)
-        {
-            root.x = 0
-        }
-        else if(root.x + dlgX > root.parent.width - root.width)
-        {
-            root.x = root.parent.width - root.width
-        }
-        else
-        {
-            root.x = root.x + dlgX
-        }
-        if(root.y + dlgY < 0)
-        {
-            root.y = 0
-        }
-        else if(root.y + dlgY > root.parent.height - root.height)
-        {
-            root.y = root.parent.height - root.height
-        }
-        else
-        {
-            root.y = root.y + dlgY
-        }
+//        if(root.x + dlgX < 0)
+//        {
+//            root.x = 0
+//        }
+//        else if(root.x + dlgX > root.parent.width - root.width)
+//        {
+//            root.x = root.parent.width - root.width
+//        }
+//        else
+//        {
+//            root.x = root.x + dlgX
+//        }
+//        if(root.y + dlgY < 0)
+//        {
+//            root.y = 0
+//        }
+//        else if(root.y + dlgY > root.parent.height - root.height)
+//        {
+//            root.y = root.parent.height - root.height
+//        }
+//        else
+//        {
+//            root.y = root.y + dlgY
+//        }
+        root.x = root.x + dlgX
+        root.y = root.y + dlgY
     }
 }
 

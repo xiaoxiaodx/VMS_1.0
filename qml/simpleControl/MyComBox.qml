@@ -9,7 +9,10 @@ ComboBox {
     property string colorNor: "#999999"
     property string colorPressed: "#409EFF"
     property string fontColor: "#BABABA"
-    property string bordColor: "#476BFD"
+    property string bordColor: colorNor
+    property string itembordColor: bordColor //子项的边界宽不能设置
+    property string itemColorNor: "#272727"
+    property string itemColorHoverd: "black"
     property int mRadius: 2
     property int indicatorW: 12
     property int indicatorH: 8
@@ -26,7 +29,8 @@ ComboBox {
         background: Rectangle{
             width: parent.width
             height: parent.height
-            color: "#272727"
+            //border.width: itembordWidth
+            color: control.highlightedIndex === index?itemColorHoverd:itemColorNor
         }
     }
 
@@ -57,7 +61,6 @@ ComboBox {
     contentItem: Text {
         leftPadding: 20
         rightPadding: control.indicator.width + control.spacing
-
         text: control.displayText
         font: control.font
         color: colorNor
@@ -68,10 +71,10 @@ ComboBox {
     background: Rectangle {
         implicitWidth: 120
         implicitHeight: 40
-        border.color: control.pressed ? colorPressed : colorNor
+        border.color: control.pressed ? colorPressed : bordColor
         border.width: control.visualFocus ? 2 : 1
         color: "transparent"
-        radius: 2
+        radius: mRadius
     }
 
     popup: Popup {
@@ -87,12 +90,14 @@ ComboBox {
             currentIndex: control.highlightedIndex
 
             ScrollIndicator.vertical: ScrollIndicator { }
+
+
         }
 
         background: Rectangle {
 
-            border.color: bordColor
-            radius: mRadius
+            border.color: itembordColor
+           // radius: mRadius
         }
     }
 }

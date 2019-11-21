@@ -6,11 +6,8 @@ DeviceManagerment::DeviceManagerment(QObject *parent) : QObject(parent)
     m_typeNetwork = 0;
 
 
-    DeviceInfo * info = new DeviceInfo;
-    info->nima = "dsadsa";
 
-
-    m_listDeviceInfo.append(info);
+    m_listDeviceInfo.clear();
 
 };
 
@@ -20,17 +17,6 @@ void DeviceManagerment::funConnectP2pDevice(QString name, QString did, QString a
     qDebug()<<" connectP2pDevice";
 
 
-
-
-
-
-
-//    QVariantMap info1 ;
-//    info1.insert("did","2222");
-
-//    m_listDeviceInfo.append(info1);
-//    emit listDeviceInfoChange();
-
     DeviceInfo *info = findDeviceName(name);
 
     if(info == nullptr){
@@ -39,10 +25,7 @@ void DeviceManagerment::funConnectP2pDevice(QString name, QString did, QString a
         info->setname(name);
         if(m_typeNetwork == 0){
 
-
-
-
-            //listDeviceInfo.append(info);
+            m_listDeviceInfo.append(info);
 
             info->createP2pThread();
             info->p2pWorker->test();
@@ -73,20 +56,27 @@ void DeviceManagerment::slot_p2pConnetState(QString name,bool isSucc){
     if(isSucc){
 
         QVariantMap map;
+        map.insert("username","admin");
+        map.insert("password","admin");
 
         DeviceInfo *info = findDeviceName(name);
 
-        if(info != nullptr)
+        if(info != nullptr){
             info->p2pWorker->p2pSendData("login",map);
+
+        }
 
     }
 
 }
 
-void DeviceManagerment::slot_recP2pLoginState(bool isSucc,QString name,QString errStr)
+void DeviceManagerment::slot_recP2pLoginState(bool isSucc,QString name,QString did,QString acc,QString pwd,QString errStr)
 {
 
     qDebug()<<"slot_recP2pConenctState :"<<isSucc <<"   "<<name<<"  "<<errStr;
+
+    emit signal_p2pConnectCallback(isSucc,name,did,acc,pwd,errStr);
+
 }
 
 void DeviceManagerment::slot_p2pErr(QString did,QString str)
@@ -98,34 +88,19 @@ void DeviceManagerment::slot_p2pErr(QString did,QString str)
 DeviceInfo* DeviceManagerment::findDeviceName(QString name)
 {
 
-//    for(int i=0;i<listDeviceInfo.size();i++){
-//        DeviceInfo *info = listDeviceInfo.at(i);
+    for(int i=0;i<m_listDeviceInfo.size();i++){
+        DeviceInfo *info = m_listDeviceInfo.at(i);
 
-//        qDebug()<<info->name()<<"   "   <<name;
-//        if(info->name().compare(name)==0){
+        qDebug()<<info->name()<<"   "   <<name;
+        if(info->name().compare(name)==0){
 
-//            return info;
-
-//        }
-//    }
-
-
+            return info;
+        }
+    }
     return nullptr;
-
 }
 
-QVariant DeviceManagerment::listDeviceInfo()
-{
-    qDebug()<<"dsadsadsa";
-    return QVariant::fromValue(m_listDeviceInfo);
-}
 
-void DeviceManagerment::setlistDeviceInfo(QVariant tmpList)
-{
-
-
-    emit listDeviceInfoChange();
-}
 
 
 

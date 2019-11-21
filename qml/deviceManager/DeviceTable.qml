@@ -9,17 +9,15 @@ TableView {
     verticalScrollBarPolicy: Qt.ScrollBarAlwaysOff
     signal sDeviceConfig(var str)
 
-    model:ListModel{
-        id:listModel
-        ListElement{
-            devicename:qsTr("zhangsan")
-            devicedid:18
-            devicetype:qsTr("hello14565")
-            networkstatus:"online"
-        }
-
-
-    }
+//    model:ListModel{
+//        id:listModel
+//        ListElement{
+//            devicename:qsTr("zhangsan")
+//            devicedid:18
+//            devicetype:qsTr("hello14565")
+//            networkstatus:"online"
+//        }
+//    }
 
 
     Component{
@@ -29,7 +27,7 @@ TableView {
             color: "#ffffff"
             elide: styleData.elideMode
             text: styleData.value
-            font.pointSize: 14
+            font.pointSize: 12
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             anchors.fill: parent
@@ -53,16 +51,16 @@ TableView {
                 Image {
                     id: img
                     anchors.verticalCenter: parent.verticalCenter
-                    source: styleData.value==="online"?"qrc:/images/deviceOnline":"qrc:/images/deviceOffline"
+                    source: styleData.value?"qrc:/images/deviceOnline":"qrc:/images/deviceOffline"
                 }
                 Text {
                     id:txt
                     anchors.left: img.right
                     anchors.leftMargin: 5
                     anchors.verticalCenter: parent.verticalCenter
-                    color: styleData.value==="online"?"#67C23A":"#red"
+                    color: styleData.value?"#67C23A":"#red"
                     elide: styleData.elideMode
-                    text: styleData.value
+                    text: styleData.value?"online":"offline"
                     font.pointSize: 14
 
 
@@ -89,7 +87,7 @@ TableView {
 
             MouseArea{
                 anchors.fill: parent
-                onClicked: sDeviceConfig();
+                onClicked: sDeviceConfig(currentRow);
             }
 
         }
@@ -119,8 +117,8 @@ TableView {
     }
 
     TableViewColumn{
-        role:"networkstatus"
-        title:qsTr("network status")
+        role:"onlinestate"
+        title:qsTr("online state")
         width:(tableView.width)/columnCount
         delegate: itemDelegateTextImg
     }

@@ -3,6 +3,11 @@ import QtQuick 2.0
 Rectangle{
 
 
+
+    signal sMoveLeft();
+    signal sMoveRight();
+    signal sMoveUp();
+    signal sMoveDown();
     Rectangle{
         id:rectCloudControlHead
         color: "transparent"
@@ -70,7 +75,7 @@ Rectangle{
                 anchors.fill: parent
                 onPressed:imgT.source = "qrc:/images/controlT_press.png"
                 onReleased: imgT.source = "qrc:/images/controlT.png"
-
+                onClicked: sMoveUp
             }
         }
         Rectangle{
@@ -88,7 +93,7 @@ Rectangle{
                 anchors.fill: parent
                 onPressed:imgB.source = "qrc:/images/controlB_press.png"
                 onReleased: imgB.source = "qrc:/images/controlB.png"
-
+                onClicked: sMoveDown()
             }
 
         }
@@ -109,10 +114,7 @@ Rectangle{
                 onPressed:imgL.source = "qrc:/images/controlL_press.png"
                 onReleased: imgL.source = "qrc:/images/controlL.png"
 
-                onClicked: {
-
-
-                }
+                onClicked: sMoveLeft()
 
             }
         }
@@ -131,6 +133,7 @@ Rectangle{
                 anchors.fill: parent
                 onPressed:imgR.source = "qrc:/images/controlR_press.png"
                 onReleased: imgR.source = "qrc:/images/controlR.png"
+                onClicked: sMoveRight()
             }
         }
 

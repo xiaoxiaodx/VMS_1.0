@@ -71,8 +71,6 @@ Rectangle {
         QmlTabBarButtonH{
             id:tabbarBtn
             height: 50
-
-
             btnBgColor:"transparent"
             btnBgSelectColor:"transparent"
             mflagColor:"#409EFF"
@@ -91,9 +89,6 @@ Rectangle {
 
             }
         }
-
-
-
 
         Rectangle{
             id:btnDeviceAdd
@@ -136,12 +131,7 @@ Rectangle {
             color: "#303030"
             anchors.bottom: tableView.top
             anchors.bottomMargin: 10
-
-
         }
-
-
-
 
         DeviceTable{
             id:tableView
@@ -153,7 +143,8 @@ Rectangle {
             anchors.left: parent.left
             anchors.leftMargin: 30
 
-           // onSDeviceConfig:
+            model: listdeviceInfo
+            onSDeviceConfig:deviceconfig.open()
         }
 
         Rectangle{
@@ -169,6 +160,9 @@ Rectangle {
 
 
     DeviceConfig{
+        id:deviceconfig
+        width: 900
+        height: 640
 
 
     }

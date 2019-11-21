@@ -6,10 +6,15 @@ Rectangle {
 
 
 
+    signal sEnsure();
+    signal sCancel();
+
     Rectangle{
         id:rectHead
-        color: "transparent"
+        color: "#191919"
         width: parent.width
+        anchors.top: parent.top
+        anchors.topMargin: 5
         height: 32
         Text {
             id: name
@@ -85,102 +90,95 @@ Rectangle {
     Rectangle{
         id:listHead
         width: parent.width
-        height: 48
+        height: 36
         anchors.top: rectHead.bottom
         color: "transparent"
-        Rectangle{
 
-            id:label1
-            width: parent.width/3
-            height: parent.height
+        Text {
+            id: txt1
+
             anchors.left: parent.left
-            anchors.leftMargin: 16
-            color: "transparent"
-            Text {
-                id: txt1
-
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: 12
-                color: "white"
-                text: qsTr("preset")
-            }
+            anchors.leftMargin: 34
+            anchors.verticalCenter: parent.verticalCenter
+            font.pixelSize: 12
+            color: "white"
+            text: qsTr("preset")
         }
 
-        Rectangle{
 
-            id:label2
-            width: parent.width/3
-            height: parent.height
-            anchors.left: label1.right
-            anchors.leftMargin: 32
-            color: "transparent"
-            Text {
-                id: txt2
 
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: 12
-                color: "white"
-                text: qsTr("speed")
-            }
+        Text {
+            id: txt2
+
+            anchors.left: parent.left
+            anchors.leftMargin: 144
+            anchors.verticalCenter: parent.verticalCenter
+            font.pixelSize: 12
+            color: "white"
+            text: qsTr("speed")
         }
-        Rectangle{
 
-            id:label3
-            width: parent.width/3
-            height: parent.height
-            anchors.left: label2.right
-            anchors.leftMargin: 38
-            color: "transparent"
-            Text {
-                id: txt3
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: 12
-                color: "white"
-                text: qsTr("time")
-            }
+
+        Text {
+            id: txt3
+            anchors.left: parent.left
+            anchors.leftMargin: 254
+            anchors.verticalCenter: parent.verticalCenter
+            font.pixelSize: 12
+            color: "white"
+            text: qsTr("time")
+        }
+
+        MouseArea{
+            anchors.fill: parent
+            onClicked: console.debug("*******   "+parent.width)
         }
     }
+
+
     ListView{
         id:listpresetPt
         width: parent.width
         height: parent.height - cruiseBottom.height-rectHead.height-listHead.height-12
         anchors.top: listHead.bottom
         model: [1,2,3]
-        spacing: 2
+        spacing: 8
         delegate: Rectangle{
             width: parent.width
-            height: 30
+            height: 28
             color: "transparent"
 
             MyComBox{
                 id:presetList
                 width: 72
                 height: parent.height
+                anchors.left: parent.left
+                anchors.leftMargin: 16
 
-                colorNor: "#FFFFFF"
+                colorNor: "#D9D9D9"
                 colorPressed: "#409EFF"
                 fontColor:"#FFFFFF"
                 bordColor:"#D9D9D9"
-
-                mRadius:5
-
+                itembordColor:"#D9D9D9"
+                itemColorNor: "black"
+                itemColorHoverd: "#191919"
+                font.pixelSize: 12
+                indicatorW:6
+                indicatorH:4
 
 
             }
 
             TextField {
                 id:inputSpeed
-                width: 72
+                width: 84
                 height: parent.height
                 anchors.left: presetList.right
                 anchors.leftMargin: 32
 
 
                 font.pixelSize: 12
-                placeholderText: qsTr("enter password")
+                placeholderText: qsTr("speed")
                 style:TextFieldStyle {
                     textColor: "white"
 
@@ -204,7 +202,7 @@ Rectangle {
 
                 font.pixelSize: 12
 
-                placeholderText: qsTr("enter password")
+                placeholderText: qsTr("time")
                 style:TextFieldStyle {
                     textColor: "white"
                     placeholderTextColor:"#999999"
@@ -216,11 +214,6 @@ Rectangle {
                     }
                 }
             }
-
-
-
-
-
 
         }
     }
@@ -255,7 +248,7 @@ Rectangle {
             mRadius:3
             fontsize:10
             text: "ensure"
-
+            onClicked: sEnsure()
         }
         QmlButton{
             id:imgRemove
@@ -271,6 +264,7 @@ Rectangle {
             mRadius:3
             fontsize:10
             text: "cancel"
+            onClicked:sCancel()
         }
 
     }

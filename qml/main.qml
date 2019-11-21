@@ -26,11 +26,40 @@ Window {
     ListModel{
         id:listdeviceInfo
 
+
+        /*
+            devicename:
+            devicedid:
+            devicetype:
+            onlinestate:
+        */
     }
     DeviceManagerment{
         id:devicemanagerment
 
+        onSignal_p2pConnectCallback: {
 
+
+            console.debug(name + "  **  "+ did + "  "+isSucc)
+            var objectDevice = findDeviceByName(name);
+            if(objectDevice === null)
+                listdeviceInfo.append({"devicename":name,"devicedid":did,"acc":acc,"pwd":pwd,"onlinestate":isSucc,"devicetype":"undefine"});
+            else
+                objectDevice.onlinestate = isSucc
+
+        }
+
+
+
+        function findDeviceByName(tName){
+
+            for(var i=0;i<listdeviceInfo.count;i++){
+                var object = listdeviceInfo.get(i)
+                if(object.name === tName)
+                    return object
+            }
+            return null;
+        }
     }
     QmlLogin{
         id:login

@@ -95,6 +95,9 @@ Rectangle {
                     border.color: "black"
                     color: "transparent"
 
+                    onSEnsure:stack.pop()
+                    onSCancel: stack.pop()
+
                 }
             }
 

@@ -48,7 +48,8 @@ signals:
     void signal_sendMsg(MsgInfo *info);
 
     void signal_p2pConnectState(QString name,bool isSucc);
-    void signal_loginState(bool isSucc,QString name,QString errStr);
+    void signal_loginState(bool isSucc,QString name,QString did,QString acc,QString pwd,QString errStr);
+
     void signal_p2pErr(QString name,QString str);
     void signal_deviceParameterSet(QString name,int parameterType,QVariantMap parMap);
 public slots:

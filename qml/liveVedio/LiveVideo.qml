@@ -51,7 +51,7 @@ Rectangle{
         id:leftContent
         anchors.top: parent.top
         anchors.left: parent.left
-        width:300
+        width:350
         height: parent.height
         color: "#272727"
 
@@ -177,23 +177,15 @@ Rectangle{
 //                            }
 //                            )
 //            }
-
 //            function saveImageData() {
-
 //                var db = Sql.LocalStorage.openDatabaseSync("MyDB", "1.0", "My model SQL", 50000);
-
-
 //                db.transaction(
 //                            function(tx) {
 //                                tx.executeSql('DROP TABLE DeviceInfoList');
 //                                tx.executeSql('CREATE TABLE IF NOT EXISTS DeviceInfoList(did TEXT, account TEXT,password TEXT, ip TEXT,port TEXT)');
 //                                var index = 0;
-
-
 //                                while (index < listDeviceDid.count) {
 //                                    var myItem = listDeviceDid.get(index);
-
-
 //                                    console.debug(myItem.did +","+","+myItem.account+","+ myItem.password+","+myItem.ip+","+myItem.port)
 //                                    tx.executeSql('INSERT INTO DeviceInfoList VALUES(?,?,?,?,?)', [myItem.did,myItem.account, myItem.password,myItem.ip,myItem.port]);
 //                                    index++;
@@ -201,7 +193,6 @@ Rectangle{
 //                            }
 //                            )
 //            }
-
 //        }
 
         ListView{
@@ -213,13 +204,13 @@ Rectangle{
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: 1
             currentIndex: listDeviceCurrentIndex
-            model: devicemanagerment.listDeviceInfo
+            model: listdeviceInfo
 
             delegate: ListDeviceItem{
 
                 backColor: index === listDeviceCurrentIndex?"#000000":"transparent"
                 mDeviceID: "data.did"
-                mArea: model.nima
+                mArea: model.devicename
                 color: "transparent"
                 onDeleteClick: {
 
@@ -270,10 +261,13 @@ Rectangle{
             height: 280
             anchors.bottom: cruiseControl.top
             color: "transparent"
+
+            onSMoveUp: ;
+            onSMoveDown:;
+            onSMoveLeft: ;
+            onSMoveRight:;
+
         }
-
-
-
 
 
         CruiseControl{

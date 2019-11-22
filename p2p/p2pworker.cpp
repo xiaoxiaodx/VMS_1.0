@@ -190,12 +190,36 @@ void P2pWorker::test()
     qDebug()<<"test**************";
 }
 
-void P2pWorker::p2pSendData(QString cmd,QVariantMap map)
+void P2pWorker::p2pSendData(QString cmd,QVariant map)
 {
     qDebug()<<" p2pSendData";
 
-    QByteArray loginArr = p2pProtrol.makeJsonPacket("login",map);
-    writeBuff(CMD_LOGIN,loginArr.data(),loginArr.length());
+    QByteArray loginArr = p2pProtrol.makeJsonPacket(cmd,map);
+    if(cmd.compare("login")==0){
+        for(int i=0;i<32;i++)
+            m_appKey[i] = rand() % 0xFF;
+        QByteArray arr;
+        arr.append(m_appKey,32);
+        qDebug()<<" m_appKey "<<arr.toHex();
+        writeBuff1(CMD_USR_KEY, m_appKey, 32);
+
+
+
+
+
+    }else if(cmd.compare("getVedio")==0)
+    {
+
+
+
+        writeBuff1(CMD_GET_VIDEO_INFO,"vlive -act list -para 0 ",strlen("vlive -act list -para 0 "));
+        writeBuff1(CMD_VIDEO_REQ,"vlive -act set -speed 2 -audio 1 ",strlen("vlive -act set -speed 2 -audio 1"));
+
+
+
+
+
+    }
 }
 
 void P2pWorker::resetParseVariant()
@@ -222,7 +246,7 @@ void P2pWorker::processUnPkg(char *buff,int len)
 
             unsigned short head = char2Short(readDataBuff.at(0),readDataBuff.at(1));
 
-            if(head == MEIAN_HEAD)
+            if(head == MEIAN_HEAD || head == MEIAN_HEAD1)
             {
 
                 qDebug()<<"找到头";
@@ -271,7 +295,19 @@ void P2pWorker::processUnPkg(char *buff,int len)
 
                 memcpy(m_serverKey,arr.data(),serverKeyLen);
 
+
+
+                QString loginCmd = "authcfg -act checkuser -name "+m_account+" -passwd "+ m_password;
+
+                //qDebug()<<loginCmd.length() <<" "<<loginCmd.toLatin1().data();
+
+
+                //想要接收流必须要使用命令登录
+                writeBuff1(CMD_LOGIN,loginCmd.toLatin1().data(),loginCmd.length());
+
+
                 qDebug()<<"找到 CMD_USR_KEY  内容:"<<m_serverKey<<"    ";
+
 
 
             }else if(m_cmd == CMD_LOGIN) {
@@ -279,24 +315,17 @@ void P2pWorker::processUnPkg(char *buff,int len)
                 QByteArray arr ;
                 arr.append(readDataBuff.data(),needLen);
 
+                usr_decode(arr.data(), arr.length(),m_serverKey, serverKeyLen);
 
-
-
-                QVariantMap map = p2pProtrol.unJsonPacket("login",arr);
                 QString returnStr = QString(arr);
+                qDebug()<<"找到 CMD_LOGIN  内容:"<<returnStr;
 
+                if(returnStr.contains("error")){
 
-
-                int stateCode = map.value("statuscode").toInt();
-
-                qDebug()<<"找到 CMD_LOGIN  内容:"<<returnStr<<endl<<"   stateCode:"<<stateCode;
-                if(stateCode == 200){
-
-
-                    emit signal_loginState(true,m_name,m_did,m_account,m_password,"fail");
+                    emit signal_loginState(false,m_name,m_did,m_account,m_password,"fail");
 
                 }else
-                    emit signal_loginState(false,m_name,m_did,m_account,m_password,"succ");
+                    emit signal_loginState(true,m_name,m_did,m_account,m_password,"succ");
 
 
             }else if(m_cmd == CMD_VIDEO_TRNS){
@@ -309,12 +338,12 @@ void P2pWorker::processUnPkg(char *buff,int len)
 
                 int vstreamLen = frameHeader->frame_len;
 
-                // qDebug()<<"找到  视频信息 1:"<<vstreamLen<<"  "<<arr.toHex();
+                qDebug()<<"找到  视频信息 1:"<<vstreamLen<<"  "<<arr.toHex();
 
-                emit signal_sendH264(arr.data() + sizeof(video_frame_header), vstreamLen,1000);
+                emit signal_sendH264(m_name,arr.data() + sizeof(video_frame_header), vstreamLen,1000);
 
             }else if(m_cmd == CMD_AUDIO_TRNS){
-                // qDebug()<<"找到  音频信息:"<<needLen<<"   "<<readDataBuff.length();
+                qDebug()<<"找到  音频信息:"<<needLen<<"   "<<readDataBuff.length();
                 QByteArray arr ;
                 arr.append(readDataBuff.data(),needLen);
 
@@ -343,7 +372,7 @@ void P2pWorker::writeBuff(unsigned int cmd,char* buff,int bufflen)
     char sendBuff[1500];
     int sendBufflen = 0;
 
-    processReqPkg(cmd,buff,bufflen,sendBuff,&sendBufflen,true);
+    processReqPkg(cmd,buff,bufflen,sendBuff,&sendBufflen,false);
 
     int ret = PPCS_Write(sessionHandle,0,sendBuff,sendBufflen);
 
@@ -354,12 +383,32 @@ void P2pWorker::writeBuff(unsigned int cmd,char* buff,int bufflen)
     qDebug()<<"writeBuff   "<<ret<<"    "<<arr.toHex();
 }
 
+void P2pWorker::writeBuff1(unsigned int cmd,char* buff,int bufflen)
+{
+
+    char sendBuff[1500];
+    int sendBufflen = 0;
+
+    processReqPkg(cmd,buff,bufflen,sendBuff,&sendBufflen,true);
+
+    int ret = PPCS_Write(sessionHandle,0,sendBuff,sendBufflen);
+
+
+    QByteArray arr;
+    arr.append(sendBuff,sendBufflen);
+
+    qDebug()<<"writeBuff1   "<<ret<<"    "<<arr.toHex();
+}
+
 void P2pWorker::processReqPkg(unsigned int cmd,  char* inBuff, int inbuffSize, char * outBuff,int *outBuffSize,bool isNeedEncrypt)
 {
     struct meian_pkg_head_type m_pkg_head;
 
     memset(&m_pkg_head, 0, sizeof(m_pkg_head));
-    m_pkg_head.head = (unsigned short)(MEIAN_HEAD);
+    if(isNeedEncrypt)
+        m_pkg_head.head = (unsigned short)(MEIAN_HEAD1);
+    else
+        m_pkg_head.head = (unsigned short)(MEIAN_HEAD);
     m_pkg_head.cmd = (unsigned short)(cmd&0xFFFF);
 
     m_pkg_head.len =(unsigned short)(inbuffSize&0xFFFF);
@@ -373,8 +422,8 @@ void P2pWorker::processReqPkg(unsigned int cmd,  char* inBuff, int inbuffSize, c
 
     *outBuffSize=inbuffSize+ sizeof(m_pkg_head);
 
-    //    if(m_serverKey != nullptr)
-    //        usr_decode(outBuff + sizeof(m_pkg_head), inbuffSize, m_serverKey, serverKeyLen);
+    if(isNeedEncrypt && m_serverKey != nullptr)
+        usr_decode(outBuff + sizeof(m_pkg_head), inbuffSize, m_serverKey, serverKeyLen);
 }
 
 

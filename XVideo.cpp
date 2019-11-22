@@ -20,6 +20,9 @@ XVideo::XVideo()
     connect(&timerUpdate,&QTimer::timeout,this,&XVideo::slot_timeout);
 
     testID = testIdIndex;
+
+   // timerUpdate.start(70);
+
     //消息分发定时器
     connect(mpDispatchMsgManager,&DispatchMsgManager::signal_sendToastMsg,this,&XVideo::slot_sendToastMsg);
 }
@@ -368,8 +371,6 @@ void XVideo::disConnectServer()
 
     emit signal_disconnentSer();
     timerUpdate.stop();
-
-
 }
 
 QSGNode* XVideo::updatePaintNode(QSGNode *old, UpdatePaintNodeData *data)
@@ -435,7 +436,38 @@ QSGNode* XVideo::updatePaintNode(QSGNode *old, UpdatePaintNodeData *data)
     //实时更新纹理而不使用老的纹理 是因为老的纹理的宽高未发生变化
 }
 
+void XVideo::funSendVideoData(char *buff,int len)
+{
+    QImage *Img = nullptr;
+    if(pffmpegCodec != nullptr){
+        Img = pffmpegCodec->decodeVFrame((unsigned char*)buff,len);
 
+       qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
+
+        if (Img != nullptr && (!Img->isNull()))
+        {
+            ImageInfo imgInfo;
+            imgInfo.pImg = Img;
+            //imgInfo.time = time;
+
+             qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
+            if(listImgInfo.size() < minBuffLen){
+
+                listImgInfo.append(imgInfo);
+                update();
+
+            }else
+                delete Img;
+        }
+    }
+}
+
+
+void XVideo::funSendAudioData(char *buff,int len)
+{
+
+
+}
 //tcpworker 线程
 void XVideo::slot_recH264(char* h264Arr,int arrlen,quint64 time)
 {

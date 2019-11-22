@@ -20,6 +20,7 @@ QByteArray P2pProtrol::makeJsonPacket(QString cmd,QVariant msgContent)
         jObjectData.insert("password",msgContent.toMap().value("password").toString());
         jObject.insert("data",jObjectData);
 
+
     }else if (cmd.compare("setptzmove")==0) {
 
         QJsonObject jObjectData ;

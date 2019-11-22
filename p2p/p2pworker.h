@@ -32,16 +32,17 @@ public:
     ~P2pWorker();
 
     void writeBuff(unsigned int cmd,char* buff,int bufflen);
+    void writeBuff1(unsigned int cmd,char* buff,int bufflen);
     void stopWoring();
 
-    void p2pSendData(QString cmd,QVariantMap map);
+    void p2pSendData(QString cmd,QVariant map);
 
     void test();
     QString m_name;
 signals:
 
 
-    void signal_sendH264(char* vH264Arr,int arrLen,long long pts);
+    void signal_sendH264(QString name ,char* vH264Arr,int arrLen,long long pts);
     void signal_sendPcmALaw(char* PcmALawArr,int arrLen,long long pts);
 
     void signal_loopEnd();

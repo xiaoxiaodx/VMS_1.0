@@ -44,6 +44,12 @@ public:
 
 
 
+    Q_INVOKABLE void funSendVideoData(char *buff,int len);
+    Q_INVOKABLE void funSendAudioData(char *buff,int len);
+
+
+
+
     explicit XVideo();
     ~XVideo();
 

@@ -144,7 +144,17 @@ Rectangle {
             anchors.leftMargin: 30
 
             model: listdeviceInfo
-            onSDeviceConfig:deviceconfig.open()
+            onSDeviceConfig:{
+
+                deviceconfig.open()
+
+
+                console.debug("qml:"+listdeviceInfo.count + "   "+configIndex)
+
+
+                var map;
+                devicemanagerment.funP2pSendData(listdeviceInfo.get(configIndex).devicename,"getVedio",map);
+            }
         }
 
         Rectangle{

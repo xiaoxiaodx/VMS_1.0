@@ -5,6 +5,7 @@
 #include <time.h>
 
 #define MEIAN_HEAD 0xBEEE
+#define MEIAN_HEAD1 0xBEEF
 
 /******************************************************************************
 //APP√¸¡Ó∏Ò Ω

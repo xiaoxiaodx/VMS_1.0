@@ -36,7 +36,7 @@ Popup {
             width: parent.width
             height: 54
             anchors.top: parent.top
-            color: "transparent"
+            color: "#303030"
             Text {
 
                 text: qsTr("Remote device configuration")

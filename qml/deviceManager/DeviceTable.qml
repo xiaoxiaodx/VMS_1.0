@@ -7,7 +7,7 @@ TableView {
 
     horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
     verticalScrollBarPolicy: Qt.ScrollBarAlwaysOff
-    signal sDeviceConfig(var str)
+    signal sDeviceConfig(var configIndex)
 
 //    model:ListModel{
 //        id:listModel
@@ -87,7 +87,7 @@ TableView {
 
             MouseArea{
                 anchors.fill: parent
-                onClicked: sDeviceConfig(currentRow);
+                onClicked: sDeviceConfig(styleData.row);
             }
 
         }

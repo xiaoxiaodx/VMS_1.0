@@ -37,9 +37,9 @@ Window {
     DeviceManagerment{
         id:devicemanagerment
 
+
+
         onSignal_p2pConnectCallback: {
-
-
             console.debug(name + "  **  "+ did + "  "+isSucc)
             var objectDevice = findDeviceByName(name);
             if(objectDevice === null)
@@ -49,6 +49,9 @@ Window {
 
         }
 
+        onSignal_p2pConnectCallVideoData: {
+
+        }
 
 
         function findDeviceByName(tName){
@@ -59,6 +62,16 @@ Window {
                     return object
             }
             return null;
+        }
+
+        function setCallBackVedioData(funRecBackVedioData){
+
+            funRecBackVedioData = callBackVedioData
+        }
+
+
+        function callBackVedioData(){
+
         }
     }
     QmlLogin{

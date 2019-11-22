@@ -11,7 +11,19 @@ DeviceManagerment::DeviceManagerment(QObject *parent) : QObject(parent)
 
 };
 
+void DeviceManagerment::funP2pSendData(QString name,QString cmd,QVariant map)
+{
 
+    DeviceInfo *info = findDeviceName(name);
+
+    if(info != nullptr){
+
+        info->p2pWorker->p2pSendData(cmd,map);
+    }else
+        emit signal_err(OTHER,"not find device");
+
+
+}
 void DeviceManagerment::funConnectP2pDevice(QString name, QString did, QString acc, QString pwd)
 {
     qDebug()<<" connectP2pDevice";
@@ -30,6 +42,7 @@ void DeviceManagerment::funConnectP2pDevice(QString name, QString did, QString a
             info->createP2pThread();
             info->p2pWorker->test();
 
+            connect(info->p2pWorker,&P2pWorker::signal_sendH264,this,&DeviceManagerment::slot_recVedio);
             connect(info->p2pWorker,&P2pWorker::signal_loginState,this,&DeviceManagerment::slot_recP2pLoginState);
             connect(info->p2pWorker,&P2pWorker::signal_p2pConnectState,this,&DeviceManagerment::slot_p2pConnetState);
 
@@ -77,6 +90,11 @@ void DeviceManagerment::slot_recP2pLoginState(bool isSucc,QString name,QString d
 
     emit signal_p2pConnectCallback(isSucc,name,did,acc,pwd,errStr);
 
+}
+
+void DeviceManagerment::slot_recVedio(QString name ,char* h264Arr,int arrlen,quint64 time)
+{
+    emit signal_p2pConnectCallVideoData(name,h264Arr,arrlen);
 }
 
 void DeviceManagerment::slot_p2pErr(QString did,QString str)

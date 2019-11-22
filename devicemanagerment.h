@@ -45,7 +45,7 @@ signals:
 
     //回调
     void signal_p2pConnectCallback(bool isSucc,QString name,QString did,QString acc,QString pwd,QString errStr);
-    void signal_p2pConnectCallVideoData(QString name ,char* h264Arr,int arrlen);
+    void signal_p2pConnectCallVideoData(QString name ,QVariant h264Arr,int arrlen);
 
 
 public slots:

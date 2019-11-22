@@ -94,7 +94,10 @@ void DeviceManagerment::slot_recP2pLoginState(bool isSucc,QString name,QString d
 
 void DeviceManagerment::slot_recVedio(QString name ,char* h264Arr,int arrlen,quint64 time)
 {
-    emit signal_p2pConnectCallVideoData(name,h264Arr,arrlen);
+
+    QByteArray arr;
+    arr.append(h264Arr,arrlen);
+    emit signal_p2pConnectCallVideoData(name,arr,arrlen);
 }
 
 void DeviceManagerment::slot_p2pErr(QString did,QString str)

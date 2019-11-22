@@ -289,7 +289,7 @@ Rectangle{
         anchors.top: parent.top
         width: parent.width - leftContent.width
         height: parent.height
-        color: "black"
+        color: "#131415"
         VedioLayout{
             id: vedioLayout
             height: parent.height - mvideomultiWindow.height
@@ -356,8 +356,9 @@ Rectangle{
             color: "#131415"
             onS_multiScreenNumChange: {
 
+                console.debug("VideoMultiWindow "+num)
                 if(num < 5)
-                    mhomecontent.setMultiScreenNum (num);
+                    setMultiScreenNum(num)
 
             }
         }
@@ -370,6 +371,13 @@ Rectangle{
 
     }
 
+
+    function dispatchVedio(pos1,buff1,len1)
+    {
+        console.debug("dispatchVedio1 ***264***:" + pos1);
+        vedioLayout.dispatchVedioData(pos1,buff1,len1);
+
+    }
 
 
     function openDlgFilePath(){

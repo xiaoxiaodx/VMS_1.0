@@ -19,8 +19,8 @@ void DeviceInfo::createP2pThread()
         m_p2pThread = new QThread;
         p2pWorker->moveToThread(m_p2pThread);
 
-        connect(p2pWorker,&P2pWorker::signal_sendH264,this,&DeviceInfo::slot_recH264,Qt::DirectConnection);
-        connect(p2pWorker,&P2pWorker::signal_sendPcmALaw,this,&DeviceInfo::slot_recPcmALaw,Qt::DirectConnection);
+//        connect(p2pWorker,&P2pWorker::signal_sendH264,this,&DeviceInfo::slot_recH264,Qt::DirectConnection);
+ //       connect(p2pWorker,&P2pWorker::signal_sendPcmALaw,this,&DeviceInfo::slot_recPcmALaw,Qt::DirectConnection);
 
 
 

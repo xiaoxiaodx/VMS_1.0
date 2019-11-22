@@ -71,7 +71,7 @@ void XVideo::initVariable()
 
     mshotScreenFilePath = "";
     m_Img = new QImage();
-    m_Img->fill(QColor("black"));
+    m_Img->fill(QColor("#ff0000"));
     preAudioTime = 0;
 
     mpDispatchMsgManager = DispatchMsgManager::getInstance();
@@ -375,7 +375,7 @@ void XVideo::disConnectServer()
 
 QSGNode* XVideo::updatePaintNode(QSGNode *old, UpdatePaintNodeData *data)
 {
-    // qDebug()<<"XVideo updatePaintNode thread:"<<QThread::currentThreadId()<<"   "<<listImgInfo.size();
+     qDebug()<<"XVideo updatePaintNode thread:"<<QThread::currentThreadId()<<"   "<<listImgInfo.size();
     QSGSimpleTextureNode *oldTexture = static_cast<QSGSimpleTextureNode*>(old);
 
     if (oldTexture == NULL) {
@@ -436,11 +436,19 @@ QSGNode* XVideo::updatePaintNode(QSGNode *old, UpdatePaintNodeData *data)
     //实时更新纹理而不使用老的纹理 是因为老的纹理的宽高未发生变化
 }
 
-void XVideo::funSendVideoData(char *buff,int len)
+void XVideo::funSendVideoData(QVariant buff1,int len)
 {
+
+
+
+    QByteArray arr = buff1.toByteArray();
+//    qDebug()<<"funSendVideoData:"<<arr.toHex();
+
     QImage *Img = nullptr;
+    createFFmpegDecodec();
+
     if(pffmpegCodec != nullptr){
-        Img = pffmpegCodec->decodeVFrame((unsigned char*)buff,len);
+        Img = pffmpegCodec->decodeVFrame((unsigned char*)arr.data(),arr.length());
 
        qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
 

@@ -19,7 +19,9 @@ Rectangle {
     signal s_deleteObject()
     signal s1_authenticationFailue(string str)
 
-    color: "black"
+    color: "#131415"
+
+    onMyLayoutSquareChanged: console.debug("onMyLayoutSquareChanged "+myLayoutSquare)
     Repeater{
         id:repeater
 
@@ -75,6 +77,14 @@ Rectangle {
                 s1_authenticationFailue(str)
             }
         }
+    }
+
+
+    function dispatchVedioData(pos,videoData,datelen){
+
+        console.debug("dispatchVedioData ***264***");
+        repeater.itemAt(pos).recVedio(videoData,datelen);
+
     }
 
 }

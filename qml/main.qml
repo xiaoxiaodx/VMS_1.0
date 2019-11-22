@@ -43,7 +43,7 @@ Window {
             console.debug(name + "  **  "+ did + "  "+isSucc)
             var objectDevice = findDeviceByName(name);
             if(objectDevice === null)
-                listdeviceInfo.append({"devicename":name,"devicedid":did,"acc":acc,"pwd":pwd,"onlinestate":isSucc,"devicetype":"undefine"});
+                listdeviceInfo.append({"devicename":name,"devicedid":did,"acc":acc,"pwd":pwd,"onlinestate":isSucc,"devicetype":"undefine","showVidoIndex":1});
             else
                 objectDevice.onlinestate = isSucc
 
@@ -51,6 +51,16 @@ Window {
 
         onSignal_p2pConnectCallVideoData: {
 
+            var objectDevice = findDeviceByName(name)
+
+            if(objectDevice !== null){
+                if(objectDevice.showVidoIndex >-1){
+                    maincontent.dispatchVedio(objectDevice.showVidoIndex,h264Arr,arrlen);
+                     console.debug("dispatchVedio3213214213")
+                }else
+                    showToast("dispatchVedio err " +objectDevice.showVidoIndex + "  "+name)
+            }else
+                console.debug("设备找不到，为空"+name + "count:"+listdeviceInfo.count)
         }
 
 
@@ -58,21 +68,15 @@ Window {
 
             for(var i=0;i<listdeviceInfo.count;i++){
                 var object = listdeviceInfo.get(i)
-                if(object.name === tName)
+                if(object.devicename === tName)
                     return object
             }
             return null;
         }
 
-        function setCallBackVedioData(funRecBackVedioData){
-
-            funRecBackVedioData = callBackVedioData
-        }
 
 
-        function callBackVedioData(){
 
-        }
     }
     QmlLogin{
         id:login

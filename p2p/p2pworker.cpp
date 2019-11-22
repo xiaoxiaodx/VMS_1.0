@@ -159,7 +159,7 @@ void P2pWorker::slot_startLoopRead()
                 arr.append(buff,readSize);
 
                 if(ERROR_PPCS_SUCCESSFUL == ret){
-                    qDebug()<<"通道"<<i<<" 有"<<readSize<<"个数据："<<arr.toHex();
+                    //qDebug()<<"通道"<<i<<" 有"<<readSize<<"个数据："<<arr.toHex();
                     processUnPkg(buff,readSize);
                 }
             }
@@ -249,7 +249,7 @@ void P2pWorker::processUnPkg(char *buff,int len)
             if(head == MEIAN_HEAD || head == MEIAN_HEAD1)
             {
 
-                qDebug()<<"找到头";
+                //qDebug()<<"找到头";
                 readDataBuff.remove(0,2);
                 isFindHead = true;
                 needLen = 6;
@@ -338,12 +338,12 @@ void P2pWorker::processUnPkg(char *buff,int len)
 
                 int vstreamLen = frameHeader->frame_len;
 
-                qDebug()<<"找到  视频信息 1:"<<vstreamLen<<"  "<<arr.toHex();
+                //qDebug()<<"找到  视频信息 1:"<<vstreamLen;//<<"  "<<arr.toHex();
 
                 emit signal_sendH264(m_name,arr.data() + sizeof(video_frame_header), vstreamLen,1000);
 
             }else if(m_cmd == CMD_AUDIO_TRNS){
-                qDebug()<<"找到  音频信息:"<<needLen<<"   "<<readDataBuff.length();
+                //qDebug()<<"找到  音频信息:"<<needLen<<"   "<<readDataBuff.length();
                 QByteArray arr ;
                 arr.append(readDataBuff.data(),needLen);
 

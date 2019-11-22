@@ -90,6 +90,7 @@ Rectangle {
             onSelectIndex: homeMenu.mCurIndex = mindex
         }
         LiveVideo{
+            id:livevideo
             anchors.fill: parent
             z:homeMenu.mCurIndex==0?1:0
 
@@ -107,6 +108,12 @@ Rectangle {
 
 
 
+    }
+
+
+    function dispatchVedio(index2,buff2,len2){
+
+        livevideo.dispatchVedio(index2,buff2,len2)
     }
 
     Rectangle{

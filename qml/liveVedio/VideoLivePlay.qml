@@ -51,6 +51,7 @@ Rectangle {
         property bool mXVideoRecordVedio: mIsRecordVedio
         property bool mXVideoIsCreateTcpConnect: mIsCreateConenect
 
+
         onSignal_authenticationFailue: {
             s_authenticationFailue(str)
         }
@@ -197,6 +198,13 @@ Rectangle {
         }
     }
 
+    function recVedio(h264,len){
+
+        if(screenBlack.visible)
+            screenBlack.visible = !screenBlack.visible
+        console.debug("recVedio***264***");
+        video.funSendVideoData(h264,len)
+    }
 
 
     Timer{

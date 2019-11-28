@@ -7,31 +7,7 @@ import "../simpleControl"
 Rectangle{
     id:rect
 
-    //    LiveContent{
-    //        id:mhomecontent
-    //        anchors.top: parent.top
-    //        anchors.left: parent.left
-    //        width: parent.width
-    //        height: parent.height
 
-    //        onS_addDevice: {
-    //            myDlgAddDevice.open();
-    //        }
-
-    //        onSt_showToastMsg: {
-    //            showToast(str1)
-    //        }
-
-    //        onS_multiScreenNumChange:{
-
-    //            mhomeState.setSelectItem (num)
-
-    //        }
-
-    //    }
-
-
-    signal s_addDevice();
     signal st_showToastMsg(string str1);
     signal s_multiScreenNumChange(int num);
 
@@ -82,23 +58,7 @@ Rectangle{
                 text: qsTr("My Device")
 
             }
-            QmlImageButton{
 
-                width:26
-                height:26
-                anchors.right: parent.right
-                anchors.rightMargin: 26
-
-                anchors.verticalCenter: parent.verticalCenter
-                imgSourseHover: "qrc:/images/add_enter.png"
-                imgSourseNormal: "qrc:/images/add.png"
-                imgSoursePress: "qrc:/images/add_enter.png"
-
-                onClick: {
-
-                    s_addDevice();
-                }
-            }
         }
 
 
@@ -229,25 +189,14 @@ Rectangle{
                 onDoubleClick: {
 
 
-                    if(modelDataCurrentIndex >= 0 && (index != listDeviceCurrentIndex)){
+                    console.debug("qml:"+listdeviceInfo.count + "   "+index)
 
-                        var curVideoItem = listDeviceDataModel.get(modelDataCurrentIndex);
+                    listdeviceInfo.get(index).showVidoIndex = modelDataCurrentIndex;
 
-                        if(curVideoItem.did === did){
-                            if(curVideoItem.isCreateConnected === 0)
-                                curVideoItem.isCreateConnected = 1;
+                    var map;
+                    devicemanagerment.funP2pSendData(listdeviceInfo.get(index).devicename,"getVedio",map);
 
-                        }else{
-                            curVideoItem.isCreateConnected = 0
-                            curVideoItem.did = did;
-                            curVideoItem.account = account
-                            curVideoItem.password = password
-                            curVideoItem.ip = ip
-                            curVideoItem.port = port
-                            curVideoItem.isCreateConnected = 1
 
-                        }
-                    }
                 }
 
             }
@@ -262,10 +211,75 @@ Rectangle{
             anchors.bottom: cruiseControl.top
             color: "transparent"
 
-            onSMoveUp: ;
-            onSMoveDown:;
-            onSMoveLeft: ;
-            onSMoveRight:;
+            onSMoveUpPressed: {
+                if(modelDataCurrentIndex > -1){
+
+                    var map={ movecmd:"continuemove",direction:"up",speedx:200,speedy:0,speedz:0,posx:0,posy:0,posz:0}
+                    devicemanagerment.funP2pSendData(listdeviceInfo.get(modelDataCurrentIndex).devicename,"setptzmove",map)
+                }else
+                    showToast(qsTr("Unspecified device"))
+            }
+            onSMoveUpReleased: {
+
+                if(modelDataCurrentIndex > -1){
+
+                    var map={ movecmd:"stop",direction:"up",speedx:200,speedy:0,speedz:0,posx:0,posy:0,posz:0}
+                    devicemanagerment.funP2pSendData(listdeviceInfo.get(modelDataCurrentIndex).devicename,"setptzmove",map)
+
+                }
+            }
+
+            onSMoveDownPressed: {
+                if(modelDataCurrentIndex > -1){
+
+                    var map={ movecmd:"continuemove",direction:"down",speedx:200,speedy:0,speedz:0,posx:0,posy:0,posz:0}
+                    devicemanagerment.funP2pSendData(listdeviceInfo.get(modelDataCurrentIndex).devicename,"setptzmove",map)
+                }else
+                    showToast(qsTr("Unspecified device"))
+            }
+            onSMoveDownReleased: {
+                if(modelDataCurrentIndex > -1){
+
+                    var map={ movecmd:"stop",direction:"down",speedx:200,speedy:0,speedz:0,posx:0,posy:0,posz:0}
+                    devicemanagerment.funP2pSendData(listdeviceInfo.get(modelDataCurrentIndex).devicename,"setptzmove",map)
+
+                }
+            }
+            onSMoveLeftPressed: {
+                if(modelDataCurrentIndex > -1){
+
+                    var map={ movecmd:"continuemove",direction:"left",speedx:200,speedy:0,speedz:0,posx:0,posy:0,posz:0}
+                    devicemanagerment.funP2pSendData(listdeviceInfo.get(modelDataCurrentIndex).devicename,"setptzmove",map)
+                }else
+                    showToast(qsTr("Unspecified device"))
+            }
+            onSMoveLeftReleased: {
+                if(modelDataCurrentIndex > -1){
+
+                    var map={ movecmd:"stop",direction:"left",speedx:200,speedy:0,speedz:0,posx:0,posy:0,posz:0}
+                    devicemanagerment.funP2pSendData(listdeviceInfo.get(modelDataCurrentIndex).devicename,"setptzmove",map)
+
+                }
+            }
+            onSMoveRightPressed: {
+                if(modelDataCurrentIndex > -1){
+
+                    var map={ movecmd:"continuemove",direction:"right",speedx:200,speedy:0,speedz:0,posx:0,posy:0,posz:0}
+                    console.debug("modelDataCurrentIndex    "+modelDataCurrentIndex+"   listdeviceInfo.count:"+listdeviceInfo.count)
+
+                    devicemanagerment.funP2pSendData(listdeviceInfo.get(modelDataCurrentIndex).devicename,"setptzmove",map)
+                }else
+                    showToast(qsTr("Unspecified device"))
+            }
+            onSMoveRightReleased: {
+                if(modelDataCurrentIndex > -1){
+
+                    var map={movecmd:"stop",direction:"right",speedx:200,speedy:0,speedz:0,posx:0,posy:0,posz:0}
+                    devicemanagerment.funP2pSendData(listdeviceInfo.get(modelDataCurrentIndex).devicename,"setptzmove",map)
+
+                }
+            }
+
 
         }
 
@@ -374,7 +388,7 @@ Rectangle{
 
     function dispatchVedio(pos1,buff1,len1)
     {
-        console.debug("dispatchVedio1 ***264***:" + pos1);
+
         vedioLayout.dispatchVedioData(pos1,buff1,len1);
 
     }

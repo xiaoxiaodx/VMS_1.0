@@ -14,6 +14,15 @@ Rectangle{
     visible: true
 
 
+    //property var netWorkModel: [{showStr:"tcp",num:0},{showStr:"p2p",num:0}]
+    ListModel{
+        id:netWorkModel
+        Component.onCompleted: {
+            netWorkModel.append({showStr:"tcp"})
+            netWorkModel.append({showStr:"p2p"})
+        }
+    }
+
 
     Image {
         id: loginImg
@@ -166,6 +175,9 @@ Rectangle{
         anchors.left: txtNetworkType.left
         anchors.top: txtNetworkType.bottom
         anchors.topMargin: 8
+        model: netWorkModel
+        currentIndex: 0
+
     }
 
     Text {

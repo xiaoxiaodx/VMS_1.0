@@ -23,6 +23,9 @@ Popup {
 
     signal s_showToast(var str1)
 
+    property int deviceConfigIndex:0
+
+
     Rectangle {
         id: rect
         anchors.fill: parent
@@ -176,8 +179,6 @@ Popup {
             text: qsTr("ensure")
             onClicked: {
 
-
-
                 root.close()
             }
         }
@@ -198,6 +199,7 @@ Popup {
 
 
 
+
                 root.close()
             }
 
@@ -212,6 +214,17 @@ Popup {
             color:"#80555555"
         }
     }
+
+    function setVideoEncodePar(){
+
+    }
+    function setAudioEncodePar(){
+
+    }
+    function setMotionDetectPar(){
+
+    }
+
 
     function setDlgPoint(dlgX ,dlgY)
     {

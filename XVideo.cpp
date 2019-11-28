@@ -375,7 +375,7 @@ void XVideo::disConnectServer()
 
 QSGNode* XVideo::updatePaintNode(QSGNode *old, UpdatePaintNodeData *data)
 {
-     qDebug()<<"XVideo updatePaintNode thread:"<<QThread::currentThreadId()<<"   "<<listImgInfo.size();
+    // qDebug()<<"XVideo updatePaintNode thread:"<<QThread::currentThreadId()<<"   "<<listImgInfo.size();
     QSGSimpleTextureNode *oldTexture = static_cast<QSGSimpleTextureNode*>(old);
 
     if (oldTexture == NULL) {
@@ -450,7 +450,7 @@ void XVideo::funSendVideoData(QVariant buff1,int len)
     if(pffmpegCodec != nullptr){
         Img = pffmpegCodec->decodeVFrame((unsigned char*)arr.data(),arr.length());
 
-       qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
+      // qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
 
         if (Img != nullptr && (!Img->isNull()))
         {
@@ -458,7 +458,7 @@ void XVideo::funSendVideoData(QVariant buff1,int len)
             imgInfo.pImg = Img;
             //imgInfo.time = time;
 
-             qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
+            // qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
             if(listImgInfo.size() < minBuffLen){
 
                 listImgInfo.append(imgInfo);

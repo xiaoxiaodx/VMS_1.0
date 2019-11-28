@@ -18,7 +18,7 @@ signals:
 public slots:
 
     QByteArray makeJsonPacket(QString cmd,QVariant msgContent);
-    QMap<QString,QVariant> unJsonPacket(QString cmd,QByteArray &arr);
+    QMap<QString,QVariant> unJsonPacket(QByteArray &arr);
 
 
 };

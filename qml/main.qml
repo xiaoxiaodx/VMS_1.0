@@ -21,42 +21,31 @@ Window {
 
     visibility : "Windowed"
 
+    property string toastStr: ""
 
 
     ListModel{
         id:listdeviceInfo
-
-
         /*
             devicename:
             devicedid:
             devicetype:
             onlinestate:
         */
+
     }
     DeviceManagerment{
         id:devicemanagerment
 
 
-
-        onSignal_p2pConnectCallback: {
-            console.debug(name + "  **  "+ did + "  "+isSucc)
-            var objectDevice = findDeviceByName(name);
-            if(objectDevice === null)
-                listdeviceInfo.append({"devicename":name,"devicedid":did,"acc":acc,"pwd":pwd,"onlinestate":isSucc,"devicetype":"undefine","showVidoIndex":1});
-            else
-                objectDevice.onlinestate = isSucc
-
-        }
-
-        onSignal_p2pConnectCallVideoData: {
+        onSignal_p2pCallbackVideoData: {
 
             var objectDevice = findDeviceByName(name)
 
             if(objectDevice !== null){
                 if(objectDevice.showVidoIndex >-1){
                     maincontent.dispatchVedio(objectDevice.showVidoIndex,h264Arr,arrlen);
-                     console.debug("dispatchVedio3213214213")
+
                 }else
                     showToast("dispatchVedio err " +objectDevice.showVidoIndex + "  "+name)
             }else
@@ -74,7 +63,29 @@ Window {
             return null;
         }
 
+        function stateCodeToStr(code){
+            var str;
+            if(code === 400)
+                str = qsTr("request error")
+            else if(code === 401)
+                str = qsTr("authentication failure")
+            else if(code === 402)
+                str = qsTr("interface call failed")
+            else if(code === 403)
+                str = qsTr("no Access")
+            else if(code === 404)
+                str = qsTr("can't find object")
+            else if(code === 406)
+                str = qsTr("loop execution")
+            else if(code === 405)
+                str = qsTr("permission denied")
+            else if(code === 411)
+                str = qsTr("permission denied")
 
+            else
+                str = qsTr("*undefined");
+            return str;
+        }
 
 
     }
@@ -145,8 +156,7 @@ Window {
             txtStr:toastStr
             backColor: "#383838"
             txtColor:"#ffffff"
-            maxWid: rect.width/2
-
+            maxWid:main.width/2
         }
     }
 

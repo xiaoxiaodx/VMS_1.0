@@ -5,11 +5,81 @@ Rectangle {
     id:root
 
 
-    property var channelModel: ["channel1", "channel1"]
-    property var frameRatelModel: ["frameRate1", "frameRate2"]
-    property var codeRateModel: ["codeRate1", "codeRate2"]
-    property var pictureQualityModel: ["pictureQuality1", "pictureQuality2"]
 
+    ListModel{
+        id:channelModel
+        Component.onCompleted: {
+
+            channelModel.append({showStr:"0"})
+            channelModel.append({showStr:"1"})
+            channelModel.append({showStr:"2"})
+            channelModel.append({showStr:"3"})
+
+        }
+    }
+
+    ListModel{
+        id:transcodingRateModel
+        Component.onCompleted: {
+            transcodingRateModel.append({showStr:"fixed rate"})
+            transcodingRateModel.append({showStr:"variable rate"})
+        }
+    }
+
+    ListModel{
+        id:pictureQualityModel
+        Component.onCompleted: {
+            pictureQualityModel.append({showStr:"1"})
+            pictureQualityModel.append({showStr:"2"})
+            pictureQualityModel.append({showStr:"3"})
+            pictureQualityModel.append({showStr:"4"})
+            pictureQualityModel.append({showStr:"5"})
+        }
+    }
+    ListModel{
+        id:resolutionModel
+        Component.onCompleted: {
+            resolutionModel.append({showStr:"1920*1080"})
+            resolutionModel.append({showStr:"640*360"})
+            resolutionModel.append({showStr:"320*160"})
+
+        }
+    }
+    ListModel{
+        id:encodingTypeModel
+        Component.onCompleted: {
+            encodingTypeModel.append({showStr:"jpeg"})
+            encodingTypeModel.append({showStr:"mpeg4"})
+            encodingTypeModel.append({showStr:"h264"})
+            encodingTypeModel.append({showStr:"h265"})
+
+        }
+    }
+    ListModel{
+        id:encodingStyleModel
+        Component.onCompleted: {
+            encodingStyleModel.append({showStr:"baseline"})
+            encodingStyleModel.append({showStr:"main"})
+            encodingStyleModel.append({showStr:"extended"})
+            encodingStyleModel.append({showStr:"high"})
+
+        }
+    }
+    ListModel{
+        id:codestreamTypeModel
+        Component.onCompleted: {
+            codestreamTypeModel.append({showStr:"main stream"})
+            codestreamTypeModel.append({showStr:"substream"})
+
+        }
+    }
+    ListModel{
+        id:audioencodeTypeModel
+        Component.onCompleted: {
+            audioencodeTypeModel.append({showStr:"g711a"})
+
+        }
+    }
 
     Text {
         id: txtLabel1
@@ -68,48 +138,48 @@ Rectangle {
                 itemColorHoverd: "#191919"
                 font.pixelSize: 15
                 model: channelModel
+
             }
 
         }
 
         Rectangle{
-            id:rectframeRate
-             color: "transparent"
+            id:rectinputframeRate
+            color: "transparent"
             width: 250
-            height: frameRate.height
+            height: inputframeRate.height
             anchors.horizontalCenter: parent.horizontalCenter
             Text {
                 id: txtframeRate
-                anchors.right: frameRate.left
+                anchors.right: inputframeRate.left
                 anchors.rightMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 16
                 color: "white"
                 text: qsTr("frameRate:")
             }
-
-            MyComBox{
-                id:frameRate
+            Text {
+                id: inputframeRate
                 width: 184
                 height: 34
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                itemColorHoverd: "#191919"
-                font.pixelSize: 15
-                model: frameRatelModel
+                color: "white"
+
             }
+
 
         }
 
         Rectangle{
             id:rectcodeRate
-             color: "transparent"
+            color: "transparent"
             width: 250
-            height: frameRate.height
+            height: inputcodeRate.height
             anchors.horizontalCenter: parent.horizontalCenter
             Text {
                 id: txtcodeRate
-                anchors.right: codeRate.left
+                anchors.right: inputcodeRate.left
                 anchors.rightMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 16
@@ -117,24 +187,23 @@ Rectangle {
                 text: qsTr("codeRate:")
             }
 
-            MyComBox{
-                id:codeRate
+            Text {
+                id: inputcodeRate
                 width: 184
                 height: 34
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                itemColorHoverd: "#191919"
-                font.pixelSize: 15
-                model: codeRateModel
+                color: "white"
+
             }
 
         }
 
         Rectangle{
             id:rectpictureQuality
-             color: "transparent"
+            color: "transparent"
             width: 250
-            height: frameRate.height
+            height: inputframeRate.height
             anchors.horizontalCenter: parent.horizontalCenter
             Text {
                 id: txtpictureQuality
@@ -155,15 +224,17 @@ Rectangle {
                 itemColorHoverd: "#191919"
                 font.pixelSize: 15
                 model: pictureQualityModel
+                currentIndex: 0
+
             }
 
         }
 
         Rectangle{
             id:recttranscodingRate
-             color: "transparent"
+            color: "transparent"
             width: 250
-            height: frameRate.height
+            height: transcodingRate.height
             anchors.horizontalCenter: parent.horizontalCenter
             Text {
                 id: txttranscodingRate
@@ -175,6 +246,7 @@ Rectangle {
                 text: qsTr("transcodingRate:")
             }
 
+
             MyComBox{
                 id:transcodingRate
                 width: 184
@@ -183,12 +255,11 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 itemColorHoverd: "#191919"
                 font.pixelSize: 15
-                model: frameRatelModel
+                model: transcodingRateModel
+
             }
 
         }
-
-
     }
 
     Column{
@@ -208,7 +279,7 @@ Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             Text {
                 id: txtframeInterval
-                anchors.right: frameInterval.left
+                anchors.right: inputframeInterval.left
                 anchors.rightMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 16
@@ -216,24 +287,25 @@ Rectangle {
                 text: qsTr("frameInterval:")
             }
 
-            MyComBox{
-                id:frameInterval
+            Text {
+                id: inputframeInterval
                 width: 184
                 height: 34
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                itemColorHoverd: "#191919"
-                font.pixelSize: 15
-                model: channelModel
+                color: "white"
+
             }
+
+
 
         }
 
         Rectangle{
             id:rectencodeType
-             color: "transparent"
+            color: "transparent"
             width: 250
-            height: frameRate.height
+            height: inputframeRate.height
             anchors.horizontalCenter: parent.horizontalCenter
             Text {
                 id: txtencodeType
@@ -253,16 +325,17 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 itemColorHoverd: "#191919"
                 font.pixelSize: 15
-                model: frameRatelModel
+                model: encodingTypeModel
+
             }
 
         }
 
         Rectangle{
             id:rectencodeStyle
-             color: "transparent"
+            color: "transparent"
             width: 250
-            height: frameRate.height
+            height: inputframeRate.height
             anchors.horizontalCenter: parent.horizontalCenter
             Text {
                 id: txtencodeStyle
@@ -282,16 +355,17 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 itemColorHoverd: "#191919"
                 font.pixelSize: 15
-                model: codeRateModel
+                model: encodingStyleModel
+
             }
 
         }
 
         Rectangle{
             id:rectresolution
-             color: "transparent"
+            color: "transparent"
             width: 250
-            height: frameRate.height
+            height: inputframeRate.height
             anchors.horizontalCenter: parent.horizontalCenter
             Text {
                 id: txtresolution
@@ -311,7 +385,38 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 itemColorHoverd: "#191919"
                 font.pixelSize: 15
-                model: pictureQualityModel
+                model: resolutionModel
+
+            }
+
+        }
+
+        Rectangle{
+            id:rectcodestreamType
+            color: "transparent"
+            width: 250
+            height: inputframeRate.height
+            anchors.horizontalCenter: parent.horizontalCenter
+            Text {
+                id: txtcodestreamType
+                anchors.right: codestreamType.left
+                anchors.rightMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+                font.pixelSize: 16
+                color: "white"
+                text: qsTr("code stream type:")
+            }
+
+            MyComBox{
+                id:codestreamType
+                width: 184
+                height: 34
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                itemColorHoverd: "#191919"
+                font.pixelSize: 15
+                model: codestreamTypeModel
+
             }
 
         }
@@ -368,22 +473,18 @@ Rectangle {
                 text: qsTr("enable:")
             }
 
-           QmlImageButton{
-            id:btnenable
-
-           }
 
         }
 
         Rectangle{
             id:rectbiteRate
-             color: "transparent"
+            color: "transparent"
             width: 250
-            height: frameRate.height
+            height: inputframeRate.height
             anchors.horizontalCenter: parent.horizontalCenter
             Text {
                 id: txtbiteRate
-                anchors.right: biteRate.left
+                anchors.right: inputbiteRate.left
                 anchors.rightMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 16
@@ -391,24 +492,23 @@ Rectangle {
                 text: qsTr("biteRate:")
             }
 
-            MyComBox{
-                id:biteRate
+            Text {
+                id: inputbiteRate
                 width: 184
                 height: 34
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                itemColorHoverd: "#191919"
-                font.pixelSize: 15
-                model: frameRatelModel
+                color: "white"
+
             }
 
         }
 
         Rectangle{
             id:rectAudioencodeType
-             color: "transparent"
+            color: "transparent"
             width: 250
-            height: frameRate.height
+            height: inputframeRate.height
             anchors.horizontalCenter: parent.horizontalCenter
             Text {
                 id: txtaudioencodeType
@@ -428,7 +528,8 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 itemColorHoverd: "#191919"
                 font.pixelSize: 15
-                model: codeRateModel
+                model: audioencodeTypeModel
+
             }
 
         }
@@ -447,13 +548,13 @@ Rectangle {
         anchors.leftMargin: 80
         Rectangle{
             id:rectsample
-             color: "transparent"
+            color: "transparent"
             width: 250
-            height: frameRate.height
+            height: inputframeRate.height
             anchors.horizontalCenter: parent.horizontalCenter
             Text {
                 id: txtsample
-                anchors.right: sample.left
+                anchors.right: inputsample.left
                 anchors.rightMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 16
@@ -461,18 +562,110 @@ Rectangle {
                 text: qsTr("sample:")
             }
 
-            MyComBox{
-                id:sample
+            Text {
+                id: inputsample
                 width: 184
                 height: 34
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                itemColorHoverd: "#191919"
-                font.pixelSize: 15
-                model: codeRateModel
+                color: "white"
+
             }
 
         }
     }
+
+
+    Connections{
+            target: devicemanagerment;
+
+            onSignal_videoencodeparam:{
+
+                console.debug("onS_videoencodeparam * "+smap)
+                console.debug("onS_videoencodeparam * "+smap.streamid)
+
+                codestreamType.currentIndex = smap.streamid
+                channel.currentIndex = smap.chn
+                inputframeRate.text = smap.framerate
+                inputcodeRate.text =smap.bitrate
+                inputframeInterval.text = smap.gop
+
+
+                if(smap.h264profile === "baseline")
+                    encodeStyle.currentIndex = 0
+                else if(smap.h264profile === "main")
+                     encodeStyle.currentIndex = 1
+                else if(smap.h264profile === "extended")
+                     encodeStyle.currentIndex = 2
+                else if(smap.h264profile === "high")
+                     encodeStyle.currentIndex = 3
+
+
+
+                if(smap.encoding === "jpeg")
+                    encodeType.currentIndex = 0
+                else if(smap.encoding === "mpeg4")
+                     encodeType.currentIndex = 1
+                else if(smap.encoding === "h264")
+                     encodeType.currentIndex = 2
+                else if(smap.encoding === "h265")
+                     encodeType.currentIndex = 3
+
+                if(smap.cvbrmode==="cbr")
+                    transcodingRate.currentIndex = 1
+                else
+                    transcodingRate.currentIndex = 0
+
+                pictureQuality.currentIndex = smap.quality
+                if(smap.width === 1920)
+                    resolution.currentIndex = 0
+                else if(smap.width === 640)
+                    resolution.currentIndex = 1
+                else if(smap.width === 320)
+                    resolution.currentIndex = 2
+
+
+
+                var objectDevice = listdeviceInfo.get(curSelectIndex)
+                objectDevice.videoChn = smap.chn;
+                objectDevice.videoStreamid = smap.streamid;
+                objectDevice.videoFramerate = smap.framerate;
+                objectDevice.videoBitrate = smap.bitrate;
+                objectDevice.videoQuality = smap.quality;
+                objectDevice.videoGop = smap.gop;
+                objectDevice.videoCvbrmode = smap.cvbrmode;
+                objectDevice.videoEncodetype = smap.encoding;
+
+                objectDevice.videoEncodestyle = smap.h264profile;
+                if(smap.width === 1920)
+                    objectDevice.videoResolution = 0
+                else if(smap.width === 640)
+                    objectDevice.videoResolution = 1
+                else if(smap.width === 320)
+                    objectDevice.videoResolution = 2
+
+            }
+            onSignal_audioencodeparam:{
+
+//                objectDevice.audioEnable = smap.enabled
+//                objectDevice.audioEncodetype = smap.encoding
+//                objectDevice.audioBitrate = smap.bitrate
+//                objectDevice.audioSamplerate = smap.samplerate
+
+                inputsample.text = smap.samplerate
+                inputbiteRate.text = smap.bitrate
+                audioencodeType.currentIndex = 0
+
+
+                var objectDevice = listdeviceInfo.get(curSelectIndex)
+                objectDevice.audioEnable = smap.enabled
+                objectDevice.audioEncodetype = smap.encoding
+                objectDevice.audioBitrate = smap.bitrate
+                objectDevice.audioSamplerate = smap.samplerate
+
+            }
+
+
+        }
 
 }

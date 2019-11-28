@@ -9,6 +9,7 @@ Rectangle {
     signal sEnsure();
     signal sCancel();
 
+    property alias trackArrModel: listpresetPt.model
     Rectangle{
         id:rectHead
         color: "#191919"
@@ -28,7 +29,7 @@ Rectangle {
         }
 
         QmlImageButton{
-            id:imgTrackSet
+            id:imgTrackAdd
             width: 20
             height: 20
             anchors.verticalCenter: parent.verticalCenter
@@ -38,7 +39,7 @@ Rectangle {
             imgSoursePress:"qrc:/images/cruise_dddP.png"
             imgSourseHover: imgSourseNormal
 
-            onClick: console.debug("QmlImageButton  imgTrackSet")
+            onClick: trackArrModel.append({presetIndex:0,speed:0,time:0});
         }
 
 
@@ -141,7 +142,7 @@ Rectangle {
         width: parent.width
         height: parent.height - cruiseBottom.height-rectHead.height-listHead.height-12
         anchors.top: listHead.bottom
-        model: [1,2,3]
+
         spacing: 8
         delegate: Rectangle{
             width: parent.width
@@ -154,7 +155,7 @@ Rectangle {
                 height: parent.height
                 anchors.left: parent.left
                 anchors.leftMargin: 16
-
+                model: trackPresetPtModel
                 colorNor: "#D9D9D9"
                 colorPressed: "#409EFF"
                 fontColor:"#FFFFFF"
@@ -165,7 +166,6 @@ Rectangle {
                 font.pixelSize: 12
                 indicatorW:6
                 indicatorH:4
-
 
             }
 
@@ -179,6 +179,8 @@ Rectangle {
 
                 font.pixelSize: 12
                 placeholderText: qsTr("speed")
+
+                text: speed
                 style:TextFieldStyle {
                     textColor: "white"
 
@@ -201,7 +203,7 @@ Rectangle {
 
 
                 font.pixelSize: 12
-
+                text:time
                 placeholderText: qsTr("time")
                 style:TextFieldStyle {
                     textColor: "white"

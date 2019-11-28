@@ -46,7 +46,8 @@ HEADERS += \
     mqtt/mqttpacket.h \
     mqtt/mqttwork.h \
     devicemanagerment.h \
-    deviceinfo.h
+    deviceinfo.h \
+    Timeline.h
 
 
 SOURCES += main.cpp \
@@ -72,7 +73,8 @@ SOURCES += main.cpp \
     mqtt/mqttpacket.cpp \
     mqtt/mqttwork.cpp \
     devicemanagerment.cpp \
-    deviceinfo.cpp
+    deviceinfo.cpp \
+    Timeline.cpp
 
 
 

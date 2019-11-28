@@ -82,7 +82,7 @@ Rectangle {
 
     function dispatchVedioData(pos,videoData,datelen){
 
-        console.debug("dispatchVedioData ***264***");
+
         repeater.itemAt(pos).recVedio(videoData,datelen);
 
     }

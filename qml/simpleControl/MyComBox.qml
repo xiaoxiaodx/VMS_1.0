@@ -1,10 +1,15 @@
-
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 
+
+/*
+    数据模型为多数据时会显示不正常
+    model = [{tes:"ads"},{{tes:"ads"}}]//2个包含个数据的模型可以显示正常
+    model = [{tes:"ads",tes1:"ads"},{{tes:"ads",tes1:"ads"}}]//2个包含多个数据的模型可以显示不正常
+*/
 ComboBox {
     id: control
-    model: ["TCP", "P2P"]
+    //model: [{showStr:"TCP",hello:0},{ showStr:"P2P",hello:2}]
 
     property string colorNor: "#999999"
     property string colorPressed: "#409EFF"
@@ -16,10 +21,12 @@ ComboBox {
     property int mRadius: 2
     property int indicatorW: 12
     property int indicatorH: 8
+
+
     delegate: ItemDelegate {
         width: control.width
         contentItem: Text {
-            text: modelData
+            text: showStr
             color: fontColor
             font: control.font
             elide: Text.ElideRight
@@ -87,7 +94,7 @@ ComboBox {
             clip: true
             implicitHeight: contentHeight
             model: control.popup.visible ? control.delegateModel : null
-            currentIndex: control.highlightedIndex
+            //currentIndex: control.highlightedIndex
 
             ScrollIndicator.vertical: ScrollIndicator { }
 

@@ -7,13 +7,15 @@ import QtQuick.Controls 1.4
 import Qt.labs.platform 1.1
 
 import QtQuick.LocalStorage 2.0 as Sql
-
+import XVideo 1.0
+import TimeLine 1.0
 
 
 import "../liveVedio"
 import "../simpleControl"
 Rectangle {
 
+    id:playbackvideo
     signal s_addDevice();
     signal st_showToastMsg(string str1);
     signal s_multiScreenNumChange(int num);
@@ -37,59 +39,74 @@ Rectangle {
         width:300
         height: parent.height
         color: "#272727"
-
-
-        Rectangle{
-            id:deviceAdd
-            width: parent.width
-            height: 50
-            color: "transparent"
-            Image {
-                id: imgDevice
-                anchors.left: parent.left
-                anchors.leftMargin: 16
-                anchors.verticalCenter: parent.verticalCenter
-                source: "qrc:/images/mydevice.png"
-            }
-
-
-            Text {
-                id: mydevice
-
-                anchors.left: imgDevice.right
-                anchors.leftMargin: 6
-                anchors.verticalCenter: parent.verticalCenter
-                verticalAlignment:Text.AlignVCenter
-                color: "white"
-                font.bold: true
-                font.family: "roboto"
-                font.pixelSize: 15
-                text: qsTr("My Device")
-
-            }
-            QmlImageButton{
-
-                width:26
-                height:26
-                anchors.right: parent.right
-                anchors.rightMargin: 26
-
-                anchors.verticalCenter: parent.verticalCenter
-                imgSourseHover: "qrc:/images/add_enter.png"
-                imgSourseNormal: "qrc:/images/add.png"
-                imgSoursePress: "qrc:/images/add_enter.png"
-
-                onClick: {
-
-                    s_addDevice();
-                }
-            }
+        Text {
+            id: timelabel
+            anchors.top: parent.top
+            anchors.topMargin: 20
+            anchors.left: parent.left
+            anchors.leftMargin: 17
+            color: "white"
+            font.pixelSize: 16
+            text: qsTr("time")
         }
 
 
         Rectangle{
+            id:timeRect
+            anchors.top: timelabel.bottom
+            anchors.topMargin: 20
+            anchors.left: timelabel.left
+            width: parent.width -32
+            height: 32
+            anchors.horizontalCenter: parent.horizontalCenter
+            color: "#3A3D41"
+            Image {
+                id: imgTimeSelect
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: parent.right
+                anchors.rightMargin: 15
+                source: "qrc:/images/search.png"
+                MouseArea{
+                    anchors.fill: parent
+                    onClicked:{
+                        getRecordInfo(1,Qt.formatDate(calendar.getCurrentData(),"yyyyMMdd000000"));
+                        calendar.open();
+                    }
+                }
+            }
+
+            Text{
+                id:timeInput
+                anchors.left: parent.left
+                anchors.leftMargin: 2
+                anchors.verticalCenter: parent.verticalCenter
+                font.pixelSize: 14
+            }
+
+        }
+
+
+
+        Text {
+            id: mydevice
+
+            anchors.left: timeRect.left
+            anchors.top: timeRect.bottom
+            anchors.topMargin: 20
+            color: "white"
+            font.family: "Microsoft Yahei"
+            font.pixelSize: 16
+            text: qsTr("my device")
+
+        }
+
+
+
+
+        Rectangle{
             id:searchDevice
-            anchors.top: deviceAdd.bottom
+            anchors.top: mydevice.bottom
+            anchors.topMargin: 20
             width: parent.width -32
             height: 32
             anchors.horizontalCenter: parent.horizontalCenter
@@ -102,311 +119,225 @@ Rectangle {
                 source: "qrc:/images/search.png"
             }
 
-            TextField{
+            TextInput{
                 id:inputSearch
                 width: searchDevice.width - imgSearch.width - 15 -2
                 height: 24
                 anchors.left: imgSearch.right
                 anchors.leftMargin: 2
                 anchors.verticalCenter: parent.verticalCenter
-
-                verticalAlignment: Text.AlignVCenter
-                horizontalAlignment: Text.AlignLeft
-                cursorPosition:10
                 font.pixelSize: 14
-                placeholderText:qsTr("search device id")
-                style:TextFieldStyle {
-                    textColor: "#909399"
-                    background: Rectangle {
-                        color: "transparent"
-                        implicitWidth: 100
-                        implicitHeight: 24
-                        radius: 4
-                    }
-                }
+
+
             }
+
+
 
         }
 
-        ListModel{
-            id:listDeviceDid
 
-            Component.onCompleted: {
-
-                loadDeviceData();
-
-            }
-            Component.onDestruction: saveImageData()
-
-            function loadDeviceData() {
-                var db = Sql.LocalStorage.openDatabaseSync("MyDB", "1.0", "My model SQL", 50000);
-
-                //listDeviceDid.append({did:strID,account:strAcc,password:strPwd,ip:strIp,port:strPort});
-                db.transaction(
-                            function(tx) {
-                                // Create the database if it doesn't already exist
-                                tx.executeSql('CREATE TABLE IF NOT EXISTS DeviceInfoList(did TEXT, account TEXT,password TEXT, ip TEXT,port TEXT)');
-
-                                var rs = tx.executeSql('SELECT * FROM DeviceInfoList');
-                                var index = 0;
-                                if (rs.rows.length > 0) {
-                                    var index = 0;
-                                    while (index < rs.rows.length) {
-                                        var myItem = rs.rows.item(index);
-
-                                        addDevice(0,myItem.did,myItem.account,myItem.password,myItem.ip,myItem.port  )
-
-                                        index++;
-                                    }
-                                }
-                            }
-                            )
-            }
-
-            function saveImageData() {
-
-                var db = Sql.LocalStorage.openDatabaseSync("MyDB", "1.0", "My model SQL", 50000);
-
-
-                db.transaction(
-                            function(tx) {
-                                tx.executeSql('DROP TABLE DeviceInfoList');
-                                tx.executeSql('CREATE TABLE IF NOT EXISTS DeviceInfoList(did TEXT, account TEXT,password TEXT, ip TEXT,port TEXT)');
-                                var index = 0;
-
-
-                                while (index < listDeviceDid.count) {
-                                    var myItem = listDeviceDid.get(index);
-
-
-                                    console.debug(myItem.did +","+","+myItem.account+","+ myItem.password+","+myItem.ip+","+myItem.port)
-                                    tx.executeSql('INSERT INTO DeviceInfoList VALUES(?,?,?,?,?)', [myItem.did,myItem.account, myItem.password,myItem.ip,myItem.port]);
-                                    index++;
-                                }
-                            }
-                            )
-            }
-
-        }
 
         ListView{
             id:listDevice
-            width: deviceAdd.width -32
+            width: parent.width -32
             height: parent.height - 90
             anchors.top: searchDevice.bottom
             anchors.topMargin: 5
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: 1
-            currentIndex: listDeviceCurrentIndex
-            model: listDeviceDid
 
-            delegate: ListDeviceItem{
+            model: listdeviceInfo//listdeviceInfo// mArea: model.devicename
 
-                backColor: index === listDeviceCurrentIndex?"#000000":"transparent"
-                mDeviceID: did
-                mArea: did
+            delegate:Rectangle{
+                id:deviceItem
+                width: parent.width
+                height: 32
                 color: "transparent"
-                onDeleteClick: {
-
-                    listDeviceDid.remove(index)
-
-                    listDeviceDid.saveImageData();
-                    for(var i=0;i<listDeviceDataModel.count;i++){
-                        var curVideoItem = listDeviceDataModel.get(i);
-                        if(curVideoItem.did === str){
-                            curVideoItem.isCreateConnected = 0;
-                            return
-                        }
-                    }
+                Text {
+                    id: txtDevice
+                    anchors.left: parent.left
+                    anchors.leftMargin: 30
+                    anchors.verticalCenter: parent.verticalCenter
+                    color: listDevice.currentIndex === index?"#409EFF":"white"
+                    font.pixelSize: 12
+                    text: devicename
                 }
 
-                onDoubleClick: {
+                MouseArea{
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onEntered: deviceItem.color = Qt.rgba(0,0,0,87)
 
+                    onExited:  deviceItem.color = "transparent"
 
-                    if(modelDataCurrentIndex >= 0 && (index != listDeviceCurrentIndex)){
-
-                        var curVideoItem = listDeviceDataModel.get(modelDataCurrentIndex);
-
-                        if(curVideoItem.did === did){
-                            if(curVideoItem.isCreateConnected === 0)
-                                curVideoItem.isCreateConnected = 1;
-
-                        }else{
-                            curVideoItem.isCreateConnected = 0
-                            curVideoItem.did = did;
-                            curVideoItem.account = account
-                            curVideoItem.password = password
-                            curVideoItem.ip = ip
-                            curVideoItem.port = port
-                            curVideoItem.isCreateConnected = 1
-
-                        }
-                    }
+                    onClicked: listDevice.currentIndex = index
                 }
 
             }
         }
 
 
-        CloudControl{
-            id:rectCloudControl
-            width: parent.width
-            height: 280
-            anchors.bottom: parent.bottom
-            color: "transparent"
-        }
 
     }
 
 
     Rectangle{
-        id:vedioContent
+        id:rightContent
         anchors.left: leftContent.right
         anchors.top: parent.top
+
         width: parent.width - leftContent.width
         height: parent.height
-        color: "transparent"
-        VedioLayout{
-            id: vedioLayout
-            height: parent.height
-            width: parent.width;
 
-            myLayoutSquare:multiScreenNum
+        color: "#131415"
+        XVideo{
+            id:video
 
-            myModel: listDeviceDataModel
-            recordingFilePath1: recordingFilePath2
-            shotScreenFilePath1: shotScreenFilePath2
+            anchors.top: parent.top
+            width:parent.width
+            height: parent.height - videoControl.height-timeline.height
+            Rectangle{
+                id:screenBlack
+                anchors.fill: parent
 
-
-            Component.onCompleted: {
-                var listCount = listDeviceDataModel.count;
-                var needCount = multiScreenNum*multiScreenNum;
-
-
-                for(var i = listCount;i < needCount;i++){
-
-                    listDeviceDataModel.append({did:"",account:"",password:"",ip:"",port:"",isCreateConnected:0,isMax:0});
-
-                }
-
-            }
-
-            onS_click: {
-
-                modelDataCurrentIndex=clickIndex
-
-            }
-
-            onS_doubleClick: {
-
-                //console.debug("onS_doubleClick  " + multiScreenNum + "  "+premultiScreenNum + "  "+ismax)
-
-                if(ismax > 0 ){
-
-                    premultiScreenNum = multiScreenNum;
-                    s_multiScreenNumChange(1)
-
-                }else{
-
-                    multiScreenNum = premultiScreenNum
-                    s_multiScreenNumChange(premultiScreenNum)
-                }
-            }
-
-            onS1_authenticationFailue: {
-
-                for(var i=0;i<listDeviceDid.count;i++){
-
-
-                    if(listDeviceDid.get(i).did == str)
-                        listDeviceDid.remove(i)
-                }
-
+                color: "#3A3D41"
             }
 
         }
+        Rectangle{
+            id:videoControl
+            width: parent.width
+            height: 50
+            anchors.top:video.bottom
+            color: "#303030"
+        }
+        TimeLine{
+            id:timeline
+            width:parent.width
+            height:50
+
+            anchors.top:videoControl.bottom
+        }
+
+
+    }
+
+
+    MyCalendar{
+        id:calendar
+        width: 280
+        height: 314
+        dim:false
+        x:timeRect.x
+        y:timeRect.y+timeRect.height
+        onS_dayChange: getRecordInfo(2,value)
+
+        onS_mouthChange:getRecordInfo(1,value)
+
+        onS_yearChange: console.debug("onS_yearChange   "+value)
+
+
+
     }
 
     ListModel{
-        id:listDeviceDataModel
+        id:calendarEventModel
 
+        function getDateEvent(tmpData){
+
+            var dayNum = Qt.formatDate(tmpData,"dd")-1
+            //console.debug("getDateEvent:    "+dayNum + "  "+calendarEventModel.count+"  "+calendarEventModel.get(dayNum))
+
+
+            if(calendarEventModel.count == 0)
+                return "#191919"
+            if(calendarEventModel.get(dayNum)=== undefined)
+                return "#191919"
+
+            if(calendarEventModel.get(dayNum).type==="1")
+                return "#3A3D41";
+            else if(calendarEventModel.get(dayNum).type==="2")
+                return "#FFAA36"
+            else if(calendarEventModel.get(dayNum).type==="0")
+                return "#191919"
+
+            return "#191919"
+        }
     }
+    Connections{
+        target: devicemanagerment
+        onSignal_getrecordinginfo:{
 
 
 
-    function openDlgFilePath(){
-        myDlgfilePath.open();
-    }
+            if(smap.infoType==="hourInfo"){
 
-    function setMultiScreenNum(num){
+                //发送给时间轴渲染
+                timeline.setTimeWarn(smap);
 
-        multiScreenNum = num;
 
-        if(num > 1){
+            }else if(smap.infoType==="dayInfo"){
 
-            for(var i=0;i<listDeviceDataModel.count;i++){
 
-                if(listDeviceDataModel.get(i).isMax > 0){
-                    listDeviceDataModel.get(i).isMax = 0;
-                    break
+                var dayStr = Qt.formatDate(calendar.getCurrentData(),"yyyyMMdd");
+
+                var listRecord = smap.data;
+
+                for(var i=0;i<smap.data.length;i++){
+
+
+                    if(listRecord[i] !== "0"){
+                        var timeStr
+                        if(i <10)
+                            timeStr= dayStr + "0"+i+"0000";
+                        else
+                            timeStr= dayStr + i+"0000";
+
+                        getRecordInfo(3,timeStr)
+                    }
+
                 }
 
+
+
+            }
+            else if(smap.infoType==="mounthInfo"){
+
+                var listRecord = smap.data;
+                for(var i=0;i<listRecord.length;i++){
+                    calendarEventModel.append({type:listRecord[i]})
+                }
             }
 
+            calendarEventModel.append({});
+
         }
-        for(var i= listDeviceDataModel.count ; i<=multiScreenNum*multiScreenNum;i++)
-            listDeviceDataModel.append({did:"",account:"",password:"",ip:"",port:"",isCreateConnected:0,isMax:0});
     }
 
-    function addDevice(isCreateTcpConnect,strID,strAcc,strPwd,strIp,strPort){
 
-        if (strID == null || strID == undefined || strID == ""){
+    function getRecordInfo(type,date){
 
-            st_showToastMsg(qsTr("add failed!  did is null"))
-
-            return;
-        }
-        if (strAcc == null || strAcc == undefined || strAcc == ""){
-
-            st_showToastMsg(qsTr("add failed!  account is null"))
-            return;
-        }
-        if (strPwd == null || strPwd == undefined || strPwd == ""){
-
-            st_showToastMsg(qsTr("add failed!  password is null"))
-            return;
+        if(listdeviceInfo.get(listDevice.currentIndex)===undefined || listdeviceInfo.get(listDevice.currentIndex).devicename === undefined){
+            main.showToast("No device specified")
+            return
         }
 
-        if (strIp == null || strIp == undefined || strIp == ""){
 
-            st_showToastMsg(qsTr("add failed!   ip is null"))
-            return;
-        }
+        var name = listdeviceInfo.get(listDevice.currentIndex).devicename
 
-        if (strPort == null || strPort == undefined || strPort == ""){
 
-            st_showToastMsg(qsTr("add failed!  port is null"))
-            return;
-        }
+        console.debug("onS_mouthChange   "+type+"   "+date)
 
-        //同一DID 不继续添加
-        for(var i = 0;i<listDeviceDid.count;i++){
+        var map = {method:type,time:date,msgid:date}
 
-            if(listDeviceDid.get(i).did === strID){
-                st_showToastMsg(qsTr("add failed! The current did already exists"))
-                return;
-            }
-        }
+        calendarEventModel.clear();
+        devicemanagerment.funP2pSendData(name,"getrecordinginfo",map)
 
-        listDeviceDid.append({did:strID,account:strAcc,password:strPwd,ip:strIp,port:strPort});
-
-        listDeviceDid.saveImageData();
     }
 
-    function deleteDevice(tmpIndex){
-        listDeviceDataModel.get(tmpIndex).isCreateConnected = 0;
 
-    }
+
+
 }
 
 

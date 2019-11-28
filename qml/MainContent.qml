@@ -9,9 +9,7 @@ import "../qml/playbackVideo"
 import "../qml/deviceManager"
 Rectangle {
 
-    id: main;
-
-
+    id: maincontent;
 
     property bool fullscreen: false
     property bool isPress: false
@@ -25,12 +23,7 @@ Rectangle {
 
     property string toastStr: ""
 
-    property string versionstr: "V 1.1.1"
-
-
-
-
-
+    property string versionstr: "version: v1.1.1"
 
 
 
@@ -47,7 +40,6 @@ Rectangle {
         id:mTitleBar
         width: parent.width
         height: 60
-        versionStr:versionstr
         color: "black"
         onWinMin: winMin1()
 
@@ -64,9 +56,9 @@ Rectangle {
         id:homeMenu
         anchors.top: mTitleBar.bottom
         anchors.left: parent.left
-        color: "black"
+        color: "#00000000"
         width: parent.width
-        height: 40
+        height: 36
 
     }
 
@@ -78,7 +70,7 @@ Rectangle {
         anchors.left: parent.left
         width: parent.width
         height: parent.height - mTitleBar.height - homeMenu.height-mhomeStateBar.height
-        color: "black"
+        color: "#00000000"
 
 
         HomePage{
@@ -122,7 +114,19 @@ Rectangle {
         height:50
         anchors.top: mhomecontent.bottom
         color: "black"
+
+
+        Text {
+            id: txtversionstr
+            text: versionstr
+            color: "#B8B3BA"
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: parent.right
+            anchors.rightMargin: 40
+            font.pixelSize: 16
+        }
     }
+
 
 
 

@@ -137,7 +137,7 @@ QImage* FfmpegCodec::decodeVFrame(uint8_t *buff,int bufflen)
     m_AVPacket.data = buff;
     m_AVPacket.size = bufflen;
 
-    qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
+    //qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
 
 
     if( avcodec_send_packet(m_pVCodecCtx,&m_AVPacket) == 0)
@@ -167,7 +167,7 @@ QImage* FfmpegCodec::decodeVFrame(uint8_t *buff,int bufflen)
             }
 
 
-            qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
+           // qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
 
 
             if (mWidth !=  m_pVCodecCtx->width || m_pVCodecCtx->height!= mHeight){
@@ -190,17 +190,17 @@ QImage* FfmpegCodec::decodeVFrame(uint8_t *buff,int bufflen)
             sws_scale(m_pImg_convert_ctx, (const uint8_t* const*)m_pAVFrame->data, m_pAVFrame->linesize, 0, m_pVCodecCtx->height, m_pVFrameBGR->data, m_pVFrameBGR->linesize);
 
 
-             qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
+            // qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
             sws_scale(m_pImg_convert_ctx, (const uint8_t* const*)m_pAVFrame->data, m_pAVFrame->linesize, 0, m_pVCodecCtx->height, m_pVFrameBGR->data, m_pVFrameBGR->linesize);
 
-            qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
+            //qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
 
             QImage *pImage = nullptr;
             try {
 
                 pImage = new QImage((uchar*)m_pVoutBuffer, m_pVCodecCtx->width, m_pVCodecCtx->height, QImage::Format_RGB32);
 
-                qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
+               // qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
 
                 // 其它代码
             } catch ( const std::bad_alloc& e ) {

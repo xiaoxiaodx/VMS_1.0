@@ -7,7 +7,7 @@ Rectangle {
     Rectangle{
         id:rectHome
         width: 80
-        height: 40
+        height: 36
         anchors.left: parent.left
         anchors.leftMargin: 33
         color: tabbarBtn.curIndex>-1?"transparent":"#409EFF"

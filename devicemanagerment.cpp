@@ -46,9 +46,7 @@ void DeviceManagerment::funConnectP2pDevice(QString name, QString did, QString a
             connect(info->p2pWorker,&P2pWorker::signal_loginState,this,&DeviceManagerment::slot_recP2pLoginState);
             connect(info->p2pWorker,&P2pWorker::signal_p2pConnectState,this,&DeviceManagerment::slot_p2pConnetState);
 
-            //        connect(p2pWorker,&P2pWorker::signal_sendH264,this,&XVideo::slot_recH264,Qt::DirectConnection);
-            //        connect(p2pWorker,&P2pWorker::signal_sendPcmALaw,this,&XVideo::slot_recPcmALaw,Qt::DirectConnection);
-
+            connect(info->p2pWorker,&P2pWorker::signal_p2pReplyData,this,&DeviceManagerment::slot_recDataReply);
             connect(info->p2pWorker,&P2pWorker::signal_p2pErr,this,&DeviceManagerment::slot_p2pErr);
 
             emit info->signal_connectP2pDev(did,acc,pwd);
@@ -97,7 +95,23 @@ void DeviceManagerment::slot_recVedio(QString name ,char* h264Arr,int arrlen,qui
 
     QByteArray arr;
     arr.append(h264Arr,arrlen);
-    emit signal_p2pConnectCallVideoData(name,arr,arrlen);
+    emit signal_p2pCallbackVideoData(name,arr,arrlen);
+}
+void DeviceManagerment::slot_recDataReply(QString name,QVariant map)
+{
+
+    QString cmd = map.toMap().value("cmd").toString();
+
+    if(cmd.compare("getvideoencodeparam")==0)
+        emit signal_videoencodeparam(name ,map);
+    else if(cmd.compare("getaudioencodeparam")==0)
+        emit signal_audioencodeparam(name ,map);
+    else if(cmd.compare("getmotiondetectparam")==0)
+        emit signal_motiondetectparam(name ,map);
+    else if (cmd.compare("getptzpreset")==0)
+        emit signal_getptzpreset(name,map);
+    else if(cmd.compare("getrecordinginfo")==0)
+        emit signal_getrecordinginfo(name,map);
 }
 
 void DeviceManagerment::slot_p2pErr(QString did,QString str)
@@ -112,7 +126,7 @@ DeviceInfo* DeviceManagerment::findDeviceName(QString name)
     for(int i=0;i<m_listDeviceInfo.size();i++){
         DeviceInfo *info = m_listDeviceInfo.at(i);
 
-        qDebug()<<info->name()<<"   "   <<name;
+        //qDebug()<<info->name()<<"   "   <<name;
         if(info->name().compare(name)==0){
 
             return info;

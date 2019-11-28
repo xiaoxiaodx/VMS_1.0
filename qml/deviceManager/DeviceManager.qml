@@ -6,6 +6,9 @@ import "../simpleControl"
 Rectangle {
 
     color: "red"
+
+
+    property int curSelectIndex: -1
     Rectangle{
 
         id:rectLeft
@@ -145,15 +148,12 @@ Rectangle {
 
             model: listdeviceInfo
             onSDeviceConfig:{
-
+                curSelectIndex = configIndex
                 deviceconfig.open()
-
-
-                console.debug("qml:"+listdeviceInfo.count + "   "+configIndex)
-
-
-                var map;
-                devicemanagerment.funP2pSendData(listdeviceInfo.get(configIndex).devicename,"getVedio",map);
+                var map={};
+                devicemanagerment.funP2pSendData(listdeviceInfo.get(configIndex).devicename,"getvideoencodeparam",map);
+                devicemanagerment.funP2pSendData(listdeviceInfo.get(configIndex).devicename,"getaudioencodeparam",map);
+                devicemanagerment.funP2pSendData(listdeviceInfo.get(configIndex).devicename,"getmotiondetectparam",map);
             }
         }
 
@@ -173,8 +173,6 @@ Rectangle {
         id:deviceconfig
         width: 900
         height: 640
-
-
     }
 
 
@@ -190,5 +188,50 @@ Rectangle {
 
 
 
+    Connections{
+        target: devicemanagerment
+        onSignal_p2pConnectCallback: {
+            console.debug(name + "  **  "+ did + "  "+isSucc)
+
+            var objectDevice = devicemanagerment.findDeviceByName(name);
+            if(objectDevice === null){
+                listdeviceInfo.append({
+                                          devicename:name,
+                                          devicedid:did,
+                                          acc:acc,
+                                          pwd:pwd,
+                                          onlinestate:isSucc,
+                                          devicetype:"undefine",
+                                          showVidoIndex:-1,
+
+                                          videoChn:0,
+                                          videoStreamid:0,
+                                          videoFramerate:0,
+                                          videoBitRate:0,
+                                          videoQuality:0,
+                                          videoCvbrmode:0,
+                                          videoGop:0,
+                                          videoEncodetype:0,
+                                          videoEncodestyle:0,
+                                          videoResolution:0,
+
+                                          audioEnable:0,
+                                          audioEncodetype:0,
+                                          audioBitrate:0,
+                                          audioSamplerate:0,
+
+                                          motionDetectionEnabled:0,
+                                          motionDetectionSensitive:0,
+                                          motionDetectionTimenabled:0,
+                                          motionDetectionStarttime:0,
+                                          motionDetectionEndtime:0,
+                                      });
+            }else
+                objectDevice.onlinestate = isSucc
+
+        }
+
+
+    }
 
 }

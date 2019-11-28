@@ -202,7 +202,7 @@ Rectangle {
 
         if(screenBlack.visible)
             screenBlack.visible = !screenBlack.visible
-        console.debug("recVedio***264***");
+
         video.funSendVideoData(h264,len)
     }
 

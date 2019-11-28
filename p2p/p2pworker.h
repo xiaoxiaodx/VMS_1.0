@@ -37,10 +37,11 @@ public:
 
     void p2pSendData(QString cmd,QVariant map);
 
+
     void test();
     QString m_name;
 signals:
-
+    void signal_p2pReplyData(QString name,QVariant map);
 
     void signal_sendH264(QString name ,char* vH264Arr,int arrLen,long long pts);
     void signal_sendPcmALaw(char* PcmALawArr,int arrLen,long long pts);

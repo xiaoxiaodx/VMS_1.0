@@ -145,5 +145,15 @@
         <file>images/wMax_enter.png</file>
         <file>images/wMin.png</file>
         <file>images/wMin_enter.png</file>
+        <file>qml/playbackVideo/MyCalendar.qml</file>
+        <file>images/mouthnext.png</file>
+        <file>images/mouthnext_p.png</file>
+        <file>images/mouthpre.png</file>
+        <file>images/mouthpre_p.png</file>
+        <file>images/yearnext.png</file>
+        <file>images/yearnext_p.png</file>
+        <file>images/yearpre.png</file>
+        <file>images/yearpre_p.png</file>
+        <file>qml/simpleControl/MyTextInput.qml</file>
     </qresource>
 </RCC>

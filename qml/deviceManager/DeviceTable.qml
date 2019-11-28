@@ -9,17 +9,6 @@ TableView {
     verticalScrollBarPolicy: Qt.ScrollBarAlwaysOff
     signal sDeviceConfig(var configIndex)
 
-//    model:ListModel{
-//        id:listModel
-//        ListElement{
-//            devicename:qsTr("zhangsan")
-//            devicedid:18
-//            devicetype:qsTr("hello14565")
-//            networkstatus:"online"
-//        }
-//    }
-
-
     Component{
         id:itemDelegateText
         Text {
@@ -87,7 +76,12 @@ TableView {
 
             MouseArea{
                 anchors.fill: parent
-                onClicked: sDeviceConfig(styleData.row);
+                onClicked: {
+
+
+                    sDeviceConfig(styleData.row );
+
+                }
             }
 
         }

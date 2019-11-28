@@ -65,7 +65,7 @@ Rectangle{
 
     SequentialAnimation on opacity {
         NumberAnimation {to: 1; easing.type: Easing.InQuad; duration: 500}
-        PauseAnimation { duration: 1000}
+        PauseAnimation { duration: 2000}
         NumberAnimation { to: 0; easing.type: Easing.InQuad; duration: 500}
     }
 }

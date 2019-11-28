@@ -41,15 +41,14 @@ Rectangle {
                 text: qsTr("sensitivity:")
             }
 
-            MyComBox{
-                id:sensitivity
+            Text {
+                id: sensitivity
                 width: 184
                 height: 34
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                itemColorHoverd: "#191919"
-                font.pixelSize: 15
-                model: channelModel
+                color: "white"
+
             }
 
         }
@@ -70,15 +69,14 @@ Rectangle {
                 text: qsTr("time:")
             }
 
-            MyComBox{
-                id:time
+            Text {
+                id: time
                 width: 184
                 height: 34
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                itemColorHoverd: "#191919"
-                font.pixelSize: 15
-                model: frameRatelModel
+                color: "white"
+
             }
 
         }
@@ -112,15 +110,14 @@ Rectangle {
                 text: qsTr("startTime:")
             }
 
-            MyComBox{
-                id:startTime
+            Text {
+                id: startTime
                 width: 184
                 height: 34
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                itemColorHoverd: "#191919"
-                font.pixelSize: 15
-                model: channelModel
+                color: "white"
+
             }
 
         }
@@ -141,15 +138,14 @@ Rectangle {
                 text: qsTr("endTime:")
             }
 
-            MyComBox{
+            Text {
                 id:endTime
                 width: 184
                 height: 34
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                itemColorHoverd: "#191919"
-                font.pixelSize: 15
-                model: frameRatelModel
+                color: "white"
+
             }
 
         }
@@ -159,5 +155,28 @@ Rectangle {
     }
 
 
+    Connections{
+            target: devicemanagerment;
+
+//            objectDevice.motionDetectionEnabled = smap.enabled
+//            objectDevice.motionDetectionSensitive = smap.sensitive
+//            objectDevice.motionDetectionTimenabled = smap.enabled
+//            objectDevice.motionDetectionStarttime = smap.starttime
+//            objectDevice.motionDetectionEndtime = smap.endtime
+
+            onSignal_motiondetectparam: {
+                sensitivity.text = smap.sensitive
+                startTime.text = smap.starttime
+                endTime.text = smap.endtime
+
+
+                 var objectDevice = listdeviceInfo.get(curSelectIndex)
+                objectDevice.motionDetectionEnabled = smap.enabled
+                objectDevice.motionDetectionSensitive = smap.sensitive
+                objectDevice.motionDetectionTimenabled = smap.enabled
+                objectDevice.motionDetectionStarttime = smap.starttime
+                objectDevice.motionDetectionEndtime = smap.endtime
+            }
+        }
 
 }

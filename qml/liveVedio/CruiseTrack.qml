@@ -5,15 +5,20 @@ Rectangle {
 
 
 
+    signal click_addTrack();
+    signal click_removeTrack(var trackIndex);
+    signal click_playTrack(var trackIndex)
+    signal click_stopTrack(var trackIndex)
 
-    signal trackSet();
+
+    signal trackSet(var trackIndex);
     ListView{
         id:listcruisetrack
         width: parent.width
         height: parent.height - cruiseBottom.height-12
         anchors.top: parent.top
         anchors.topMargin: 12
-        model: [1,2,3]
+        model: cruisetrackModel
         delegate: Rectangle{
 
 
@@ -27,7 +32,7 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.leftMargin: 30
                 anchors.verticalCenter: parent.verticalCenter
-                text: qsTr("text")
+                text: trackName
 
             }
 
@@ -44,7 +49,7 @@ Rectangle {
                 imgSoursePress:"qrc:/images/cruise_playP.png"
                 imgSourseHover: imgSourseNormal
 
-
+                onClick: click_playTrack(index)
             }
 
             QmlImageButton{
@@ -58,7 +63,7 @@ Rectangle {
                 imgSoursePress:"qrc:/images/cruise_stopP.png"
                 imgSourseHover: imgSourseNormal
 
-
+                onClick: click_stopTrack(index)
             }
 
             QmlImageButton{
@@ -72,7 +77,7 @@ Rectangle {
                 imgSoursePress:"qrc:/images/cruise_setP.png"
                 imgSourseHover: imgSourseNormal
 
-                onClick: trackSet()
+                onClick: trackSet(index)
             }
 
             QmlImageButton{
@@ -85,6 +90,7 @@ Rectangle {
                 imgSourseNormal:"qrc:/images/cruise_delete.png"
                 imgSoursePress:"qrc:/images/cruise_deleteP.png"
                 imgSourseHover: imgSourseNormal
+                onClick: click_removeTrack(index)
 
             }
 
@@ -110,23 +116,24 @@ Rectangle {
             width: 20
             height: 20
             anchors.verticalCenter: parent.verticalCenter
-            anchors.right: imgRemove.left
+            anchors.right: parent.right
             anchors.rightMargin: 20
             imgSourseNormal: "qrc:/images/cruise_presetPlus.png"
             imgSoursePress:"qrc:/images/cruise_presetAddPlusP.png"
             imgSourseHover: imgSourseNormal
+            onClick: click_addTrack()
         }
-        QmlImageButton{
-            id:imgRemove
-            width: 20
-            height: 20
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.right: parent.right
-            anchors.rightMargin: 20
-            imgSourseNormal:"qrc:/images/cruise_presetLess.png"
-            imgSourseHover: imgSourseNormal
-            imgSoursePress:"qrc:/images/cruise_presetLessP.png"
-        }
+//        QmlImageButton{
+//            id:imgRemove
+//            width: 20
+//            height: 20
+//            anchors.verticalCenter: parent.verticalCenter
+//            anchors.right: parent.right
+//            anchors.rightMargin: 20
+//            imgSourseNormal:"qrc:/images/cruise_presetLess.png"
+//            imgSourseHover: imgSourseNormal
+//            imgSoursePress:"qrc:/images/cruise_presetLessP.png"
+//        }
 
     }
 }

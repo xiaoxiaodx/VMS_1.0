@@ -6,7 +6,7 @@
 #include "qmllanguage.h"
 #include "ccrashstack.h"
 #include "devicemanagerment.h"
-
+#include "Timeline.h"
 #include <QFile>
 #include <QFont>
 
@@ -67,6 +67,7 @@ int main(int argc, char *argv[])
     // XVideo 为QPaint显示视频(光栅绘图)
     qmlRegisterType<XVideo>("XVideo", 1, 0, "XVideo");
     qmlRegisterType<DeviceManagerment>("DeviceManagerment", 1, 0, "DeviceManagerment");
+    qmlRegisterType<TimeLine>("TimeLine", 1, 0, "TimeLine");
 
 
 //    qmlRegisterType<TcpWorker>("TcpWorker", 1, 0, "TcpWorker");

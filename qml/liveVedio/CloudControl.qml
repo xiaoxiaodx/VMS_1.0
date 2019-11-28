@@ -4,10 +4,14 @@ Rectangle{
 
 
 
-    signal sMoveLeft();
-    signal sMoveRight();
-    signal sMoveUp();
-    signal sMoveDown();
+    signal sMoveLeftPressed();
+    signal sMoveLeftReleased();
+    signal sMoveRightPressed();
+    signal sMoveRightReleased();
+    signal sMoveUpPressed();
+    signal sMoveUpReleased();
+    signal sMoveDownPressed();
+    signal sMoveDownReleased();
     Rectangle{
         id:rectCloudControlHead
         color: "transparent"
@@ -73,9 +77,16 @@ Rectangle{
             }
             MouseArea{
                 anchors.fill: parent
-                onPressed:imgT.source = "qrc:/images/controlT_press.png"
-                onReleased: imgT.source = "qrc:/images/controlT.png"
-                onClicked: sMoveUp
+                onPressed:
+                {
+                    imgT.source = "qrc:/images/controlT_press.png"
+                    sMoveUpPressed()
+                }
+                onReleased: {
+                    imgT.source = "qrc:/images/controlT.png"
+                    sMoveUpReleased()
+                }
+
             }
         }
         Rectangle{
@@ -91,11 +102,16 @@ Rectangle{
             }
             MouseArea{
                 anchors.fill: parent
-                onPressed:imgB.source = "qrc:/images/controlB_press.png"
-                onReleased: imgB.source = "qrc:/images/controlB.png"
-                onClicked: sMoveDown()
-            }
+                onPressed:{
 
+                    imgB.source = "qrc:/images/controlB_press.png";
+                    sMoveDownPressed()
+                }
+                onReleased: {
+                    sMoveDownReleased()
+                    imgB.source = "qrc:/images/controlB.png"
+                }
+            }
         }
         Rectangle{
             id:btnL
@@ -110,12 +126,15 @@ Rectangle{
             }
             MouseArea{
                 anchors.fill: parent
-
-                onPressed:imgL.source = "qrc:/images/controlL_press.png"
-                onReleased: imgL.source = "qrc:/images/controlL.png"
-
-                onClicked: sMoveLeft()
-
+                onPressed:{
+                    imgL.source = "qrc:/images/controlL_press.png"
+                    sMoveLeftPressed()
+                }
+                onReleased:
+                {
+                    imgL.source = "qrc:/images/controlL.png"
+                    sMoveLeftReleased()
+                }
             }
         }
         Rectangle{
@@ -131,9 +150,15 @@ Rectangle{
             }
             MouseArea{
                 anchors.fill: parent
-                onPressed:imgR.source = "qrc:/images/controlR_press.png"
-                onReleased: imgR.source = "qrc:/images/controlR.png"
-                onClicked: sMoveRight()
+                onPressed:{
+                    sMoveRightPressed()
+                    imgR.source = "qrc:/images/controlR_press.png"
+                }
+                onReleased: {
+                    sMoveRightReleased()
+                    imgR.source = "qrc:/images/controlR.png"
+                }
+
             }
         }
 

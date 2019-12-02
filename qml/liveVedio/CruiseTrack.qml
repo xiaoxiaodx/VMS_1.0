@@ -1,6 +1,8 @@
 import QtQuick 2.0
-import "../simpleControl"
+import QtQuick.Controls 1.4
+import QtQuick.Controls.Styles 1.4
 
+import "../simpleControl"
 Rectangle {
 
 
@@ -19,21 +21,56 @@ Rectangle {
         anchors.top: parent.top
         anchors.topMargin: 12
         model: cruisetrackModel
+        z:0
         delegate: Rectangle{
 
 
             color: "transparent"
             width: parent.width
             height: 32
-            Text {
-                id: name
-                font.pixelSize: 12
-                color: "white"
+
+
+
+            TextField{
+                id:txtfieldname
+                property bool isTextChange: false
+                width: 250
+                height: 24
                 anchors.left: parent.left
                 anchors.leftMargin: 30
                 anchors.verticalCenter: parent.verticalCenter
+                cursorPosition:10
+                activeFocusOnPress: false
+                font.pixelSize: 12
                 text: trackName
+                style:TextFieldStyle {
+                    textColor: "white"
+                    background: Rectangle {
+                        color: "transparent"
+                        implicitWidth: 100
+                        implicitHeight: 24
+                        radius: 4
+                    }
+                }
 
+                onEditingFinished: {
+                    console.debug("onEditingFinished    "+trackName +"    "+ text);
+
+                    if(isTextChange){
+                        isTextChange = false;
+                    }
+                    txtfieldname.focus = false
+                }
+                onTextChanged: isTextChange = true
+
+                MouseArea{
+                    anchors.fill: parent
+                    onPressed: {
+                        txtfieldname.forceActiveFocus()
+                        mouse.accepted = false
+                    }
+                    onReleased: mouse.accepted = true
+                }
             }
 
 
@@ -102,14 +139,14 @@ Rectangle {
         width: parent.width
         height: 31
         anchors.top: listcruisetrack.bottom
-        color: "transparent"
-
-         Rectangle{
+        color: "#272727"
+        z:1
+        Rectangle{
             width: parent.width
             height: 1
             color: "black"
             anchors.top: parent.top
-         }
+        }
 
         QmlImageButton {
             id: imgAdd
@@ -123,17 +160,17 @@ Rectangle {
             imgSourseHover: imgSourseNormal
             onClick: click_addTrack()
         }
-//        QmlImageButton{
-//            id:imgRemove
-//            width: 20
-//            height: 20
-//            anchors.verticalCenter: parent.verticalCenter
-//            anchors.right: parent.right
-//            anchors.rightMargin: 20
-//            imgSourseNormal:"qrc:/images/cruise_presetLess.png"
-//            imgSourseHover: imgSourseNormal
-//            imgSoursePress:"qrc:/images/cruise_presetLessP.png"
-//        }
+        //        QmlImageButton{
+        //            id:imgRemove
+        //            width: 20
+        //            height: 20
+        //            anchors.verticalCenter: parent.verticalCenter
+        //            anchors.right: parent.right
+        //            anchors.rightMargin: 20
+        //            imgSourseNormal:"qrc:/images/cruise_presetLess.png"
+        //            imgSourseHover: imgSourseNormal
+        //            imgSoursePress:"qrc:/images/cruise_presetLessP.png"
+        //        }
 
     }
 }

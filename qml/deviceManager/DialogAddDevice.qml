@@ -124,6 +124,7 @@ Popup {
                     placeholderText: qsTr("enter name")
                     text:"hello"//"113.247.22.69"//"218.76.52.29"//
                     font.pixelSize: 16
+                     activeFocusOnPress: false
                     style:TextFieldStyle {
                         textColor: "#ffffff"
                         background: Rectangle {
@@ -132,6 +133,14 @@ Popup {
                             implicitHeight: 24
                             radius: 4
                         }
+                    }
+                    MouseArea{
+                        anchors.fill: parent
+                        onPressed: {
+                            input4.forceActiveFocus()
+                            mouse.accepted = false
+                        }
+                        onReleased: mouse.accepted = true
                     }
                 }
             }
@@ -168,6 +177,7 @@ Popup {
                     //validator: RegExpValidator { regExp: /[0-9A-F-]+/ }
                     font.pixelSize: 16
                     text:"INEW-003882-RHHFR"
+                    activeFocusOnPress: false
                     style:TextFieldStyle {
                         textColor: "#ffffff"
                         background: Rectangle {
@@ -176,6 +186,14 @@ Popup {
                             implicitHeight: 24
                             radius: 4
                         }
+                    }
+                    MouseArea{
+                        anchors.fill: parent
+                        onPressed: {
+                            input1.forceActiveFocus()
+                            mouse.accepted = false
+                        }
+                        onReleased: mouse.accepted = true
                     }
                     //inputMask: "AAAA-000000-AAAAA"
                 }
@@ -212,6 +230,7 @@ Popup {
                     placeholderText: qsTr("input account")
                     text:"admin"
                     font.pixelSize: 16
+                    activeFocusOnPress: false
                     style:TextFieldStyle {
                         textColor: "#ffffff"
                         background: Rectangle {
@@ -221,6 +240,14 @@ Popup {
                             radius: 4
                         }
                     }
+                }
+                MouseArea{
+                    anchors.fill: parent
+                    onPressed: {
+                        input2.forceActiveFocus()
+                        mouse.accepted = false
+                    }
+                    onReleased: mouse.accepted = true
                 }
             }
             Rectangle{
@@ -253,6 +280,7 @@ Popup {
                     anchors.right: parent.right
                     anchors.rightMargin: 118
                     placeholderText: qsTr("input password")
+                    activeFocusOnPress: false
                     text:"admin"
                     font.pixelSize: 16
                     style:TextFieldStyle {
@@ -266,6 +294,14 @@ Popup {
                         }
                     }
 
+                }
+                MouseArea{
+                    anchors.fill: parent
+                    onPressed: {
+                        input3.forceActiveFocus()
+                        mouse.accepted = false
+                    }
+                    onReleased: mouse.accepted = true
                 }
             }
         }

@@ -84,10 +84,8 @@ Rectangle{
                 anchors.left: imgSearch.right
                 anchors.leftMargin: 2
                 anchors.verticalCenter: parent.verticalCenter
-
-                verticalAlignment: Text.AlignVCenter
-                horizontalAlignment: Text.AlignLeft
                 cursorPosition:10
+                activeFocusOnPress: false
                 font.pixelSize: 14
                 placeholderText:qsTr("search device id")
                 style:TextFieldStyle {
@@ -99,61 +97,70 @@ Rectangle{
                         radius: 4
                     }
                 }
+
+                MouseArea{
+                    anchors.fill: parent
+                    onPressed: {
+                        inputSearch.forceActiveFocus()
+                        mouse.accepted = false
+                    }
+                    onReleased: mouse.accepted = true
+                }
             }
 
         }
 
-//        ListModel{
-//            id:listDeviceDid
+        //        ListModel{
+        //            id:listDeviceDid
 
-//            Component.onCompleted: {
+        //            Component.onCompleted: {
 
-//                loadDeviceData();
+        //                loadDeviceData();
 
-//            }
-//            Component.onDestruction: saveImageData()
+        //            }
+        //            Component.onDestruction: saveImageData()
 
-//            function loadDeviceData() {
-//                var db = Sql.LocalStorage.openDatabaseSync("MyDB", "1.0", "My model SQL", 50000);
+        //            function loadDeviceData() {
+        //                var db = Sql.LocalStorage.openDatabaseSync("MyDB", "1.0", "My model SQL", 50000);
 
-//                //listDeviceDid.append({did:strID,account:strAcc,password:strPwd,ip:strIp,port:strPort});
-//                db.transaction(
-//                            function(tx) {
-//                                // Create the database if it doesn't already exist
-//                                tx.executeSql('CREATE TABLE IF NOT EXISTS DeviceInfoList(did TEXT, account TEXT,password TEXT, ip TEXT,port TEXT)');
+        //                //listDeviceDid.append({did:strID,account:strAcc,password:strPwd,ip:strIp,port:strPort});
+        //                db.transaction(
+        //                            function(tx) {
+        //                                // Create the database if it doesn't already exist
+        //                                tx.executeSql('CREATE TABLE IF NOT EXISTS DeviceInfoList(did TEXT, account TEXT,password TEXT, ip TEXT,port TEXT)');
 
-//                                var rs = tx.executeSql('SELECT * FROM DeviceInfoList');
-//                                var index = 0;
-//                                if (rs.rows.length > 0) {
-//                                    var index = 0;
-//                                    while (index < rs.rows.length) {
-//                                        var myItem = rs.rows.item(index);
+        //                                var rs = tx.executeSql('SELECT * FROM DeviceInfoList');
+        //                                var index = 0;
+        //                                if (rs.rows.length > 0) {
+        //                                    var index = 0;
+        //                                    while (index < rs.rows.length) {
+        //                                        var myItem = rs.rows.item(index);
 
-//                                        addDevice(0,myItem.did,myItem.account,myItem.password,myItem.ip,myItem.port  )
+        //                                        addDevice(0,myItem.did,myItem.account,myItem.password,myItem.ip,myItem.port  )
 
-//                                        index++;
-//                                    }
-//                                }
-//                            }
-//                            )
-//            }
-//            function saveImageData() {
-//                var db = Sql.LocalStorage.openDatabaseSync("MyDB", "1.0", "My model SQL", 50000);
-//                db.transaction(
-//                            function(tx) {
-//                                tx.executeSql('DROP TABLE DeviceInfoList');
-//                                tx.executeSql('CREATE TABLE IF NOT EXISTS DeviceInfoList(did TEXT, account TEXT,password TEXT, ip TEXT,port TEXT)');
-//                                var index = 0;
-//                                while (index < listDeviceDid.count) {
-//                                    var myItem = listDeviceDid.get(index);
-//                                    console.debug(myItem.did +","+","+myItem.account+","+ myItem.password+","+myItem.ip+","+myItem.port)
-//                                    tx.executeSql('INSERT INTO DeviceInfoList VALUES(?,?,?,?,?)', [myItem.did,myItem.account, myItem.password,myItem.ip,myItem.port]);
-//                                    index++;
-//                                }
-//                            }
-//                            )
-//            }
-//        }
+        //                                        index++;
+        //                                    }
+        //                                }
+        //                            }
+        //                            )
+        //            }
+        //            function saveImageData() {
+        //                var db = Sql.LocalStorage.openDatabaseSync("MyDB", "1.0", "My model SQL", 50000);
+        //                db.transaction(
+        //                            function(tx) {
+        //                                tx.executeSql('DROP TABLE DeviceInfoList');
+        //                                tx.executeSql('CREATE TABLE IF NOT EXISTS DeviceInfoList(did TEXT, account TEXT,password TEXT, ip TEXT,port TEXT)');
+        //                                var index = 0;
+        //                                while (index < listDeviceDid.count) {
+        //                                    var myItem = listDeviceDid.get(index);
+        //                                    console.debug(myItem.did +","+","+myItem.account+","+ myItem.password+","+myItem.ip+","+myItem.port)
+        //                                    tx.executeSql('INSERT INTO DeviceInfoList VALUES(?,?,?,?,?)', [myItem.did,myItem.account, myItem.password,myItem.ip,myItem.port]);
+        //                                    index++;
+        //                                }
+        //                            }
+        //                            )
+        //            }
+        //        }
 
         ListView{
             id:listDevice
@@ -188,10 +195,9 @@ Rectangle{
 
                 onDoubleClick: {
 
-
                     console.debug("qml:"+listdeviceInfo.count + "   "+index)
 
-                    listdeviceInfo.get(index).showVidoIndex = modelDataCurrentIndex;
+                    listDeviceDataModel.get(modelDataCurrentIndex).deviceName = model.devicename
 
                     var map;
                     devicemanagerment.funP2pSendData(listdeviceInfo.get(index).devicename,"getVedio",map);
@@ -208,88 +214,77 @@ Rectangle{
             id:rectCloudControl
             width: parent.width
             height: 280
-            anchors.bottom: cruiseControl.top
-            color: "transparent"
+            z:1
+            //y:parent.height - rectCloudControl.height
+            color: "#272727"
+            onSMoveUpPressed:       sendCloudConrol("continuemove","up");
+            onSMoveUpReleased:      sendCloudConrol("stop","up");
+            onSMoveDownPressed:     sendCloudConrol("continuemove","down");
+            onSMoveDownReleased:    sendCloudConrol("stop","down");
+            onSMoveLeftPressed:     sendCloudConrol("continuemove","left");
+            onSMoveLeftReleased:    sendCloudConrol("stop","left");
+            onSMoveRightPressed:    sendCloudConrol("continuemove","right");
+            onSMoveRightReleased:   sendCloudConrol("stop","right");
 
-            onSMoveUpPressed: {
-                if(modelDataCurrentIndex > -1){
 
-                    var map={ movecmd:"continuemove",direction:"up",speedx:200,speedy:0,speedz:0,posx:0,posy:0,posz:0}
-                    devicemanagerment.funP2pSendData(listdeviceInfo.get(modelDataCurrentIndex).devicename,"setptzmove",map)
-                }else
-                    showToast(qsTr("Unspecified device"))
-            }
-            onSMoveUpReleased: {
 
-                if(modelDataCurrentIndex > -1){
+            Rectangle{
+                id:rectCruiseControlShow
+                width: 100
+                height: 10
+                color: "#3A3D41"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottom: parent.bottom
+                radius: 5
+                Image {
+                    id: imgcruisecontrol
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    source: "qrc:/images/cruiseControl_up.png"
+                }
+                MouseArea{
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onClicked: {
+                        if(leftContent.state === "show"){
+                            imgcruisecontrol.source = "qrc:/images/cruiseControl_up.png"
+                            leftContent.state = "hide"
+                        }else{
+                            leftContent.state = "show"
+                            imgcruisecontrol.source = "qrc:/images/cruiseControl_down.png"
+                        }
+                    }
 
-                    var map={ movecmd:"stop",direction:"up",speedx:200,speedy:0,speedz:0,posx:0,posy:0,posz:0}
-                    devicemanagerment.funP2pSendData(listdeviceInfo.get(modelDataCurrentIndex).devicename,"setptzmove",map)
+                    onEntered: rectCruiseControlShow.color = "#888888"
+                    onExited: rectCruiseControlShow.color = "#3A3D41"
 
                 }
             }
+        }
 
-            onSMoveDownPressed: {
-                if(modelDataCurrentIndex > -1){
-
-                    var map={ movecmd:"continuemove",direction:"down",speedx:200,speedy:0,speedz:0,posx:0,posy:0,posz:0}
-                    devicemanagerment.funP2pSendData(listdeviceInfo.get(modelDataCurrentIndex).devicename,"setptzmove",map)
-                }else
-                    showToast(qsTr("Unspecified device"))
+        states: [
+            State {
+                name: "show"; PropertyChanges { target: rectCloudControl; y: parent.height - rectCloudControl.height - cruiseControl.height;}
+            },
+            // 将PageA的属性y赋值为-height，opaticy赋值为0以实现窗口向上移动并消失的效果
+            State {
+                name: "hide"; PropertyChanges { target: rectCloudControl; y: parent.height - rectCloudControl.height;}
             }
-            onSMoveDownReleased: {
-                if(modelDataCurrentIndex > -1){
+        ]
 
-                    var map={ movecmd:"stop",direction:"down",speedx:200,speedy:0,speedz:0,posx:0,posy:0,posz:0}
-                    devicemanagerment.funP2pSendData(listdeviceInfo.get(modelDataCurrentIndex).devicename,"setptzmove",map)
+        state: "hide"
 
-                }
-            }
-            onSMoveLeftPressed: {
-                if(modelDataCurrentIndex > -1){
-
-                    var map={ movecmd:"continuemove",direction:"left",speedx:200,speedy:0,speedz:0,posx:0,posy:0,posz:0}
-                    devicemanagerment.funP2pSendData(listdeviceInfo.get(modelDataCurrentIndex).devicename,"setptzmove",map)
-                }else
-                    showToast(qsTr("Unspecified device"))
-            }
-            onSMoveLeftReleased: {
-                if(modelDataCurrentIndex > -1){
-
-                    var map={ movecmd:"stop",direction:"left",speedx:200,speedy:0,speedz:0,posx:0,posy:0,posz:0}
-                    devicemanagerment.funP2pSendData(listdeviceInfo.get(modelDataCurrentIndex).devicename,"setptzmove",map)
-
-                }
-            }
-            onSMoveRightPressed: {
-                if(modelDataCurrentIndex > -1){
-
-                    var map={ movecmd:"continuemove",direction:"right",speedx:200,speedy:0,speedz:0,posx:0,posy:0,posz:0}
-                    console.debug("modelDataCurrentIndex    "+modelDataCurrentIndex+"   listdeviceInfo.count:"+listdeviceInfo.count)
-
-                    devicemanagerment.funP2pSendData(listdeviceInfo.get(modelDataCurrentIndex).devicename,"setptzmove",map)
-                }else
-                    showToast(qsTr("Unspecified device"))
-            }
-            onSMoveRightReleased: {
-                if(modelDataCurrentIndex > -1){
-
-                    var map={movecmd:"stop",direction:"right",speedx:200,speedy:0,speedz:0,posx:0,posy:0,posz:0}
-                    devicemanagerment.funP2pSendData(listdeviceInfo.get(modelDataCurrentIndex).devicename,"setptzmove",map)
-
-                }
-            }
-
-
+        transitions: Transition {
+            PropertyAnimation { properties: "y"; duration: 500; easing.type: Easing.InOutBack }
         }
 
 
         CruiseControl{
             id:cruiseControl
-
+            z:1
             width: parent.width
             height: 277
-            anchors.bottom: parent.bottom
+            anchors.top: rectCloudControl.bottom
             color: "transparent"
 
         }
@@ -323,7 +318,7 @@ Rectangle{
 
                 for(var i = listCount;i < needCount;i++){
 
-                    listDeviceDataModel.append({did:"",account:"",password:"",ip:"",port:"",isCreateConnected:0,isMax:0});
+                    listDeviceDataModel.append({did:"",account:"",password:"",ip:"",port:"",isCreateConnected:0,isMax:0,deviceName:""});
 
                 }
 
@@ -386,17 +381,10 @@ Rectangle{
     }
 
 
-    function dispatchVedio(pos1,buff1,len1)
-    {
-
-        vedioLayout.dispatchVedioData(pos1,buff1,len1);
-
-    }
 
 
-    function openDlgFilePath(){
-        myDlgfilePath.open();
-    }
+
+
 
     function setMultiScreenNum(num){
 
@@ -418,56 +406,17 @@ Rectangle{
             listDeviceDataModel.append({did:"",account:"",password:"",ip:"",port:"",isCreateConnected:0,isMax:0});
     }
 
-    function addDevice(isCreateTcpConnect,strID,strAcc,strPwd,strIp,strPort){
 
-        if (strID == null || strID == undefined || strID == ""){
+    function sendCloudConrol(startStr,direction){
 
-            st_showToastMsg(qsTr("add failed!  did is null"))
+        //console.debug("sendCloudConrol  " + listDeviceDataModel.get(modelDataCurrentIndex).deviceName)
+        if(modelDataCurrentIndex > -1){
+            var map={movecmd:startStr,direction:direction,speedx:200,speedy:0,speedz:0,posx:0,posy:0,posz:0}
+            devicemanagerment.funP2pSendData(listDeviceDataModel.get(modelDataCurrentIndex).deviceName,"setptzmove",map)
 
-            return;
-        }
-        if (strAcc == null || strAcc == undefined || strAcc == ""){
-
-            st_showToastMsg(qsTr("add failed!  account is null"))
-            return;
-        }
-        if (strPwd == null || strPwd == undefined || strPwd == ""){
-
-            st_showToastMsg(qsTr("add failed!  password is null"))
-            return;
-        }
-
-        if (strIp == null || strIp == undefined || strIp == ""){
-
-            st_showToastMsg(qsTr("add failed!   ip is null"))
-            return;
-        }
-
-        if (strPort == null || strPort == undefined || strPort == ""){
-
-            st_showToastMsg(qsTr("add failed!  port is null"))
-            return;
-        }
-
-        //同一DID 不继续添加
-        for(var i = 0;i<listDeviceDid.count;i++){
-
-            if(listDeviceDid.get(i).did === strID){
-                st_showToastMsg(qsTr("add failed! The current did already exists"))
-                return;
-            }
-        }
-
-        listDeviceDid.append({did:strID,account:strAcc,password:strPwd,ip:strIp,port:strPort});
-
-        listDeviceDid.saveImageData();
+        }else
+            showToast(qsTr("Unspecified device"))
     }
-
-    function deleteDevice(tmpIndex){
-        listDeviceDataModel.get(tmpIndex).isCreateConnected = 0;
-
-    }
-
 
 
 }

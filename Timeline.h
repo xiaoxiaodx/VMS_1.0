@@ -9,6 +9,8 @@
 #include <QPolygon>
 #include <QTimer>
 
+
+#define DAYSECONDS 86400
 class TimeLine : public QQuickPaintedItem
 {
     Q_OBJECT
@@ -16,15 +18,15 @@ public:
     TimeLine();
 
 
-
     Q_INVOKABLE void setTimeWarn(QVariant timeInfo);
 
 
+
+signals:
+    void midValueChange(QString value);
+
 protected:
     void paint(QPainter *painter);
-
-
-
     void mousePressEvent(QMouseEvent* event);
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
@@ -32,13 +34,14 @@ protected:
 
 
     virtual void drawAxis(QPainter *painter);
-    virtual void drawChart(QPainter *painter);
+    virtual void drawChart(QPainter *painter,int timeMin,int timeMax);
 
 
 
 
 private:
 
+    QString secondsToStr(int seconds);
 
     int SencondsPerPix;//每10个像素代表多少秒 ,10个像素为1个小刻度，60个像素为一个大刻度
 
@@ -48,7 +51,10 @@ private:
 
 
     int midValueTime ;
-    QList<QMap<QString,int>> listTimeType;
+    QList<QMap<QString,int> *> listTimeType;
+
+    QString commonColor;
+    QString warningColor;
 };
 
 #endif // CHARTBASE_H

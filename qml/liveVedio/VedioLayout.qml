@@ -34,6 +34,7 @@ Rectangle {
             x:(index === currentIndex && model.isMax >0)?0:(index%myLayoutSquare) * (width+1)
             y:(index === currentIndex && model.isMax >0)?0:Math.floor(index/myLayoutSquare) * (height+1)
 
+            z:model.isMax >0?1:0
             color: "#3A3D41"
             mip:model.ip
             mport:model.port
@@ -45,6 +46,8 @@ Rectangle {
             mIsSelected: index === currentIndex
             shotScrennFilePath:shotScreenFilePath1
             recordingFilePath: recordingFilePath1
+
+            belongDeviceName:model.deviceName
             onClick: {
 
                 //console.debug("current index "+ index)
@@ -80,11 +83,12 @@ Rectangle {
     }
 
 
-    function dispatchVedioData(pos,videoData,datelen){
+//    function setXVideoDeviceName(curIndex,name){
 
+//        console.debug("***"+curIndex+" "+name)
 
-        repeater.itemAt(pos).recVedio(videoData,datelen);
+//        repeater.itemAt(curIndex).setXVideoDeviceName(name);
 
-    }
+//    }
 
 }

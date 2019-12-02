@@ -61,26 +61,39 @@ Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             color: "#3A3D41"
             Image {
+                id: imgdate
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: parent.left
+                anchors.leftMargin: 15
+                source: "qrc:/images/date.png"
+            }
+
+            Text{
+                id:timeInput
+                anchors.left: imgdate.right
+                anchors.leftMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+                font.pixelSize: 14
+                color: "white"
+                text: Qt.formatDate(calendar.getCurrentData(),"yyyy-MM-dd");
+            }
+
+
+            Image {
                 id: imgTimeSelect
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
                 anchors.rightMargin: 15
-                source: "qrc:/images/search.png"
+                source: "qrc:/images/dateSelect.png"
                 MouseArea{
                     anchors.fill: parent
                     onClicked:{
                         getRecordInfo(1,Qt.formatDate(calendar.getCurrentData(),"yyyyMMdd000000"));
                         calendar.open();
                     }
+                    onPressed: imgTimeSelect.source = "qrc:/images/dateSelect_P.png"
+                    onReleased: imgTimeSelect.source = "qrc:/images/dateSelect.png"
                 }
-            }
-
-            Text{
-                id:timeInput
-                anchors.left: parent.left
-                anchors.leftMargin: 2
-                anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: 14
             }
 
         }
@@ -119,16 +132,35 @@ Rectangle {
                 source: "qrc:/images/search.png"
             }
 
-            TextInput{
+            TextField{
                 id:inputSearch
                 width: searchDevice.width - imgSearch.width - 15 -2
                 height: 24
                 anchors.left: imgSearch.right
                 anchors.leftMargin: 2
                 anchors.verticalCenter: parent.verticalCenter
+                cursorPosition:10
+                activeFocusOnPress: false
                 font.pixelSize: 14
+                placeholderText:qsTr("search device id")
+                style:TextFieldStyle {
+                    textColor: "#909399"
+                    background: Rectangle {
+                        color: "transparent"
+                        implicitWidth: 100
+                        implicitHeight: 24
+                        radius: 4
+                    }
+                }
 
-
+                MouseArea{
+                    anchors.fill: parent
+                    onPressed: {
+                        inputSearch.forceActiveFocus()
+                        mouse.accepted = false
+                    }
+                    onReleased: mouse.accepted = true
+                }
             }
 
 
@@ -203,6 +235,12 @@ Rectangle {
                 color: "#3A3D41"
             }
 
+            Image {
+                id: name
+                source: "qrc:/images/playbackPlay.png"
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
         }
         Rectangle{
             id:videoControl
@@ -210,13 +248,63 @@ Rectangle {
             height: 50
             anchors.top:video.bottom
             color: "#303030"
+
+            Image {
+                id: imgslow
+                source: "qrc:/images/playbackslowdown.png"
+
+                anchors.right: rectControl.left
+                anchors.rightMargin: 31
+                anchors.verticalCenter: parent.verticalCenter
+                MouseArea{
+                    anchors.fill: parent
+                    onPressed: imgslow.source = "qrc:/images/playbackslowdown_p.png"
+                    onReleased: imgslow.source = "qrc:/images/playbackslowdown.png"
+                }
+            }
+
+            Image {
+                id: imgfast
+                source: "qrc:/images/playbackFastforward.png"
+                anchors.left: rectControl.right
+                anchors.leftMargin: 31
+                anchors.verticalCenter: parent.verticalCenter
+
+                MouseArea{
+                    anchors.fill: parent
+                    onPressed: imgfast.source = "qrc:/images/playbackFastforward_p.png"
+                    onReleased: imgfast.source = "qrc:/images/playbackFastforward.png"
+                }
+            }
+
+            Rectangle{
+                id:rectControl
+                width: 92
+                height: parent.height
+                color: "#272727"
+                anchors.horizontalCenter: parent.horizontalCenter
+                Text {
+                    id: timeShow
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    font.pixelSize: 18
+                    color: "white"
+                    text: ""
+                }
+            }
+
+
         }
+
         TimeLine{
             id:timeline
             width:parent.width
             height:50
-
             anchors.top:videoControl.bottom
+
+
+            onMidValueChange:timeShow.text = value
+
         }
 
 

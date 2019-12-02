@@ -83,12 +83,12 @@ QByteArray P2pProtrol::makeJsonPacket(QString cmd,QVariant msgContent)
     }else if (cmd.compare("getaudioencodeparam")==0) {
 
 
-    }else if (cmd.compare("setptzpreset")==0) {
+    }else if (cmd.compare("setptzpreset")==0) {//deviceName:deviceName
 
 
         QJsonObject jObjectData ;
         jObjectData.insert("presetname",msgContent.toMap().value("presetname").toString());
-
+        jObject.insert("msgid",msgContent.toMap().value("name").toString());
         jObject.insert("data",jObjectData);
     }else if (cmd.compare("getptzpreset")==0) {
 
@@ -97,12 +97,13 @@ QByteArray P2pProtrol::makeJsonPacket(QString cmd,QVariant msgContent)
         QJsonObject jObjectData ;
         jObjectData.insert("presetid",msgContent.toMap().value("presetid").toString());
 
+         jObject.insert("msgid",msgContent.toMap().value("name").toString());
         jObject.insert("data",jObjectData);
 
     }else if (cmd.compare("removeptzpreset")==0) {
         QJsonObject jObjectData ;
         jObjectData.insert("presetid",msgContent.toMap().value("presetid").toString());
-
+         jObject.insert("msgid",msgContent.toMap().value("name").toString());
         jObject.insert("data",jObjectData);
 
     }else if (cmd.compare("getrecordinginfo")==0) {//msgid当时间来使用
@@ -126,7 +127,7 @@ QMap<QString,QVariant> P2pProtrol::unJsonPacket(QByteArray &arr)
 
     QJsonDocument jsDoc = QJsonDocument::fromJson(arr.data());
 
-   // qDebug()<<"unJsonPacket:"<<jsDoc;
+    qDebug()<<"unJsonPacket:"<<jsDoc;
     QString cmd = jsDoc.object().value("cmd").toString();
     map.insert("cmd",cmd);
     map.insert("msgid",jsDoc.object().value("msgid"));
@@ -218,15 +219,21 @@ QMap<QString,QVariant> P2pProtrol::unJsonPacket(QByteArray &arr)
         map.insert("presets",vlist);
 
 
+    }else if(cmd.compare("gotoptzpreset")==0){
+
+         map.insert("name",jsDoc.object().value("msgid"));
+
+    }else if(cmd.compare("removeptzpreset")==0){
+
+        map.insert("name",jsDoc.object().value("msgid"));
     }else if(cmd.compare("setptzpreset")==0){
 
+        map.insert("name",jsDoc.object().value("msgid"));
 
     }else if (cmd.compare("getrecordinginfo")==0){//msgid当时间来使用
         QJsonObject jObjectData = jsDoc.object().value("data").toObject();
 
         QVariantList listRecord;
-
-
 
         if(jObjectData.contains("mounthInfo")){
             map.insert("infoType","mounthInfo");
@@ -258,8 +265,6 @@ QMap<QString,QVariant> P2pProtrol::unJsonPacket(QByteArray &arr)
             map.insert("infoType","");
         }
         map.insert("time",jsDoc.object().value("msgid").toString());
-
-
 
     }
 

@@ -14,10 +14,10 @@ DeviceManagerment::DeviceManagerment(QObject *parent) : QObject(parent)
 void DeviceManagerment::funP2pSendData(QString name,QString cmd,QVariant map)
 {
 
+    //qDebug()<<" funP2pSendData  "<<name<<"  "<<cmd;
     DeviceInfo *info = findDeviceName(name);
 
     if(info != nullptr){
-
         info->p2pWorker->p2pSendData(cmd,map);
     }else
         emit signal_err(OTHER,"not find device");
@@ -102,16 +102,26 @@ void DeviceManagerment::slot_recDataReply(QString name,QVariant map)
 
     QString cmd = map.toMap().value("cmd").toString();
 
+    //
     if(cmd.compare("getvideoencodeparam")==0)
         emit signal_videoencodeparam(name ,map);
     else if(cmd.compare("getaudioencodeparam")==0)
         emit signal_audioencodeparam(name ,map);
     else if(cmd.compare("getmotiondetectparam")==0)
         emit signal_motiondetectparam(name ,map);
+    //轨迹设置
     else if (cmd.compare("getptzpreset")==0)
         emit signal_getptzpreset(name,map);
+    else if (cmd.compare("removeptzpreset")==0)
+        emit signal_removeptzpreset(name,map);
+    else if (cmd.compare("gotoptzpreset")==0)
+        emit signal_gotoptzpreset(name,map);
+    else if (cmd.compare("setrtmpinfo")==0)
+        emit signal_setrtmpinfo(name,map);
+    //录像信息
     else if(cmd.compare("getrecordinginfo")==0)
         emit signal_getrecordinginfo(name,map);
+
 }
 
 void DeviceManagerment::slot_p2pErr(QString did,QString str)

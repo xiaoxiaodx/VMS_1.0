@@ -36,7 +36,7 @@ Rectangle {
                 anchors.left: img.right
                 anchors.leftMargin: 6
                 anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: 20
+                font.pixelSize: 16
                 color: "white"
             }
             Rectangle{

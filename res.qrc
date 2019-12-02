@@ -155,5 +155,24 @@
         <file>images/yearpre.png</file>
         <file>images/yearpre_p.png</file>
         <file>qml/simpleControl/MyTextInput.qml</file>
+        <file>images/playbackPlay.png</file>
+        <file>images/playbackslowdown.png</file>
+        <file>images/playbackslowdown_p.png</file>
+        <file>images/playbackStop.png</file>
+        <file>images/timeLineZoom out.png</file>
+        <file>images/timeLineZoom.png</file>
+        <file>images/playbackFastforward.png</file>
+        <file>images/playbackFastforward_p.png</file>
+        <file>images/date.png</file>
+        <file>images/date_p.png</file>
+        <file>images/dateSelect.png</file>
+        <file>images/dateSelect_P.png</file>
+        <file>images/cruiseControl_down.png</file>
+        <file>images/cruiseControl_down_p.png</file>
+        <file>images/cruiseControl_up.png</file>
+        <file>images/cruiseControl_up_p.png</file>
+        <file>qml/systemConfig/SystemConfig.qml</file>
+        <file>images/pathSelect.png</file>
+        <file>images/systemconfig.png</file>
     </qresource>
 </RCC>

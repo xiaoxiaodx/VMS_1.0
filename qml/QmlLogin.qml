@@ -67,26 +67,31 @@ Rectangle{
 
 
         TextField {
-
             id:inputacc
             width: rectAcc.width - 61
             height: 30
-
-
             anchors.left: img.right
             anchors.leftMargin: 4
             anchors.verticalCenter: parent.verticalCenter
-
-            // textColor: "white"
             placeholderText: qsTr("enter account")
-            text:""
-            font.pointSize:14
+            font.pointSize:12
+            activeFocusOnPress: false
             style:TextFieldStyle {
                 textColor: "white"
                 placeholderTextColor:"#999999"
                 background: Rectangle {
                     color: "transparent"
                 }
+            }
+
+
+            MouseArea{
+                anchors.fill: parent
+                onPressed: {
+                    inputacc.forceActiveFocus()
+                    mouse.accepted = false
+                }
+                onReleased: mouse.accepted = true
             }
         }
     }
@@ -117,15 +122,23 @@ Rectangle{
             anchors.left: img1.right
             anchors.leftMargin: 4
             anchors.verticalCenter: parent.verticalCenter
-
-
             placeholderText: qsTr("enter password")
+            activeFocusOnPress: false
+            font.pointSize:12
             style:TextFieldStyle {
                 textColor: "white"
                 placeholderTextColor:"#999999"
                 background: Rectangle {
                     color: "transparent"
                 }
+            }
+            MouseArea{
+                anchors.fill: parent
+                onPressed: {
+                    inputpwd.forceActiveFocus()
+                    mouse.accepted = false
+                }
+                onReleased: mouse.accepted = true
             }
         }
     }
@@ -200,9 +213,10 @@ Rectangle{
         anchors.left: txtSerInfo.left
         anchors.top: txtSerInfo.bottom
         anchors.topMargin: 8
-
         placeholderText: qsTr("ip")
         text:""//10.67.1.167
+        activeFocusOnPress: false
+        font.pointSize:12
         style:TextFieldStyle {
             textColor: "white"
             placeholderTextColor:"#999999"
@@ -210,6 +224,14 @@ Rectangle{
                 color: "#272727"
                 radius: 4.3
             }
+        }
+        MouseArea{
+            anchors.fill: parent
+            onPressed: {
+                inputSerIp.forceActiveFocus()
+                mouse.accepted = false
+            }
+            onReleased: mouse.accepted = true
         }
     }
 
@@ -220,9 +242,10 @@ Rectangle{
         anchors.left: inputSerIp.right
         anchors.leftMargin: 7
         anchors.top: inputSerIp.top
-
         placeholderText: qsTr("port")
         text:""//1883
+        activeFocusOnPress: false
+        font.pointSize:12
         style:TextFieldStyle {
 
 
@@ -233,6 +256,14 @@ Rectangle{
                 radius: 4.3
             }
 
+        }
+        MouseArea{
+            anchors.fill: parent
+            onPressed: {
+                inputSerPort.forceActiveFocus()
+                mouse.accepted = false
+            }
+            onReleased: mouse.accepted = true
         }
     }
 

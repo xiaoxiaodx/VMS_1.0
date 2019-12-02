@@ -28,6 +28,7 @@ Rectangle {
         id:cruisetrackModel
     }
 
+
     QmlTabBarButtonH{
         id:tabbarBtn
         height: 30
@@ -44,6 +45,7 @@ Rectangle {
         txtLeftMargin:16
         imageLeftMargin: 8
         textSize: 14
+        z:1
         Component.onCompleted: {
 
             tabbarBtn.barModel.append({txtStr:qsTr("preset point"),imgSrc:"qrc:/images/homemenuClo1se.png",imgSrcEnter:"qrc:/images/homemenuClose.png"})
@@ -90,25 +92,41 @@ Rectangle {
             color: "transparent"
 
             onClick_flush:  {
+                if(modelDataCurrentIndex<0){
+                    showToast(qsTr("no device specified"))
+                    return;
+                }
+                var deviceName =  listDeviceDataModel.get(modelDataCurrentIndex).deviceName
                 var map;
-                devicemanagerment.funP2pSendData("hello","getptzpreset",map)
+                devicemanagerment.funP2pSendData(deviceName,"getptzpreset",map)
             }
             onClick_addPresetPt:{
-
-                var map = {presetname:"dmj"+(++nameIndex)};
-                devicemanagerment.funP2pSendData("hello","setptzpreset",map)
+                if(modelDataCurrentIndex<0){
+                    showToast(qsTr("no device specified"))
+                    return;
+                }
+                var deviceName =  listDeviceDataModel.get(modelDataCurrentIndex).deviceName
+                var map = {presetname:"dmj"+(++nameIndex),name:"dmj"+nameIndex};
+                devicemanagerment.funP2pSendData(deviceName,"setptzpreset",map)
             }
             onClick_removePresetPt: {
-
-                var map = {presetid:smap.get(presetIndex).presetid};
-
-
-                devicemanagerment.funP2pSendData("hello","removeptzpreset",map)
+                if(modelDataCurrentIndex<0){
+                    showToast(qsTr("no device specified"))
+                    return;
+                }
+                var deviceName =  listDeviceDataModel.get(modelDataCurrentIndex).deviceName
+                var map = {presetid:presetPtModel.get(presetIndex).presetid,name:presetPtModel.get(presetIndex).showStr};
+                devicemanagerment.funP2pSendData(deviceName,"removeptzpreset",map)
             }
 
             onClick_moveToPreset: {
-                var map = {presetid:smap.get(presetIndex).presetid};
-                devicemanagerment.funP2pSendData("hello","gotoptzpreset",map)
+                if(modelDataCurrentIndex<0){
+                    showToast(qsTr("no device specified"))
+                    return;
+                }
+                var deviceName =  listDeviceDataModel.get(modelDataCurrentIndex).deviceName
+                var map = {presetid:presetPtModel.get(presetIndex).presetid,name:presetPtModel.get(presetIndex).showStr};
+                devicemanagerment.funP2pSendData(deviceName,"gotoptzpreset",map)
             }
         }
 
@@ -116,6 +134,7 @@ Rectangle {
         StackView{
             id: stack
             property int configIndex: -1
+
             initialItem: cruiseControlCmp
 
             Component{
@@ -125,19 +144,21 @@ Rectangle {
                     border.color: "black"
                     color: "transparent"
                     onTrackSet: {
-
                         configIndex = trackIndex
                         stack.push(cruiseTrackSetCmp)
-
                     }
 
-                    onClick_playTrack: ;
+                    onClick_playTrack: {
+                        trackTime.curTrackIndex = 0;
+                        trackTime.timeTrackArr = cruisetrackModel.get(trackIndex).trackArr;
+                        trackTime.start();
+                    }
 
-                    onClick_stopTrack: ;
+                    onClick_stopTrack: trackTime.stop();
 
-                    onClick_addTrack:cruisetrackModel.append({trackName:"track"+trackNameIndex,trackArr:[{showStr:"11",time:0,speed:0},{showStr:"11",time:0,speed:0}]})
+                    onClick_addTrack:cruisetrackModel.append({trackName:"track"+trackNameIndex,trackArr:[]})
 
-                    onClick_removeTrack:;
+                    onClick_removeTrack:cruisetrackModel.remove(trackIndex);
                 }
             }
 
@@ -148,20 +169,75 @@ Rectangle {
                     border.color: "black"
                     color: "transparent"
 
-                    onSEnsure:stack.pop()
-                    onSCancel: stack.pop()
+                    trackArrModel:cruisetrackModel.get(configIndex).trackArr
 
-                    Component.onCompleted: cruiseTrackSet.trackArrModel = cruisetrackModel.get(configIndex).trackArr
+                    onSEnsure:stack.pop()
+
+                    onSCancel:stack.pop()
+
+                    onSAddPreset: {
+                        console.debug("     onSAddPreset    "+cruisetrackModel.get(configIndex).trackArr.count)
+                        cruisetrackModel.get(configIndex).trackArr.append({presetIndex:0,time:0,speed:0});
+
+                    }
+                    onSPresetDown: {
+
+                        var trackArr = cruisetrackModel.get(configIndex).trackArr
+                        if(trancksetIndex<(trackArr.count-1))
+                            trackArr.move(trancksetIndex,trancksetIndex+1,1)
+
+                    }
+                    onSPresetUp: {
+                        var trackArr = cruisetrackModel.get(configIndex).trackArr
+                        if(trancksetIndex>0)
+                            trackArr.move(trancksetIndex,trancksetIndex-1,1)
+                    }
+                    onSPresetRemove: {
+                        var trackArr = cruisetrackModel.get(configIndex).trackArr
+                        trackArr.remove(trancksetIndex)
+                    }
+
+                    onSDeviceIndexChange: {
+
+                         var trackArr = cruisetrackModel.get(configIndex).trackArr
+
+                        trackArr.get(trancksetIndex).presetIndex = mpresetIndex
+                    }
+
+
+                    //Component.onCompleted: cruiseTrackSet.trackArrModel = cruisetrackModel.get(configIndex).trackArr
 
                 }
             }
 
         }
-
-
-
     }
 
+    Timer{
+        id:trackTime
+        property var timeTrackArr;
+        property var curTrackIndex;
+        interval: 500
+        repeat: true
+        onTriggered: {
+
+
+            var tmpindex = timeTrackArr.get(curTrackIndex).presetIndex;
+
+            console.debug("onTriggered  Arrcount" + timeTrackArr.count+"    devName:"+tmpindex)
+
+            curTrackIndex++;
+
+            if(curTrackIndex >= (timeTrackArr.count-1))
+                curTrackIndex = 0
+
+
+            var map = {presetid:presetPtModel.get(tmpindex).presetid,name:presetPtModel.get(tmpindex).showStr};
+            devicemanagerment.funP2pSendData(listDeviceDataModel.get(modelDataCurrentIndex).deviceName,"gotoptzpreset",map)
+
+        }
+
+    }
 
 
     Connections{
@@ -177,6 +253,25 @@ Rectangle {
                 nameIndex = preset.presetid
             }
 
+        }
+        onSignal_setrtmpinfo:{
+
+
+        }
+        onSignal_gotoptzpreset:{
+
+        }
+        onSignal_removeptzpreset:{
+
+
+            for(var i=0;i<presetPtModel.count;i++){
+                if(presetPtModel.get(i).showStr === smap.name){
+                    presetPtModel.remove(i)
+                    trackPresetPtModel.remove(i)
+                    return;
+                }
+
+            }
         }
     }
 }

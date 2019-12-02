@@ -23,6 +23,7 @@ Rectangle {
     property string recordingFilePath: ""
 
 
+    property string belongDeviceName: ""
 
     border.color: mIsSelected?"#409EFF":"#00000000"
     border.width: 2
@@ -226,6 +227,26 @@ Rectangle {
         }
     }
 
+
+    Connections{
+        target: devicemanagerment
+        onSignal_p2pCallbackVideoData: {
+
+            //console.debug("belongDeviceName "+belongDeviceName)
+
+            if(name === belongDeviceName){
+
+
+                if(screenBlack.visible)
+                    screenBlack.visible = !screenBlack.visible
+
+                video.funSendVideoData(h264Arr,arrlen)
+
+            }
+
+        }
+
+    }
 
 
     function delayFun(delay,fun1){

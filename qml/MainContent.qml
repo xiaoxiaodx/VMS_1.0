@@ -7,6 +7,7 @@ import "../qml/homePage"
 import "../qml/liveVedio"
 import "../qml/playbackVideo"
 import "../qml/deviceManager"
+import "../qml/systemConfig"
 Rectangle {
 
     id: maincontent;
@@ -97,7 +98,11 @@ Rectangle {
             anchors.fill: parent
             z:homeMenu.mCurIndex==2?1:0
         }
+        SystemConfig{
+            anchors.fill: parent
+            z:homeMenu.mCurIndex==3?1:0
 
+        }
 
 
     }

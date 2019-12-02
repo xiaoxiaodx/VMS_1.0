@@ -187,14 +187,14 @@ void P2pWorker::slot_startLoopRead()
 }
 void P2pWorker::test()
 {
-    qDebug()<<"test**************";
+
 }
 
 void P2pWorker::p2pSendData(QString cmd,QVariant map)
 {
-   // qDebug()<<" p2pSendData:"<<cmd<<"   "<<map;
+    qDebug()<<" p2pSendData:"<<cmd<<"   "<<map;
 
-    QByteArray loginArr = p2pProtrol.makeJsonPacket(cmd,map);
+    //QByteArray loginArr = p2pProtrol.makeJsonPacket(cmd,map);
     if(cmd.compare("login")==0){
         for(int i=0;i<32;i++)
             m_appKey[i] = rand() % 0xFF;
@@ -202,8 +202,6 @@ void P2pWorker::p2pSendData(QString cmd,QVariant map)
         arr.append(m_appKey,32);
         qDebug()<<" m_appKey "<<arr.toHex();
         writeBuff1(CMD_USR_KEY, m_appKey, 32);
-
-
 
 
     }else if(cmd.compare("getVedio")==0)

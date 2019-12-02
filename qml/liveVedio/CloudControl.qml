@@ -37,9 +37,10 @@ Rectangle{
 
         Rectangle{
             width: parent.width
-            height: 1
-            color: "transparent"
+            height: 2
+            color: "black"
             anchors.top: parent.top
+            anchors.topMargin: 2
         }
         Rectangle{
             width: parent.width

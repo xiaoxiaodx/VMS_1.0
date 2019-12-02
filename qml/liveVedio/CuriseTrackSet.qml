@@ -8,6 +8,11 @@ Rectangle {
 
     signal sEnsure();
     signal sCancel();
+    signal sAddPreset();
+    signal sPresetUp(var trancksetIndex);
+    signal sPresetDown(var trancksetIndex);
+    signal sPresetRemove(var trancksetIndex)
+    signal sDeviceIndexChange(var trancksetIndex,var mpresetIndex);
 
     property alias trackArrModel: listpresetPt.model
     Rectangle{
@@ -17,6 +22,7 @@ Rectangle {
         anchors.top: parent.top
         anchors.topMargin: 5
         height: 32
+        z:1
         Text {
             id: name
             font.pixelSize: 12
@@ -39,7 +45,8 @@ Rectangle {
             imgSoursePress:"qrc:/images/cruise_dddP.png"
             imgSourseHover: imgSourseNormal
 
-            onClick: trackArrModel.append({presetIndex:0,speed:0,time:0});
+            onClick:  sAddPreset()//
+
         }
 
 
@@ -55,7 +62,7 @@ Rectangle {
             imgSourseNormal:"qrc:/images/cruise_up.png"
             imgSoursePress:"qrc:/images/cruise_upP.png"
             imgSourseHover: imgSourseNormal
-
+            onClick: sPresetUp(listpresetPt.currentIndex)
 
         }
 
@@ -69,7 +76,7 @@ Rectangle {
             imgSourseNormal:"qrc:/images/cruise_down.png"
             imgSoursePress:"qrc:/images/cruise_downP.png"
             imgSourseHover: imgSourseNormal
-
+            onClick: sPresetDown(listpresetPt.currentIndex)
 
         }
 
@@ -83,18 +90,19 @@ Rectangle {
             imgSourseNormal:"qrc:/images/cruise_delete.png"
             imgSoursePress:"qrc:/images/cruise_deleteP.png"
             imgSourseHover: imgSourseNormal
-
+            onClick: sPresetRemove(listpresetPt.currentIndex)
         }
     }
 
 
     Rectangle{
         id:listHead
-        width: parent.width
+        width: parent.width-2
+        anchors.horizontalCenter: parent.horizontalCenter
         height: 36
         anchors.top: rectHead.bottom
-        color: "transparent"
-
+        color: "#272727"
+        z:1
         Text {
             id: txt1
 
@@ -105,8 +113,6 @@ Rectangle {
             color: "white"
             text: qsTr("preset")
         }
-
-
 
         Text {
             id: txt2
@@ -130,31 +136,29 @@ Rectangle {
             text: qsTr("time")
         }
 
-        MouseArea{
-            anchors.fill: parent
-            onClicked: console.debug("*******   "+parent.width)
-        }
     }
 
 
     ListView{
         id:listpresetPt
-        width: parent.width
+        width: listHead.width
         height: parent.height - cruiseBottom.height-rectHead.height-listHead.height-12
         anchors.top: listHead.bottom
-
+        anchors.horizontalCenter: parent.horizontalCenter
         spacing: 8
+        z:0
         delegate: Rectangle{
             width: parent.width
             height: 28
-            color: "transparent"
+            color: index===listpresetPt.currentIndex?"#191919":"transparent"
 
             MyComBox{
                 id:presetList
                 width: 72
-                height: parent.height
+                height: parent.height-4
                 anchors.left: parent.left
                 anchors.leftMargin: 16
+                anchors.verticalCenter: parent.verticalCenter
                 model: trackPresetPtModel
                 colorNor: "#D9D9D9"
                 colorPressed: "#409EFF"
@@ -166,24 +170,28 @@ Rectangle {
                 font.pixelSize: 12
                 indicatorW:6
                 indicatorH:4
+                currentIndex: presetIndex
+
+
+                onCurrentIndexChanged: sDeviceIndexChange(index,presetList.currentIndex);
+
 
             }
 
             TextField {
                 id:inputSpeed
                 width: 84
-                height: parent.height
+                height: parent.height-4
                 anchors.left: presetList.right
                 anchors.leftMargin: 32
-
-
+                anchors.verticalCenter: parent.verticalCenter
+                horizontalAlignment: Text.horizontalCenter
                 font.pixelSize: 12
                 placeholderText: qsTr("speed")
-
+                activeFocusOnPress: false
                 text: speed
                 style:TextFieldStyle {
                     textColor: "white"
-
                     placeholderTextColor:"#999999"
                     background: Rectangle {
                         color: "transparent"
@@ -191,20 +199,29 @@ Rectangle {
                         border.color: "#D9D9D9"
                         radius: 5
                     }
+                }
+                MouseArea{
+                    anchors.fill: parent
+                    onPressed: {
+                        inputSpeed.forceActiveFocus()
+                        mouse.accepted = false
+                    }
+                    onReleased: mouse.accepted = true
                 }
             }
 
             TextField {
                 id:inputTime
                 width: 72
-                height: parent.height
+                height: parent.height-4
                 anchors.left: inputSpeed.right
                 anchors.leftMargin: 32
-
-
                 font.pixelSize: 12
                 text:time
                 placeholderText: qsTr("time")
+                anchors.verticalCenter: parent.verticalCenter
+                horizontalAlignment: Text.horizontalCenter
+                activeFocusOnPress: false
                 style:TextFieldStyle {
                     textColor: "white"
                     placeholderTextColor:"#999999"
@@ -215,11 +232,28 @@ Rectangle {
                         radius: 5
                     }
                 }
+                MouseArea{
+                    anchors.fill: parent
+                    onPressed: {
+                        inputTime.forceActiveFocus()
+                        mouse.accepted = false
+                    }
+                    onReleased: mouse.accepted = true
+                }
+
+            }
+            MouseArea{
+                anchors.fill: parent
+                onPressed: {
+                    listpresetPt.currentIndex  = index
+                    mouse.accepted = false
+                }
+
             }
 
         }
-    }
 
+    }
 
 
     Rectangle{
@@ -227,8 +261,8 @@ Rectangle {
         width: parent.width
         height: 31
         anchors.bottom: parent.bottom
-        color: "transparent"
-
+        color: "#272727"
+        z:1
         Rectangle{
             width: parent.width
             height: 1
@@ -250,7 +284,12 @@ Rectangle {
             mRadius:3
             fontsize:10
             text: "ensure"
-            onClicked: sEnsure()
+            onClicked: {
+
+
+
+                sEnsure()
+            }
         }
         QmlButton{
             id:imgRemove
@@ -270,4 +309,5 @@ Rectangle {
         }
 
     }
+
 }

@@ -38,19 +38,19 @@ Window {
         id:devicemanagerment
 
 
-        onSignal_p2pCallbackVideoData: {
+//        onSignal_p2pCallbackVideoData: {
 
-            var objectDevice = findDeviceByName(name)
+//            var objectDevice = findDeviceByName(name)
 
-            if(objectDevice !== null){
-                if(objectDevice.showVidoIndex >-1){
-                    maincontent.dispatchVedio(objectDevice.showVidoIndex,h264Arr,arrlen);
+//            if(objectDevice !== null){
+//                if(objectDevice.showVidoIndex >-1){
+//                    maincontent.dispatchVedio(objectDevice.showVidoIndex,h264Arr,arrlen);
 
-                }else
-                    showToast("dispatchVedio err " +objectDevice.showVidoIndex + "  "+name)
-            }else
-                console.debug("设备找不到，为空"+name + "count:"+listdeviceInfo.count)
-        }
+//                }else
+//                    showToast("dispatchVedio err " +objectDevice.showVidoIndex + "  "+name)
+//            }else
+//                console.debug("设备找不到，为空"+name + "count:"+listdeviceInfo.count)
+//        }
 
 
         function findDeviceByName(tName){

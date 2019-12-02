@@ -1,5 +1,7 @@
 import QtQuick 2.0
 import "../simpleControl"
+import QtQuick.Controls 1.4
+import QtQuick.Controls.Styles 1.4
 Rectangle{
 
 
@@ -14,22 +16,53 @@ Rectangle{
         anchors.top: parent.top
         anchors.topMargin: 12
         model:presetPtModel
+        z:0
         delegate: Rectangle{
-
-
             color: "transparent"
             width: parent.width
             height: 32
-            Text {
-                id: name
-                font.pixelSize: 12
-                color: "white"
+            TextField{
+                id:txtfieldname
+                property bool isTextChange: false
+                width: 250
+                height: 24
                 anchors.left: parent.left
                 anchors.leftMargin: 30
                 anchors.verticalCenter: parent.verticalCenter
+                cursorPosition:10
+                activeFocusOnPress: false
+                font.pixelSize: 12
                 text: showStr
+                style:TextFieldStyle {
+                    textColor: "white"
+                    background: Rectangle {
+                        color: "transparent"
+                        implicitWidth: 100
+                        implicitHeight: 24
+                        radius: 4
+                    }
+                }
 
+                onEditingFinished: {
+                    console.debug("onEditingFinished    "+showStr +"    "+ text);
+
+                    if(isTextChange){
+                        isTextChange = false;
+                    }
+                    txtfieldname.focus = false
+                }
+                onTextChanged: isTextChange = true
+
+                MouseArea{
+                    anchors.fill: parent
+                    onPressed: {
+                        txtfieldname.forceActiveFocus()
+                        mouse.accepted = false
+                    }
+                    onReleased: mouse.accepted = true
+                }
             }
+
 
             QmlImageButton{
                 id:imgPresetMove
@@ -42,7 +75,6 @@ Rectangle{
                 imgSoursePress:"qrc:/images/cruise_moveP.png"
                 imgSourseHover: imgSourseNormal
                 onClick: click_moveToPreset(index)
-
             }
 
             QmlImageButton{
@@ -56,7 +88,6 @@ Rectangle{
                 imgSoursePress:"qrc:/images/cruise_deleteP.png"
                 imgSourseHover: imgSourseNormal
                 onClick: click_removePresetPt(index)
-
             }
 
         }
@@ -67,8 +98,8 @@ Rectangle{
         width: parent.width
         height: 31
         anchors.top: listPresetPt.bottom
-        color: "transparent"
-
+        color: "#272727"
+        z:1
         Rectangle{
             width: parent.width
             height: 1

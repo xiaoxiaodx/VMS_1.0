@@ -50,8 +50,9 @@ Rectangle {
         Component.onCompleted: {
 
             tabbarBtn.barModel.append({txtStr:qsTr("Video Live"),imgSrc:"qrc:/images/homemenuClose.png",imgSrcEnter:"qrc:/images/homemenuClose.png"})
-            tabbarBtn.barModel.append({txtStr:qsTr("Video playback"),imgSrc:"qrc:/images/homemenuClose.png",imgSrcEnter:"qrc:/images/homemenuClose.png"})
+            tabbarBtn.barModel.append({txtStr:qsTr("Video Playback"),imgSrc:"qrc:/images/homemenuClose.png",imgSrcEnter:"qrc:/images/homemenuClose.png"})
             tabbarBtn.barModel.append({txtStr:qsTr("Device Manager"),imgSrc:"qrc:/images/homemenuClose.png",imgSrcEnter:"qrc:/images/homemenuClose.png"})
+            tabbarBtn.barModel.append({txtStr:qsTr("System Config"),imgSrc:"qrc:/images/homemenuClose.png",imgSrcEnter:"qrc:/images/homemenuClose.png"})
 
         }
 

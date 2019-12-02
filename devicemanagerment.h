@@ -100,6 +100,7 @@ signals:
     void signal_getptzpreset(QString name,QVariant smap);
     void signal_setrtmpinfo(QString name,QVariant smap);
     void signal_gotoptzpreset(QString name,QVariant smap);
+    void signal_removeptzpreset(QString name,QVariant smap);
     //录像信息
     void signal_getrecordinginfo(QString name,QVariant smap);
 public slots:

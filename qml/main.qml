@@ -38,21 +38,6 @@ Window {
         id:devicemanagerment
 
 
-//        onSignal_p2pCallbackVideoData: {
-
-//            var objectDevice = findDeviceByName(name)
-
-//            if(objectDevice !== null){
-//                if(objectDevice.showVidoIndex >-1){
-//                    maincontent.dispatchVedio(objectDevice.showVidoIndex,h264Arr,arrlen);
-
-//                }else
-//                    showToast("dispatchVedio err " +objectDevice.showVidoIndex + "  "+name)
-//            }else
-//                console.debug("设备找不到，为空"+name + "count:"+listdeviceInfo.count)
-//        }
-
-
         function findDeviceByName(tName){
 
             for(var i=0;i<listdeviceInfo.count;i++){
@@ -88,6 +73,21 @@ Window {
         }
 
 
+        onSignal_startSendWait: {
+            console.debug("onSignal_startSendWait")
+
+            busyWait.open();
+            timer.setTimeOut(5000,function(){
+
+                if(busyWait.opened){
+                    busyWait.close();
+                    showToast(qsTr("network timeout"))
+                }
+
+            })
+
+        }
+        onSignal_endEndWait: busyWait.close();
     }
     QmlLogin{
         id:login
@@ -129,6 +129,15 @@ Window {
         }
         onWinClose1:Qt.quit();
         onDragPosChange1:main.setDlgPoint(mx,my);
+
+
+        QmlWatingBusy{
+            id:busyWait
+            anchors.centerIn: parent
+            width: 100
+            height: 100
+
+        }
     }
 
 
@@ -140,6 +149,9 @@ Window {
             }
         }
     }
+
+
+
 
 
     Loader{

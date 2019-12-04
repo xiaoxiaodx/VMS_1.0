@@ -626,34 +626,6 @@ XVideo::~XVideo()
 {
     qDebug()<<mDid + " 析构   XVideo";
 
-//    //析构tcpworker
-
-//    if(worker != nullptr)
-//    {
-//        emit signal_destoryTcpWork();
-
-//        worker->stopParsing();
-
-//        m_readThread->quit();
-
-//    }
-
-
-//    //析构meidiadateprocess
-//    if(m_dataProcess != nullptr)
-//    {
-
-//        m_dataProcess->slot_stopRead();
-//        m_threadReadDate->quit();
-
-//        if(m_threadReadDate->wait(3000)){
-
-//            qDebug()<<"delete meidiadateprocess read Thread succ";
-//        }else
-//            qDebug()<<"delete meidiadateprocess read Thread timeout";
-//    }
-
-
     if(recordThread != nullptr)
         recordThread->quit();
 
@@ -665,14 +637,5 @@ XVideo::~XVideo()
     if(pffmpegCodec != nullptr)
         pffmpegCodec->deleteLater();
 
-
-    qDebug()<<mDid + " 3333";
-//    if(p2pWorker != nullptr){
-//        p2pWorker->stopWoring();
-//        m_p2pThread->quit();
-//    }
-
-
-    qDebug()<<mDid + " 析构   XVideo 结束";
 }
 

@@ -150,8 +150,7 @@ else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/thir
 RESOURCES += \
     res.qrc
 
-DISTFILES += \
-    qml/simpleControl/LineEdit.qml
+DISTFILES +=
 
 
 

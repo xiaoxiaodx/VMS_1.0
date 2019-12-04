@@ -26,14 +26,14 @@ P2pWorker::P2pWorker(QString name)
 
     pffmpegCodec = nullptr;
 
-    debugFile = new QFile("p2pWordDebug.txt");
+//    debugFile = new QFile("p2pWordDebug.txt");
 
-    if(!debugFile->isOpen()){
+//    if(!debugFile->isOpen()){
 
 
-        debugFile->open(QIODevice::WriteOnly);
+//        debugFile->open(QIODevice::WriteOnly);
 
-    }
+//    }
 
 }
 
@@ -269,8 +269,8 @@ void P2pWorker::writeDebugFile(QString str)
 {
 
     return;
-    QTextStream txtOutput(debugFile);
-    txtOutput << str<< endl;
+//    QTextStream txtOutput(debugFile);
+//    txtOutput << str<< endl;
 }
 
 void P2pWorker::resetParseVariant()
@@ -348,20 +348,6 @@ void P2pWorker::processUnPkg(char *buff,int len)
             }else
                 break;
         }
-
-//        if(m_cmd == CMD_USR_KEY);
-//        else if(m_cmd == CMD_LOGIN);
-//        else if(m_cmd == CMD_VIDEO_TRNS);
-//        else if(m_cmd == CMD_AUDIO_TRNS);
-//        else if(m_cmd == CMD_REC_REQ);
-//        else if(m_cmd == CMD_REC_VIDEO_TRNS);
-//        else if(m_cmd == CMD_REC_AUDIO_TRNS);
-//        else if(m_cmd == CMD_NEW_PROTROL);
-//        else {
-//            //writeDebugFile("cmd is error:"+QString::number(m_cmd,16));
-//            resetParseVariant();
-//            continue;
-//        }
 
         if(readDataBuff.length() >= needLen){
 
@@ -441,6 +427,9 @@ void P2pWorker::processUnPkg(char *buff,int len)
             }else if(m_cmd == CMD_REC_REQ){
                 //qDebug()<<"请求回放应答 "<<needLen<<"   "<<readDataBuff.length();
 
+                QVariantMap map;
+                map.insert("cmd","replay");
+                emit signal_p2pReplyData(m_name,map);
             }else if(m_cmd == CMD_REC_VIDEO_TRNS){//回放视频
                 //qDebug()<<"找到  回放视频信息:"<<needLen<<"   "<<readDataBuff.length();
 
@@ -473,6 +462,22 @@ void P2pWorker::processUnPkg(char *buff,int len)
                 //QThread::msleep(2);
                 //emit signal_sendReplayPcmALaw(m_name,arr.data(), arr.length(),1000);
 
+            }else if(m_cmd == CMD_REC_STOP){
+
+                QVariantMap map;
+                map.insert("cmd","replay stop");
+                emit signal_p2pReplyData(m_name,map);
+            }else if(m_cmd == CMD_REC_PAUSE){
+
+
+                QVariantMap map;
+                map.insert("cmd","replay pause");
+                emit signal_p2pReplyData(m_name,map);
+            }else if(m_cmd == CMD_REC_CONTINUE){
+
+                QVariantMap map;
+                map.insert("cmd","replay continue");
+                emit signal_p2pReplyData(m_name,map);
             }else if(m_cmd == CMD_NEW_PROTROL){
 
                 QByteArray arr ;

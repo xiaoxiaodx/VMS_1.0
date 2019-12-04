@@ -68,3 +68,17 @@ void DeviceInfo::slot_recPcmALaw( char * buff,int len,quint64 time)
 {
 
 }
+
+
+DeviceInfo:: ~DeviceInfo()
+{
+
+
+    if(p2pWorker!= nullptr){
+
+        p2pWorker->stopWoring();
+        m_p2pThread->quit();
+
+    }
+
+}

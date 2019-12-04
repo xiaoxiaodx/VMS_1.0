@@ -51,6 +51,7 @@ class DeviceManagerment : public QObject
 public:
     Q_INVOKABLE void funConnectP2pDevice(QString name,QString did,QString acc,QString pwd);
     Q_INVOKABLE void funP2pSendData(QString name,QString cmd,QVariant map);
+    Q_INVOKABLE void funDeleteDevice(QString name);
 
 
 
@@ -85,6 +86,8 @@ signals:
 
     void signal_connectDev(QString deviceDid,QString name,QString pwd);
 
+    void signal_startSendWait();
+    void signal_endEndWait();
 
 
     //回调
@@ -121,6 +124,7 @@ public slots:
 
 private:
 
+    void addOrDeleteCmdToList(bool isAdd,QString cmd);
     DeviceInfo* findDeviceName(QString did);
 
     void connectDevice();
@@ -128,6 +132,8 @@ private:
 
     QList<DeviceInfo*> m_listDeviceInfo;
 
+
+    QList<QString> listSendCmd;
     //QList<DeviceInfo*> m_listDeviceInfo;
 };
 

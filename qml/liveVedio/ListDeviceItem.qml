@@ -44,7 +44,7 @@ Rectangle{
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
 
-            visible: true
+            visible: false
             source: "qrc:/images/img_delete.png"
 
             MouseArea{

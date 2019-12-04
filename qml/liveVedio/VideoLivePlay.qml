@@ -6,7 +6,7 @@ Rectangle {
     signal doubleClick(bool isFullScreen);
     signal click();
     signal s_showToastMsg(string str)
-    signal s_deleteObject()
+
     signal s_authenticationFailue(string str)
 
     property string mip: ""
@@ -74,7 +74,7 @@ Rectangle {
             id: img_delete
             x:parent.x + parent.width - img_delete.width
 
-            visible:  (mIsCreateConenect && mIsSelected) ? true:false
+            visible:   mIsSelected ? true:false
             source: "qrc:/images/img_delete.png"
 
             MouseArea{
@@ -83,13 +83,16 @@ Rectangle {
 
                 onClicked: {
 
-                    s_deleteObject();
+                    screenBlack.visible = true;
+                    if(belongDeviceName==="")
+                        showToast("no device specified ")
+                    else{
+                        var map;
+                        devicemanagerment.funP2pSendData(belongDeviceName,"",map);
+                    }
 
                 }
 
-                onDoubleClicked: {
-                    //console.debug("1000")
-                }
 
             }
         }
@@ -177,7 +180,7 @@ Rectangle {
         Rectangle{
             id:screenBlack
             anchors.fill: parent
-            visible: mIsCreateConenect?false:true
+            visible:true
             color: "#3A3D41"
         }
 

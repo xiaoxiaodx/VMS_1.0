@@ -112,7 +112,7 @@ private:
 
     P2pProtrol p2pProtrol;
 
-    QFile *debugFile;
+    //QFile *debugFile;
 };
 
 #endif // P2PWORKER_H

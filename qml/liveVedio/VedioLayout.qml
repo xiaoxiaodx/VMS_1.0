@@ -42,7 +42,7 @@ Rectangle {
             mAcc:model.account
             mPwd:model.password
             mIsPlayAudio:(model.isMax>0)?true:false
-            mIsCreateConenect:model.isCreateConnected>0?true:false
+           // mIsCreateConenect:model.isCreateConnected>0?true:false
             mIsSelected: index === currentIndex
             shotScrennFilePath:shotScreenFilePath1
             recordingFilePath: recordingFilePath1
@@ -70,11 +70,6 @@ Rectangle {
 
             onS_showToastMsg:st_showToastMsg(str)
 
-            onS_deleteObject:{
-
-                isCreateConnected = 0;
-
-            }
 
             onS_authenticationFailue: {
                 s1_authenticationFailue(str)
@@ -83,12 +78,6 @@ Rectangle {
     }
 
 
-//    function setXVideoDeviceName(curIndex,name){
 
-//        console.debug("***"+curIndex+" "+name)
-
-//        repeater.itemAt(curIndex).setXVideoDeviceName(name);
-
-//    }
 
 }

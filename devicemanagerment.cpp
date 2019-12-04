@@ -2,33 +2,28 @@
 
 DeviceManagerment::DeviceManagerment(QObject *parent) : QObject(parent)
 {
-
     m_typeNetwork = 0;
-
-
-
     m_listDeviceInfo.clear();
-
-};
+}
 
 void DeviceManagerment::funP2pSendData(QString name,QString cmd,QVariant map)
 {
+
 
     qDebug()<<" funP2pSendData  "<<name<<"  "<<cmd;
     DeviceInfo *info = findDeviceName(name);
 
     if(info != nullptr){
+        addOrDeleteCmdToList(true,cmd);
         info->p2pWorker->p2pSendData(cmd,map);
     }else
         emit signal_err(OTHER,"not find device");
 
-
 }
+
 void DeviceManagerment::funConnectP2pDevice(QString name, QString did, QString acc, QString pwd)
 {
     qDebug()<<" connectP2pDevice";
-
-
     DeviceInfo *info = findDeviceName(name);
 
     if(info == nullptr){
@@ -53,12 +48,27 @@ void DeviceManagerment::funConnectP2pDevice(QString name, QString did, QString a
             connect(info->p2pWorker,&P2pWorker::signal_p2pErr,this,&DeviceManagerment::slot_p2pErr);
 
             emit info->signal_connectP2pDev(did,acc,pwd);
-
-
         }
 
     }else{
         signal_err(DEVICE_ADD_DIFFPAR,"The name already exists");
+    }
+
+}
+
+void DeviceManagerment::funDeleteDevice(QString name){
+
+    DeviceInfo *info = findDeviceName(name);
+
+    qDebug()<<"funDeleteDevice  "<<m_listDeviceInfo.size();
+    if(info != nullptr){
+
+        m_listDeviceInfo.removeOne(info);
+        qDebug()<<"funDeleteDevice1  "<<m_listDeviceInfo.size();
+
+
+        delete info;
+
     }
 
 }
@@ -95,8 +105,6 @@ void DeviceManagerment::slot_recP2pLoginState(bool isSucc,QString name,QString d
 
 void DeviceManagerment::slot_recVedio(QString name ,QVariant arr,quint64 time)
 {
-
-
     emit signal_p2pCallbackVideoData(name,arr);
 }
 
@@ -123,8 +131,10 @@ void DeviceManagerment::slot_recReplayAudio(QString name ,char* PcmALawArr,int a
 void DeviceManagerment::slot_recDataReply(QString name,QVariant map)
 {
 
+
     QString cmd = map.toMap().value("cmd").toString();
 
+    addOrDeleteCmdToList(false,cmd);
     //
     if(cmd.compare("getvideoencodeparam")==0)
         emit signal_videoencodeparam(name ,map);
@@ -144,6 +154,28 @@ void DeviceManagerment::slot_recDataReply(QString name,QVariant map)
     //录像信息
     else if(cmd.compare("getrecordinginfo")==0)
         emit signal_getrecordinginfo(name,map);
+
+}
+
+void DeviceManagerment::addOrDeleteCmdToList(bool isAdd,QString cmd){
+
+    if(isAdd){
+        listSendCmd.append(cmd);
+        emit signal_startSendWait();
+    }else {
+
+        for (int i=0;i<listSendCmd.size();i++) {
+
+            if(cmd == listSendCmd.at(i)){
+                listSendCmd.removeAt(i);
+                break;
+            }
+        }
+
+        if(listSendCmd.size() == 0)
+            emit signal_endEndWait();
+
+    }
 
 }
 

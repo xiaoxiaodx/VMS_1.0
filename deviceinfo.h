@@ -23,6 +23,7 @@ class DeviceInfo : public QObject
 public:
     explicit DeviceInfo();
 
+    ~DeviceInfo();
     QML_PROPERTY(int,typeNetwork)
     QML_PROPERTY(int,veidoIndex)
 

@@ -16,6 +16,8 @@ Rectangle {
 
 
 
+
+
     Column{
         id:contentLeft
 
@@ -25,57 +27,62 @@ Rectangle {
         anchors.left: parent.left
         anchors.leftMargin: 80
         Rectangle{
-            id:rectsensitivity
-
-            height: sensitivity.height
+            id:rectenable
+            height: 34
             width: 250
             color: "transparent"
             anchors.horizontalCenter: parent.horizontalCenter
             Text {
-                id: txtsensitivity
-                anchors.right: sensitivity.left
-                anchors.rightMargin: 10
+                id: txtenable
+                anchors.right: parent.right
+                anchors.rightMargin: 194
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 16
                 color: "white"
-                text: qsTr("sensitivity:")
+                text: qsTr("enable:")
             }
 
-            Text {
-                id: sensitivity
-                width: 184
-                height: 34
-                anchors.right: parent.right
+            SwitchButton{
+                id:motionEnable
+                width: 50
+                height: 25
+                anchors.left: txtenable.right
+                anchors.leftMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
-                color: "white"
-
+                bgColor: "#409EFF"
+                onCheckedChange: console.debug("SwitchButton    "+checked)
             }
+
 
         }
+
+
 
         Rectangle{
             id:recttime
             color: "transparent"
             width: 250
-            height: time.height
+            height: 34
             anchors.horizontalCenter: parent.horizontalCenter
             Text {
                 id: txttime
-                anchors.right: time.left
-                anchors.rightMargin: 10
-                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: parent.right
+                anchors.rightMargin: 194
+                anchors.verticalCenter:  parent.verticalCenter
                 font.pixelSize: 16
                 color: "white"
-                text: qsTr("time:")
+                text: qsTr("time enable:")
             }
 
-            Text {
-                id: time
-                width: 184
-                height: 34
-                anchors.right: parent.right
+            SwitchButton {
+                id: timeenable
+                width: 50
+                height: 25
+                anchors.left: txttime.right
+                anchors.leftMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
-                color: "white"
+                bgColor: "#409EFF"
+                onCheckedChange: console.debug("SwitchButton    "+checked)
 
             }
 
@@ -93,6 +100,41 @@ Rectangle {
         anchors.top: contentLeft.top
         anchors.left: contentLeft.right
         anchors.leftMargin: 80
+
+        Rectangle{
+            id:rectsensitivity
+
+            height: sensitivity.height
+            width: 250
+            color: "transparent"
+            anchors.horizontalCenter: parent.horizontalCenter
+            Text {
+                id: txtsensitivity
+                anchors.right: sensitivity.left
+                anchors.rightMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+                font.pixelSize: 16
+                color: "white"
+                text: qsTr("sensitivity:")
+            }
+
+            LineEdit {
+                id: sensitivity
+                width: 184
+                height: 34
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                border.width: 0
+                font.pixelSize: 14
+                placeholderText: ""
+                isNeedDoubleClickEdit: false
+                textLeftPadding:0
+                color: "#272727"
+                text: "000000"
+            }
+
+        }
+
         Rectangle{
             id:rectstartTime
 
@@ -110,13 +152,19 @@ Rectangle {
                 text: qsTr("startTime:")
             }
 
-            Text {
+            LineEdit {
                 id: startTime
                 width: 184
                 height: 34
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                color: "white"
+                border.width: 0
+                font.pixelSize: 14
+                placeholderText: ""
+                isNeedDoubleClickEdit: false
+                textLeftPadding:0
+                color: "#272727"
+                text: "000000"
 
             }
 
@@ -138,13 +186,18 @@ Rectangle {
                 text: qsTr("endTime:")
             }
 
-            Text {
+            LineEdit {
                 id:endTime
                 width: 184
                 height: 34
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                color: "white"
+                border.width: 0
+                font.pixelSize: 14
+                placeholderText: ""
+                isNeedDoubleClickEdit: false
+                textLeftPadding:0
+                color: "#272727"
 
             }
 
@@ -156,27 +209,51 @@ Rectangle {
 
 
     Connections{
-            target: devicemanagerment;
+        target: devicemanagerment;
 
-//            objectDevice.motionDetectionEnabled = smap.enabled
-//            objectDevice.motionDetectionSensitive = smap.sensitive
-//            objectDevice.motionDetectionTimenabled = smap.enabled
-//            objectDevice.motionDetectionStarttime = smap.starttime
-//            objectDevice.motionDetectionEndtime = smap.endtime
+        //            objectDevice.motionDetectionEnabled = smap.enabled
+        //            objectDevice.motionDetectionSensitive = smap.sensitive
+        //            objectDevice.motionDetectionTimenabled = smap.enabled
+        //            objectDevice.motionDetectionStarttime = smap.starttime
+        //            objectDevice.motionDetectionEndtime = smap.endtime
 
-            onSignal_motiondetectparam: {
-                sensitivity.text = smap.sensitive
-                startTime.text = smap.starttime
-                endTime.text = smap.endtime
+        onSignal_motiondetectparam: {
+
+            console.debug("onSignal_motiondetectparam   "+ smap.enable+"   "+ smap.sensitive+"   "+ smap.enabled+"   "+ smap.starttime+"   "+smap.endtime)
+            sensitivity.text = smap.sensitive
+            if(smap.enable > 0)
+                motionEnable.checked = true
+            else
+                motionEnable.checked = false
+
+            if(smap.enabled > 0)
+                timeenable.checked = true;
+            else
+                timeenable.checked = false;
+
+            startTime.text =  smap.starttime
+            endTime.text = smap.endtime
 
 
-                 var objectDevice = listdeviceInfo.get(curSelectIndex)
-                objectDevice.motionDetectionEnabled = smap.enabled
-                objectDevice.motionDetectionSensitive = smap.sensitive
-                objectDevice.motionDetectionTimenabled = smap.enabled
-                objectDevice.motionDetectionStarttime = smap.starttime
-                objectDevice.motionDetectionEndtime = smap.endtime
-            }
+
+            var objectDevice = listdeviceInfo.get(curSelectIndex)
+            objectDevice.motionDetectionEnabled = smap.enable
+            objectDevice.motionDetectionSensitive = smap.sensitive
+            objectDevice.motionDetectionTimenabled = smap.enabled
+            objectDevice.motionDetectionStarttime = smap.starttime
+            objectDevice.motionDetectionEndtime = smap.endtime
         }
+    }
 
+    function getMotionDetectionConfig(){
+        var map={
+            enable:motionEnable.checked,
+            enabled:timeenable.checked,
+            starttime:startTime.text.toString(),
+            endtime:endTime.text.toString(),
+            sensitive:sensitivity.text.toString()
+        };
+        return map;
+
+    }
 }

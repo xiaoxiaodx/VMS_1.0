@@ -21,6 +21,20 @@ P2pWorker::P2pWorker(QString name)
 
     m_validDatalen = 0;
     m_cmd = 0;
+
+
+
+    pffmpegCodec = nullptr;
+
+    debugFile = new QFile("p2pWordDebug.txt");
+
+    if(!debugFile->isOpen()){
+
+
+        debugFile->open(QIODevice::WriteOnly);
+
+    }
+
 }
 
 
@@ -113,7 +127,7 @@ void P2pWorker::slot_connectDev(QString deviceDid,QString name,QString pwd)
 
 
         emit signal_p2pConnectState(m_name,true);
-        emit slot_startLoopRead();
+        slot_startLoopRead();
 
     }else{
         QThread::msleep(500);
@@ -128,6 +142,8 @@ void P2pWorker::slot_connectDev(QString deviceDid,QString name,QString pwd)
 void P2pWorker::slot_startLoopRead()
 {
     qDebug()<<"P2P slot_startLoopRead";
+
+    createFFmpegDecodec();
 
     while(isWorking  && (!isForceStopWorking)){
 
@@ -155,17 +171,18 @@ void P2pWorker::slot_startLoopRead()
                 ret = PPCS_Read(sessionHandle,i,buff,(int *)&readSize,5000);
 
 
-                QByteArray arr;
-                arr.append(buff,readSize);
+                //                QByteArray arr;
+                //                arr.append(buff,readSize);
 
                 if(ERROR_PPCS_SUCCESSFUL == ret){
-                    //  qDebug()<<"通道"<<i<<" 有"<<readSize<<"个数据："<<arr.toHex();
-                    processUnPkg(buff,readSize);
+                   // qDebug()<<"通道"<<i<<" 有"<<readSize<<"个数据：";
+                    this->processUnPkg(buff,(int)readSize);
+                    //qDebug()<<"通道*** "<<i<<" 有"<<readSize<<"个数据："<<endl;
                 }
             }
         }
 
-        QThread::msleep(10);
+
     }
 
 
@@ -204,17 +221,56 @@ void P2pWorker::p2pSendData(QString cmd,QVariant map)
         writeBuff1(CMD_USR_KEY, m_appKey, 32);
 
 
-    }else if(cmd.compare("getVedio")==0)
-    {
+    }else if(cmd.compare("getVedio")==0){
 
         writeBuff1(CMD_GET_VIDEO_INFO,"vlive -act list -para 0 ",strlen("vlive -act list -para 0 "));
         writeBuff1(CMD_VIDEO_REQ,"vlive -act set -speed 2 -audio 1 ",strlen("vlive -act set -speed 2 -audio 1"));
+
+    }else if(cmd.compare("replay")==0){
+
+
+        QString str = map.toMap().value("time").toString();
+
+        QStringList  listTime = str.split(":");
+        QString year = listTime.at(0);
+        QString mouth = listTime.at(1);
+        QString day = listTime.at(2);
+        QString hour = listTime.at(3);
+        QString minit = listTime.at(4);
+        QString sencond = listTime.at(5);
+
+        //replay -act play  -year 2019 -month 12 -day 3 -hour 0 -min 0 -sec 0 -buffmode 0 -duration 0
+        QString replaycmd =  "replay -act play -year "+year+" -month "+mouth+" -day "+day+" -hour "+hour+" -min "+minit+" -sec "+sencond+" -buffmode 0 -duration 0";
+
+        qDebug()<<"replay :"<<replaycmd;
+        writeBuff1(CMD_REC_REQ,replaycmd.toLocal8Bit().data(),replaycmd.length());
+
+
+    }else if(cmd.compare("replay stop")==0){
+
+        writeBuff1(CMD_REC_STOP,"replay -act stop",strlen("replay -act stop"));
+
+    }else if(cmd.compare("replay pause")==0){
+
+        writeBuff1(CMD_REC_PAUSE,"replay -act pause",strlen("replay -act pause"));
+
+    }else if(cmd.compare("replay continue")==0){
+
+        writeBuff1(CMD_REC_CONTINUE,"replay -act cont",strlen("replay -act cont"));
 
     }else{
 
         QByteArray arr = p2pProtrol.makeJsonPacket(cmd,map);
         writeBuff(CMD_NEW_PROTROL,arr.data(),arr.length());
     }
+}
+
+void P2pWorker::writeDebugFile(QString str)
+{
+
+    return;
+    QTextStream txtOutput(debugFile);
+    txtOutput << str<< endl;
 }
 
 void P2pWorker::resetParseVariant()
@@ -230,12 +286,14 @@ void P2pWorker::processUnPkg(char *buff,int len)
 {
 
     readDataBuff.append(buff,len);
+    //qDebug()<<"processUnPkg "<<readDataBuff.length()<<" "<<needLen<<endl<<readDataBuff.toHex();
 
+    writeDebugFile("processUnPkg:"+QString::number(__LINE__)+"   "+readDataBuff.toHex());
 
-    // qDebug()<<"processUnPkg "<<readDataBuff.length()<<" "<<needLen;
     while(readDataBuff.length() >= needLen)
     {
 
+        //qDebug()<<"while "<<readDataBuff.toHex()<<" "<<needLen;
         if(!isFindHead)
         {
 
@@ -244,7 +302,9 @@ void P2pWorker::processUnPkg(char *buff,int len)
             if(head == MEIAN_HEAD || head == MEIAN_HEAD1)
             {
 
-                //qDebug()<<"找到头";
+                //qDebug()<<"find head";
+
+                writeDebugFile("find head ");
                 readDataBuff.remove(0,2);
                 isFindHead = true;
                 needLen = 6;
@@ -260,10 +320,21 @@ void P2pWorker::processUnPkg(char *buff,int len)
 
             if(readDataBuff.length() >= needLen){
 
+
                 int DatalenL = char2Short(readDataBuff.at(0),readDataBuff.at(1));
                 int DatalenH = char2Short(readDataBuff.at(4),readDataBuff.at(5));
 
-                m_validDatalen = DatalenL + DatalenH * 256;
+                int datL1 = 0x000000ff & readDataBuff.at(0);
+                int datL2 = 0x000000ff & readDataBuff.at(1);
+
+                int datH1 = 0x000000ff & readDataBuff.at(4);
+                int datH2 = 0x000000ff & readDataBuff.at(5);
+
+                int datL = datL1 + datL2*256;
+                int datH = datH1 + datH2*256;
+
+
+                m_validDatalen = datL + datH * 256*256;
 
                 m_cmd = char2Short(readDataBuff.at(2),readDataBuff.at(3));
 
@@ -277,6 +348,20 @@ void P2pWorker::processUnPkg(char *buff,int len)
             }else
                 break;
         }
+
+//        if(m_cmd == CMD_USR_KEY);
+//        else if(m_cmd == CMD_LOGIN);
+//        else if(m_cmd == CMD_VIDEO_TRNS);
+//        else if(m_cmd == CMD_AUDIO_TRNS);
+//        else if(m_cmd == CMD_REC_REQ);
+//        else if(m_cmd == CMD_REC_VIDEO_TRNS);
+//        else if(m_cmd == CMD_REC_AUDIO_TRNS);
+//        else if(m_cmd == CMD_NEW_PROTROL);
+//        else {
+//            //writeDebugFile("cmd is error:"+QString::number(m_cmd,16));
+//            resetParseVariant();
+//            continue;
+//        }
 
         if(readDataBuff.length() >= needLen){
 
@@ -293,8 +378,6 @@ void P2pWorker::processUnPkg(char *buff,int len)
 
                 //想要接收流必须要使用命令登录
                 writeBuff1(CMD_LOGIN,loginCmd.toLatin1().data(),loginCmd.length());
-
-
 
                 QVariantMap map;
                 map.insert("username",m_account);
@@ -330,11 +413,7 @@ void P2pWorker::processUnPkg(char *buff,int len)
 
                 }
 
-
-
             }else if(m_cmd == CMD_VIDEO_TRNS){
-
-
                 QByteArray arr;
                 arr.append(readDataBuff.data(),needLen);
 
@@ -344,7 +423,11 @@ void P2pWorker::processUnPkg(char *buff,int len)
 
                 //qDebug()<<"找到  视频信息 1:"<<vstreamLen;//<<"  "<<arr.toHex();
 
-                emit signal_sendH264(m_name,arr.data() + sizeof(video_frame_header), vstreamLen,1000);
+
+                QImage *img = pffmpegCodec->decodeVFrame((unsigned char*)readDataBuff.data(),needLen);
+
+
+                emit signal_sendH264(m_name,QVariant::fromValue(img),1000);
 
             }else if(m_cmd == CMD_AUDIO_TRNS){
                 //qDebug()<<"找到  音频信息:"<<needLen<<"   "<<readDataBuff.length();
@@ -353,7 +436,42 @@ void P2pWorker::processUnPkg(char *buff,int len)
 
                 video_frame_header *video_pack= (video_frame_header*)(readDataBuff.data());
 
-                emit signal_sendPcmALaw(arr.data(), arr.length(),1000);
+                emit signal_sendPcmALaw(m_name,arr.data(), arr.length(),1000);
+
+            }else if(m_cmd == CMD_REC_REQ){
+                //qDebug()<<"请求回放应答 "<<needLen<<"   "<<readDataBuff.length();
+
+            }else if(m_cmd == CMD_REC_VIDEO_TRNS){//回放视频
+                //qDebug()<<"找到  回放视频信息:"<<needLen<<"   "<<readDataBuff.length();
+
+               // writeDebugFile("replay video "+QString::number(needLen)+"  "+QString::number(readDataBuff.length()));
+                QByteArray arr ;
+                arr.append(readDataBuff.data(),needLen);
+
+                video_frame_header *video_pack= (video_frame_header*)(readDataBuff.data());
+
+                QImage *img = pffmpegCodec->decodeVFrame((unsigned char*)readDataBuff.data(),needLen);
+
+
+               emit signal_sendReplayH264(m_name,QVariant::fromValue(img),1000);
+
+
+
+                QThread::msleep(66);
+
+            }else if(m_cmd == CMD_REC_AUDIO_TRNS){//回放音频
+                //qDebug()<<"找到  回放音频信息:"<<needLen<<"   "<<readDataBuff.length();
+
+
+               // writeDebugFile("replay audio "+QString::number(needLen)+"  "+QString::number(readDataBuff.length()));
+
+                QByteArray arr ;
+                arr.append(readDataBuff.data(),needLen);
+
+                video_frame_header *video_pack= (video_frame_header*)(readDataBuff.data());
+
+                //QThread::msleep(2);
+                //emit signal_sendReplayPcmALaw(m_name,arr.data(), arr.length(),1000);
 
             }else if(m_cmd == CMD_NEW_PROTROL){
 
@@ -368,10 +486,11 @@ void P2pWorker::processUnPkg(char *buff,int len)
             readDataBuff.remove(0,needLen);
             resetParseVariant();
 
+            //qDebug()<<"readDataBuff.lenght  "<<readDataBuff.length()<<" "<<needLen;
+
+
         }else
             break;
-
-
 
         //  qDebug()<<"finish loop :"<<readDataBuff.length() <<"    "<<needLen;
     }
@@ -514,6 +633,22 @@ QString P2pWorker::err2String(int ret)
 
     return  "p2p err:"+errStr;
 }
+void P2pWorker::createFFmpegDecodec()
+{
+    if(pffmpegCodec == nullptr)
+    {
+        pffmpegCodec = new FfmpegCodec;
+        pffmpegCodec->vNakedStreamDecodeInit(AV_CODEC_ID_H264);
+        pffmpegCodec->aNakedStreamDecodeInit(AV_CODEC_ID_PCM_ALAW,AV_SAMPLE_FMT_S16,8000,1);
+        pffmpegCodec->resetSample(AV_CH_LAYOUT_MONO,AV_CH_LAYOUT_MONO,8000,44100,AV_SAMPLE_FMT_S16,AV_SAMPLE_FMT_S16,160);
+
+       // connect(pffmpegCodec,&FfmpegCodec::signal_sendMsg,this,&XVideo::slot_recMsg);
+
+    }
+
+}
+
+
 
 P2pWorker::~P2pWorker()
 {

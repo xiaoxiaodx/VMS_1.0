@@ -242,11 +242,26 @@ void TimeLine::mouseMoveEvent(QMouseEvent *event)
 
 }
 
+void TimeLine::addMidValueTime(qreal ms)
+{
 
+    qreal sencond = ms/1000;
+    midValueTime += sencond;
+    update();
+    emit midValueChange(secondsToStr(midValueTime));
+}
 
 void TimeLine::mouseReleaseEvent(QMouseEvent *event)
 {
+
+    if(isMousePress ){
+
+
+        emit requestReply(secondsToStr(midValueTime));
+    }
     isMousePress = false;
+
+
 }
 
 void TimeLine::wheelEvent(QWheelEvent *event)

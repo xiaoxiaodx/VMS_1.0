@@ -16,6 +16,7 @@ extern "C"{
 }
 
 #include "protocal_pkg.h"
+#include "ffmpegcodec.h"
 
 
 
@@ -43,8 +44,11 @@ public:
 signals:
     void signal_p2pReplyData(QString name,QVariant map);
 
-    void signal_sendH264(QString name ,char* vH264Arr,int arrLen,long long pts);
-    void signal_sendPcmALaw(char* PcmALawArr,int arrLen,long long pts);
+    void signal_sendH264(QString name ,QVariant img,long long pts);
+    void signal_sendPcmALaw(QString name ,char* PcmALawArr,int arrLen,long long pts);
+
+    void signal_sendReplayH264(QString name ,QVariant img,long long pts);
+    void signal_sendReplayPcmALaw(QString name,char* PcmALawArr,int arrLen,long long pts);
 
     void signal_loopEnd();
     void signal_sendMsg(MsgInfo *info);
@@ -67,6 +71,8 @@ private:
     void p2pinit();
 
 
+    void createFFmpegDecodec();
+
 
     void processUnPkg(char* inBuff, int inbuffSize);
     void processReqPkg(unsigned int cmd,  char* inBuff, int inbuffSize, char * outBuff,int *outBuffSize,bool isNeedEncrypt);
@@ -77,9 +83,12 @@ private:
 
     QString err2String(int ret);
 
+    void writeDebugFile(QString str);
     char m_appKey[appKeyLen];
     char *m_serverKey;
 
+
+     FfmpegCodec *pffmpegCodec;
 
     bool isFindHead;
     bool isFindCmd;
@@ -103,6 +112,7 @@ private:
 
     P2pProtrol p2pProtrol;
 
+    QFile *debugFile;
 };
 
 #endif // P2PWORKER_H

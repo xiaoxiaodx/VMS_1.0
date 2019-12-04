@@ -43,7 +43,7 @@ QByteArray P2pProtrol::makeJsonPacket(QString cmd,QVariant msgContent)
 
     }else if(cmd.compare("setmotiondetectparam")==0){
         QJsonObject jObjectData ;
-        jObjectData.insert("enabled",msgContent.toMap().value("enabled").toInt());
+        jObjectData.insert("enable",msgContent.toMap().value("enable").toInt());
         jObjectData.insert("sensitive",msgContent.toMap().value("sensitive").toInt());
 
         QJsonObject jObjectDataTimesection ;
@@ -150,6 +150,8 @@ QMap<QString,QVariant> P2pProtrol::unJsonPacket(QByteArray &arr)
         map.insert("enabled",jobject1.value("enabled").toInt());
         map.insert("starttime",jobject1.value("starttime").toString());
         map.insert("endtime",jobject1.value("endtime").toString());
+
+
 
     }else if(cmd.compare("setptzmove")==0){
         //不需要填充参数

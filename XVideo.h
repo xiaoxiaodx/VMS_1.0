@@ -44,7 +44,7 @@ public:
 
 
 
-    Q_INVOKABLE void funSendVideoData(QVariant buff,int len);
+    Q_INVOKABLE void funSendVideoData(QVariant buff);
     Q_INVOKABLE void funSendAudioData(char *buff,int len);
 
 

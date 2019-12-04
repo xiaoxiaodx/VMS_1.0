@@ -150,11 +150,12 @@ Popup {
                 currentIndex: 0
                 orientation:Qt.Vertical
                 DeviceConfigMedia{
+                    id:mediaconfig
 
                 }
 
                 DeviceConfigMotionDetection{
-
+                    id:motiondetection
                 }
 
             }
@@ -179,6 +180,7 @@ Popup {
             text: qsTr("ensure")
             onClicked: {
 
+                //mediaconfig
                 root.close()
             }
         }
@@ -198,8 +200,12 @@ Popup {
             onClicked: {
 
 
+               var map =  mediaconfig.getMediaVideoConfig();
+               var map1 = motiondetection.getMotionDetectionConfig();
 
 
+                devicemanagerment.funP2pSendData(listdeviceInfo.get(curSelectIndex).devicename,"setvideoencodeparam",map);
+                devicemanagerment.funP2pSendData(listdeviceInfo.get(curSelectIndex).devicename,"setmotiondetectparam",map1);
                 root.close()
             }
 

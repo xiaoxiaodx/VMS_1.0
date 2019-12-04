@@ -542,7 +542,6 @@ void TcpWorker::writeDebugfile(QString filename,QString funname,int lineCount,QS
 
 
 
-
 TcpWorker::~TcpWorker()
 {
     qDebug()<<m_did +  " 析构   tcpWorker";
@@ -569,6 +568,7 @@ TcpWorker::~TcpWorker()
 
     qDebug()<<m_did +  " 析构   tcpWorker 结束";
 }
+
 
 
 

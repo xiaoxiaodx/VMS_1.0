@@ -14,7 +14,7 @@ DeviceManagerment::DeviceManagerment(QObject *parent) : QObject(parent)
 void DeviceManagerment::funP2pSendData(QString name,QString cmd,QVariant map)
 {
 
-    //qDebug()<<" funP2pSendData  "<<name<<"  "<<cmd;
+    qDebug()<<" funP2pSendData  "<<name<<"  "<<cmd;
     DeviceInfo *info = findDeviceName(name);
 
     if(info != nullptr){
@@ -43,6 +43,9 @@ void DeviceManagerment::funConnectP2pDevice(QString name, QString did, QString a
             info->p2pWorker->test();
 
             connect(info->p2pWorker,&P2pWorker::signal_sendH264,this,&DeviceManagerment::slot_recVedio);
+            connect(info->p2pWorker,&P2pWorker::signal_sendPcmALaw,this,&DeviceManagerment::slot_recAudio);
+            connect(info->p2pWorker,&P2pWorker::signal_sendReplayH264,this,&DeviceManagerment::slot_recReplayVedio);
+            connect(info->p2pWorker,&P2pWorker::signal_sendReplayPcmALaw,this,&DeviceManagerment::slot_recReplayAudio);
             connect(info->p2pWorker,&P2pWorker::signal_loginState,this,&DeviceManagerment::slot_recP2pLoginState);
             connect(info->p2pWorker,&P2pWorker::signal_p2pConnectState,this,&DeviceManagerment::slot_p2pConnetState);
 
@@ -90,13 +93,33 @@ void DeviceManagerment::slot_recP2pLoginState(bool isSucc,QString name,QString d
 
 }
 
-void DeviceManagerment::slot_recVedio(QString name ,char* h264Arr,int arrlen,quint64 time)
+void DeviceManagerment::slot_recVedio(QString name ,QVariant arr,quint64 time)
 {
 
-    QByteArray arr;
-    arr.append(h264Arr,arrlen);
-    emit signal_p2pCallbackVideoData(name,arr,arrlen);
+
+    emit signal_p2pCallbackVideoData(name,arr);
 }
+
+
+
+void DeviceManagerment::slot_recAudio(QString name ,char* PcmALawArr,int arrLen,long long pts){
+    QByteArray arr;
+    arr.append(PcmALawArr,arrLen);
+    emit signal_p2pCallbackReplayAudioData(name,arr,arrLen);
+}
+void DeviceManagerment::slot_recReplayVedio(QString name ,QVariant arr,quint64 time){
+
+
+   // qDebug()<<"slot_recReplayVedio  1";
+    emit signal_p2pCallbackReplayVideoData(name,arr);
+}
+void DeviceManagerment::slot_recReplayAudio(QString name ,char* PcmALawArr,int arrLen,long long pts){
+    QByteArray arr;
+    arr.append(PcmALawArr,arrLen);
+    emit signal_p2pCallbackReplayAudioData(name,arr,arrLen);
+}
+
+
 void DeviceManagerment::slot_recDataReply(QString name,QVariant map)
 {
 

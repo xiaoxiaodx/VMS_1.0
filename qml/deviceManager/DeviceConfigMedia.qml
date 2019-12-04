@@ -158,13 +158,18 @@ Rectangle {
                 color: "white"
                 text: qsTr("frameRate:")
             }
-            Text {
+            LineEdit {
                 id: inputframeRate
                 width: 184
                 height: 34
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                color: "white"
+                border.width: 0
+                font.pixelSize: 14
+                placeholderText: ""
+                isNeedDoubleClickEdit: false
+                textLeftPadding:0
+                color: "#272727"
 
             }
 
@@ -187,13 +192,18 @@ Rectangle {
                 text: qsTr("codeRate:")
             }
 
-            Text {
+            LineEdit {
                 id: inputcodeRate
                 width: 184
                 height: 34
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                color: "white"
+                border.width: 0
+                font.pixelSize: 14
+                placeholderText: ""
+                isNeedDoubleClickEdit: false
+                textLeftPadding:0
+                color: "#272727"
 
             }
 
@@ -287,14 +297,18 @@ Rectangle {
                 text: qsTr("frameInterval:")
             }
 
-            Text {
+            LineEdit {
                 id: inputframeInterval
                 width: 184
                 height: 34
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                color: "white"
-
+                border.width: 0
+                font.pixelSize: 14
+                placeholderText: ""
+                isNeedDoubleClickEdit: false
+                textLeftPadding:0
+                color: "#272727"
             }
 
 
@@ -465,12 +479,23 @@ Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             Text {
                 id: txtenable
-                anchors.right: frameInterval.left
-                anchors.rightMargin: 10
+                anchors.right: parent.right
+                anchors.rightMargin: 194
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 16
                 color: "white"
                 text: qsTr("enable:")
+            }
+
+            SwitchButton{
+                id:audioEnable
+                width: 50
+                height: 25
+                anchors.left: txtenable.right
+                anchors.leftMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+                bgColor: "#409EFF"
+                onCheckedChange: console.debug("SwitchButton    "+checked)
             }
 
 
@@ -492,14 +517,19 @@ Rectangle {
                 text: qsTr("biteRate:")
             }
 
-            Text {
+            LineEdit {
                 id: inputbiteRate
                 width: 184
                 height: 34
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                color: "white"
-
+                border.width: 0
+                font.pixelSize: 14
+                placeholderText: ""
+                isNeedDoubleClickEdit: false
+                textLeftPadding:0
+                color: "#272727"
+                isNeedImg: false
             }
 
         }
@@ -562,13 +592,18 @@ Rectangle {
                 text: qsTr("sample:")
             }
 
-            Text {
+            LineEdit {
                 id: inputsample
                 width: 184
                 height: 34
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                color: "white"
+                border.width: 0
+                font.pixelSize: 14
+                placeholderText: ""
+                isNeedDoubleClickEdit: false
+                textLeftPadding:0
+                color: "#272727"
 
             }
 
@@ -577,95 +612,124 @@ Rectangle {
 
 
     Connections{
-            target: devicemanagerment;
+        target: devicemanagerment;
 
-            onSignal_videoencodeparam:{
+        onSignal_videoencodeparam:{
 
-                console.debug("onS_videoencodeparam * "+smap)
-                console.debug("onS_videoencodeparam * "+smap.streamid)
+            console.debug("onS_videoencodeparam * "+smap)
+            console.debug("onS_videoencodeparam * "+smap.streamid)
 
-                codestreamType.currentIndex = smap.streamid
-                channel.currentIndex = smap.chn
-                inputframeRate.text = smap.framerate
-                inputcodeRate.text =smap.bitrate
-                inputframeInterval.text = smap.gop
-
-
-                if(smap.h264profile === "baseline")
-                    encodeStyle.currentIndex = 0
-                else if(smap.h264profile === "main")
-                     encodeStyle.currentIndex = 1
-                else if(smap.h264profile === "extended")
-                     encodeStyle.currentIndex = 2
-                else if(smap.h264profile === "high")
-                     encodeStyle.currentIndex = 3
+            codestreamType.currentIndex = smap.streamid
+            channel.currentIndex = smap.chn
+            inputframeRate.text = smap.framerate
+            inputcodeRate.text =smap.bitrate
+            inputframeInterval.text = smap.gop
 
 
-
-                if(smap.encoding === "jpeg")
-                    encodeType.currentIndex = 0
-                else if(smap.encoding === "mpeg4")
-                     encodeType.currentIndex = 1
-                else if(smap.encoding === "h264")
-                     encodeType.currentIndex = 2
-                else if(smap.encoding === "h265")
-                     encodeType.currentIndex = 3
-
-                if(smap.cvbrmode==="cbr")
-                    transcodingRate.currentIndex = 1
-                else
-                    transcodingRate.currentIndex = 0
-
-                pictureQuality.currentIndex = smap.quality
-                if(smap.width === 1920)
-                    resolution.currentIndex = 0
-                else if(smap.width === 640)
-                    resolution.currentIndex = 1
-                else if(smap.width === 320)
-                    resolution.currentIndex = 2
+            if(smap.h264profile === "baseline")
+                encodeStyle.currentIndex = 0
+            else if(smap.h264profile === "main")
+                encodeStyle.currentIndex = 1
+            else if(smap.h264profile === "extended")
+                encodeStyle.currentIndex = 2
+            else if(smap.h264profile === "high")
+                encodeStyle.currentIndex = 3
 
 
 
-                var objectDevice = listdeviceInfo.get(curSelectIndex)
-                objectDevice.videoChn = smap.chn;
-                objectDevice.videoStreamid = smap.streamid;
-                objectDevice.videoFramerate = smap.framerate;
-                objectDevice.videoBitrate = smap.bitrate;
-                objectDevice.videoQuality = smap.quality;
-                objectDevice.videoGop = smap.gop;
-                objectDevice.videoCvbrmode = smap.cvbrmode;
-                objectDevice.videoEncodetype = smap.encoding;
+            if(smap.encoding === "jpeg")
+                encodeType.currentIndex = 0
+            else if(smap.encoding === "mpeg4")
+                encodeType.currentIndex = 1
+            else if(smap.encoding === "h264")
+                encodeType.currentIndex = 2
+            else if(smap.encoding === "h265")
+                encodeType.currentIndex = 3
 
-                objectDevice.videoEncodestyle = smap.h264profile;
-                if(smap.width === 1920)
-                    objectDevice.videoResolution = 0
-                else if(smap.width === 640)
-                    objectDevice.videoResolution = 1
-                else if(smap.width === 320)
-                    objectDevice.videoResolution = 2
+            if(smap.cvbrmode==="cbr")
+                transcodingRate.currentIndex = 1
+            else
+                transcodingRate.currentIndex = 0
 
-            }
-            onSignal_audioencodeparam:{
-
-//                objectDevice.audioEnable = smap.enabled
-//                objectDevice.audioEncodetype = smap.encoding
-//                objectDevice.audioBitrate = smap.bitrate
-//                objectDevice.audioSamplerate = smap.samplerate
-
-                inputsample.text = smap.samplerate
-                inputbiteRate.text = smap.bitrate
-                audioencodeType.currentIndex = 0
+            pictureQuality.currentIndex = smap.quality
+            if(smap.width === 1920)
+                resolution.currentIndex = 0
+            else if(smap.width === 640)
+                resolution.currentIndex = 1
+            else if(smap.width === 320)
+                resolution.currentIndex = 2
 
 
-                var objectDevice = listdeviceInfo.get(curSelectIndex)
-                objectDevice.audioEnable = smap.enabled
-                objectDevice.audioEncodetype = smap.encoding
-                objectDevice.audioBitrate = smap.bitrate
-                objectDevice.audioSamplerate = smap.samplerate
 
-            }
+            var objectDevice = listdeviceInfo.get(curSelectIndex)
+            objectDevice.videoChn = smap.chn;
+            objectDevice.videoStreamid = smap.streamid;
+            objectDevice.videoFramerate = smap.framerate;
+            objectDevice.videoBitrate = smap.bitrate;
+            objectDevice.videoQuality = smap.quality;
+            objectDevice.videoGop = smap.gop;
+            objectDevice.videoCvbrmode = smap.cvbrmode;
+            objectDevice.videoEncodetype = smap.encoding;
 
+            objectDevice.videoEncodestyle = smap.h264profile;
+            if(smap.width === 1920)
+                objectDevice.videoResolution = 0
+            else if(smap.width === 640)
+                objectDevice.videoResolution = 1
+            else if(smap.width === 320)
+                objectDevice.videoResolution = 2
 
         }
+        onSignal_audioencodeparam:{
+
+            //                objectDevice.audioEnable = smap.enabled
+            //                objectDevice.audioEncodetype = smap.encoding
+            //                objectDevice.audioBitrate = smap.bitrate
+            //                objectDevice.audioSamplerate = smap.samplerate
+
+            console.debug(" onSignal_audioencodeparam***    "+ smap.enabled)
+            if(smap.enabled>0)
+                audioEnable.checked = true
+            else
+                audioEnable.checked = false
+            inputsample.text = smap.samplerate
+            inputbiteRate.text = smap.bitrate
+            audioencodeType.currentIndex = 0
+
+
+            var objectDevice = listdeviceInfo.get(curSelectIndex)
+            objectDevice.audioEnable = smap.enabled
+            objectDevice.audioEncodetype = smap.encoding
+            objectDevice.audioBitrate = smap.bitrate
+            objectDevice.audioSamplerate = smap.samplerate
+
+        }
+
+
+    }
+
+
+    function getMediaVideoConfig(){
+
+        var w,h;
+        if(resolution.currentIndex === 0){w=1920;h=1080}
+        else if (resolution.currentIndex===1){w=640;h=320;}
+        else if (resolution.currentIndex===2){w=320;h=160;}
+        var map={
+            chn:channel.currentIndex,
+            streamid:codestreamType.currentIndex,
+            framerate:inputframeRate.text.toString(),
+            bitrate:inputcodeRate.text.toString(),
+            quality:pictureQuality.currentIndex,
+            cvbrmode:transcodingRate.currentIndex,
+            encoding:encodeType.currentText.toString(),
+            h264profile:encodeStyle.currentText.toString(),
+            width:w,
+            height:h
+        };
+        return map;
+    }
+
+
 
 }

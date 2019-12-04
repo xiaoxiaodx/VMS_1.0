@@ -240,7 +240,7 @@ Rectangle {
                 if(screenBlack.visible)
                     screenBlack.visible = !screenBlack.visible
 
-                video.funSendVideoData(h264Arr,arrlen)
+                video.funSendVideoData(h264Arr)
 
             }
 

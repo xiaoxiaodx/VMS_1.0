@@ -185,15 +185,7 @@ QImage* FfmpegCodec::decodeVFrame(uint8_t *buff,int bufflen)
 
             }
 
-
-
             sws_scale(m_pImg_convert_ctx, (const uint8_t* const*)m_pAVFrame->data, m_pAVFrame->linesize, 0, m_pVCodecCtx->height, m_pVFrameBGR->data, m_pVFrameBGR->linesize);
-
-
-            // qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
-            sws_scale(m_pImg_convert_ctx, (const uint8_t* const*)m_pAVFrame->data, m_pAVFrame->linesize, 0, m_pVCodecCtx->height, m_pVFrameBGR->data, m_pVFrameBGR->linesize);
-
-            //qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
 
             QImage *pImage = nullptr;
             try {

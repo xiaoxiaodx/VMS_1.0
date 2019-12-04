@@ -19,11 +19,13 @@ public:
 
 
     Q_INVOKABLE void setTimeWarn(QVariant timeInfo);
-
+    Q_INVOKABLE void addMidValueTime(qreal ms);
 
 
 signals:
     void midValueChange(QString value);
+
+    void requestReply(QString value);
 
 protected:
     void paint(QPainter *painter);
@@ -50,7 +52,7 @@ private:
 
 
 
-    int midValueTime ;
+    qreal midValueTime ;
     QList<QMap<QString,int> *> listTimeType;
 
     QString commonColor;

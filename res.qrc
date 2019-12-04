@@ -174,5 +174,7 @@
         <file>qml/systemConfig/SystemConfig.qml</file>
         <file>images/pathSelect.png</file>
         <file>images/systemconfig.png</file>
+        <file>qml/simpleControl/LineEdit.qml</file>
+        <file>qml/simpleControl/SwitchButton.qml</file>
     </qresource>
 </RCC>

@@ -89,7 +89,10 @@ signals:
 
     //回调
     void signal_p2pConnectCallback(bool isSucc,QString name,QString did,QString acc,QString pwd,QString errStr);
-    void signal_p2pCallbackVideoData(QString name ,QVariant h264Arr,int arrlen);
+    void signal_p2pCallbackVideoData(QString name ,QVariant h264Arr);
+    void signal_p2pCallbackAudioData(QString name ,QVariant PcmALawArr,int arrLen,long long pts);
+    void signal_p2pCallbackReplayVideoData(QString name ,QVariant h264Arr);
+    void signal_p2pCallbackReplayAudioData(QString name ,QVariant PcmALawArr,int arrLen);
 
 
     //参数配置
@@ -106,7 +109,12 @@ signals:
 public slots:
 
     void slot_recDataReply(QString name,QVariant map);
-    void slot_recVedio(QString name ,char* h264Arr,int arrlen,quint64 time);
+
+    void slot_recVedio(QString name ,QVariant img,quint64 time);
+    void slot_recAudio(QString name ,char* PcmALawArr,int arrLen,long long pts);
+    void slot_recReplayVedio(QString name ,QVariant img,quint64 time);
+    void slot_recReplayAudio(QString name ,char* PcmALawArr,int arrLen,long long pts);
+
     void slot_p2pConnetState(QString did,bool isSucc);
     void slot_recP2pLoginState(bool isSucc,QString name,QString did,QString acc,QString pwd,QString errStr);
     void slot_p2pErr(QString did,QString str);

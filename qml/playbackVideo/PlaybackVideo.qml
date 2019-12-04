@@ -240,6 +240,18 @@ Rectangle {
                 source: "qrc:/images/playbackPlay.png"
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
+
+                MouseArea{
+                    anchors.fill: parent
+                    onClicked: {
+
+                        var map ;
+                        devicemanagerment.funP2pSendData(listdeviceInfo.get(listDevice.currentIndex).devicename,"replay stop",map);
+
+
+
+                    }
+                }
             }
         }
         Rectangle{
@@ -303,7 +315,21 @@ Rectangle {
             anchors.top:videoControl.bottom
 
 
-            onMidValueChange:timeShow.text = value
+            onMidValueChange:{
+
+                timeShow.text = value
+
+
+
+
+            }
+
+            onRequestReply: {
+
+                var str = Qt.formatDate(calendar.getCurrentData(),"yyyy:MM:dd:" +value);
+                var map = {time:str};
+                devicemanagerment.funP2pSendData(listdeviceInfo.get(listDevice.currentIndex).devicename,"replay",map);
+            }
 
         }
 
@@ -355,9 +381,6 @@ Rectangle {
     Connections{
         target: devicemanagerment
         onSignal_getrecordinginfo:{
-
-
-
             if(smap.infoType==="hourInfo"){
 
                 //发送给时间轴渲染
@@ -400,6 +423,25 @@ Rectangle {
             calendarEventModel.append({});
 
         }
+
+
+        onSignal_p2pCallbackReplayAudioData:{
+
+
+        }
+
+       // signal_p2pCallbackReplayVideoData(name,arr,arrlen);
+        onSignal_p2pCallbackReplayVideoData:{
+
+
+            if(screenBlack.visible)
+                screenBlack.visible = !screenBlack.visible
+
+
+            timeline.addMidValueTime(60);
+            video.funSendVideoData(h264Arr)
+
+        }
     }
 
 
@@ -409,8 +451,6 @@ Rectangle {
             main.showToast("No device specified")
             return
         }
-
-
         var name = listdeviceInfo.get(listDevice.currentIndex).devicename
 
 

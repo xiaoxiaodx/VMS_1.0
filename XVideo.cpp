@@ -90,8 +90,6 @@ void XVideo::createFFmpegDecodec()
 
         connect(pffmpegCodec,&FfmpegCodec::signal_sendMsg,this,&XVideo::slot_recMsg);
 
-//        if(m_readThread != nullptr)
-//            connect(m_readThread,&QThread::finished,pffmpegCodec,&FfmpegCodec::deleteLater);
     }
 
 }
@@ -375,7 +373,7 @@ void XVideo::disConnectServer()
 
 QSGNode* XVideo::updatePaintNode(QSGNode *old, UpdatePaintNodeData *data)
 {
-    // qDebug()<<"XVideo updatePaintNode thread:"<<QThread::currentThreadId()<<"   "<<listImgInfo.size();
+     //qDebug()<<"XVideo updatePaintNode thread:"<<QThread::currentThreadId()<<"   "<<listImgInfo.size();
     QSGSimpleTextureNode *oldTexture = static_cast<QSGSimpleTextureNode*>(old);
 
     if (oldTexture == NULL) {
@@ -433,24 +431,43 @@ QSGNode* XVideo::updatePaintNode(QSGNode *old, UpdatePaintNodeData *data)
 
     }
 
+    qDebug()<<"XVideo updatePaintNode thread:***";
     //实时更新纹理而不使用老的纹理 是因为老的纹理的宽高未发生变化
 }
 
-void XVideo::funSendVideoData(QVariant buff1,int len)
+void XVideo::funSendVideoData(QVariant buff1)
 {
 
-
+    //qDebug()<<"funSendVideoData ****1";
 
     QByteArray arr = buff1.toByteArray();
-//    qDebug()<<"funSendVideoData:"<<arr.toHex();
+   // qDebug()<<"funSendVideoData:"<<arr.toHex();
 
-    QImage *Img = nullptr;
-    createFFmpegDecodec();
+    QImage *Img = buff1.value<QImage*>();
 
+    //createFFmpegDecodec();
+
+    if (Img != nullptr && (!Img->isNull()))
+    {
+        ImageInfo imgInfo;
+        imgInfo.pImg = Img;
+        //imgInfo.time = time;
+
+        // qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
+        if(listImgInfo.size() < minBuffLen){
+
+            // qDebug()<<"****2";
+            listImgInfo.append(imgInfo);
+            update();
+
+        }else
+            delete Img;
+    }
+    /*
     if(pffmpegCodec != nullptr){
         Img = pffmpegCodec->decodeVFrame((unsigned char*)arr.data(),arr.length());
 
-      // qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
+       //qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
 
         if (Img != nullptr && (!Img->isNull()))
         {
@@ -461,13 +478,14 @@ void XVideo::funSendVideoData(QVariant buff1,int len)
             // qDebug()<<QString(__FUNCTION__) + "    "+QString::number(__LINE__) ;
             if(listImgInfo.size() < minBuffLen){
 
+                 qDebug()<<"****2";
                 listImgInfo.append(imgInfo);
-                update();
+                //update();
 
             }else
                 delete Img;
         }
-    }
+    }*/
 }
 
 
